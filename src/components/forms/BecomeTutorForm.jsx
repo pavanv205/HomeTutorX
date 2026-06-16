@@ -1,0 +1,603 @@
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaBriefcase, FaBook, FaUpload } from 'react-icons/fa';
+import { SUBJECTS, CLASSES, CITIES } from '../../constants';
+import { bookingService } from '../../services/bookingService';
+import Button from '../common/Button';
+
+// Global schema for full validation
+const validationSchema = yup.object().shape({
+  // Step 1
+  name: yup.string().required('Full name is required').min(3, 'Name must be at least 3 characters'),
+  email: yup.string().required('Email address is required').email('Please enter a valid email address'),
+  phone: yup.string().required('Phone number is required').matches(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit number'),
+  city: yup.string().required('City is required'),
+  bio: yup.string().required('About section is required').min(30, 'Bio must be at least 30 characters'),
+  
+  // Step 2
+  degree: yup.string().required('Highest qualification is required'),
+  institution: yup.string().required('College / University name is required'),
+  passingYear: yup.number().typeError('Passing year must be a number').required('Passing year is required').min(1980, 'Invalid year').max(new Date().getFullYear(), 'Year cannot be in the future'),
+  experienceYears: yup.number().typeError('Experience must be a number').required('Experience is required').min(0, 'Cannot be negative').max(50, 'Invalid experience'),
+
+  // Step 3
+  subjects: yup.array().min(1, 'Select at least one subject to teach'),
+  classes: yup.array().min(1, 'Select at least one class grade'),
+  teachingMode: yup.string().required('Please select preferred teaching mode'),
+
+  // Step 4
+  address: yup.string().required('Address is required'),
+  pincode: yup.string().required('Postal code is required').matches(/^\d{6}$/, 'Must be a valid 6-digit pin code')
+});
+
+const STEPS = [
+  { title: 'Personal Details', icon: <FaUser /> },
+  { title: 'Education & Exp', icon: <FaGraduationCap /> },
+  { title: 'Teaching Prefs', icon: <FaBook /> },
+  { title: 'Upload & Finish', icon: <FaUpload /> }
+];
+
+const BecomeTutorForm = () => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [resumeFile, setResumeFile] = useState(null);
+  const [resumeError, setResumeError] = useState('');
+
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    formState: { errors },
+    getValues,
+    setValue,
+    watch
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: 'onChange',
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      city: '',
+      bio: '',
+      degree: '',
+      institution: '',
+      passingYear: '',
+      experienceYears: '',
+      subjects: [],
+      classes: [],
+      teachingMode: 'Both',
+      address: '',
+      pincode: ''
+    }
+  });
+
+  // Watch fields for rendering checkbox states
+  const watchedSubjects = watch('subjects');
+  const watchedClasses = watch('classes');
+
+  const handleNext = async () => {
+    // Validate fields belonging to the current step
+    let fieldsToValidate = [];
+    if (currentStep === 0) {
+      fieldsToValidate = ['name', 'email', 'phone', 'city', 'bio'];
+    } else if (currentStep === 1) {
+      fieldsToValidate = ['degree', 'institution', 'passingYear', 'experienceYears'];
+    } else if (currentStep === 2) {
+      fieldsToValidate = ['subjects', 'classes', 'teachingMode'];
+    }
+
+    const isStepValid = await trigger(fieldsToValidate);
+    if (isStepValid) {
+      setCurrentStep((prev) => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => prev - 1);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setResumeError('File size should be less than 5MB');
+        setResumeFile(null);
+      } else if (!['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
+        setResumeError('Only PDF, DOC, or DOCX files are allowed');
+        setResumeFile(null);
+      } else {
+        setResumeError('');
+        setResumeFile(file);
+      }
+    }
+  };
+
+  const onSubmit = async (data) => {
+    if (!resumeFile) {
+      setResumeError('Resume upload is required');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const payload = {
+        ...data,
+        resumeName: resumeFile.name,
+        resumeSize: resumeFile.size
+      };
+      const response = await bookingService.registerTutor(payload);
+      if (response.success) {
+        setSuccessMsg(response.message);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleSubject = (subject) => {
+    const current = getValues('subjects') || [];
+    if (current.includes(subject)) {
+      setValue('subjects', current.filter((s) => s !== subject), { shouldValidate: true });
+    } else {
+      setValue('subjects', [...current, subject], { shouldValidate: true });
+    }
+  };
+
+  const toggleClass = (cls) => {
+    const current = getValues('classes') || [];
+    if (current.includes(cls)) {
+      setValue('classes', current.filter((c) => c !== cls), { shouldValidate: true });
+    } else {
+      setValue('classes', [...current, cls], { shouldValidate: true });
+    }
+  };
+
+  if (successMsg) {
+    return (
+      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 md:p-12 text-center max-w-xl mx-auto shadow-xl">
+        <div className="h-20 w-20 bg-emerald-100 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
+          <svg className="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+          Application Submitted!
+        </h3>
+        <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+          {successMsg}
+        </p>
+        <Button variant="primary" onClick={() => window.location.href = '/'}>
+          Back to Home
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full max-w-4xl mx-auto bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-10 shadow-xl">
+      {/* Progress Steps Header */}
+      <div className="mb-10">
+        <div className="flex justify-between items-center relative">
+          {/* Progress bar background line */}
+          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-100 dark:bg-slate-800 -translate-y-1/2 z-0" />
+          {/* Active progress bar line */}
+          <div
+            className="absolute top-1/2 left-0 h-0.5 bg-primary dark:bg-blue-500 -translate-y-1/2 z-0 transition-all duration-300"
+            style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
+          />
+
+          {STEPS.map((step, idx) => (
+            <div key={idx} className="flex flex-col items-center z-10 relative">
+              <div
+                className={`h-11 w-11 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
+                  idx < currentStep
+                    ? 'bg-primary border-primary text-white'
+                    : idx === currentStep
+                    ? 'bg-white border-primary text-primary dark:bg-slate-900 dark:text-blue-400 dark:border-blue-400 ring-4 ring-primary/10'
+                    : 'bg-white border-slate-200 text-slate-400 dark:bg-slate-900 dark:border-slate-800'
+                }`}
+              >
+                {idx < currentStep ? (
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  step.icon
+                )}
+              </div>
+              <span
+                className={`text-xs font-semibold mt-2 hidden sm:block ${
+                  idx === currentStep ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400'
+                }`}
+              >
+                {step.title}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* STEP 1: Personal Details */}
+        {currentStep === 0 && (
+          <div className="space-y-5">
+            <h4 className="text-lg font-bold text-slate-850 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
+              Personal Information
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {/* Name */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  Full Name
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400"><FaUser className="h-4 w-4" /></span>
+                  <input
+                    type="text"
+                    placeholder="Enter your full name"
+                    {...register('name')}
+                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                  />
+                </div>
+                {errors.name && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.name.message}</p>}
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  Email Address
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400"><FaEnvelope className="h-4 w-4" /></span>
+                  <input
+                    type="email"
+                    placeholder="e.g. name@example.com"
+                    {...register('email')}
+                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                  />
+                </div>
+                {errors.email && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.email.message}</p>}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {/* Phone */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  Phone Number
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400"><FaPhone className="h-4 w-4" /></span>
+                  <input
+                    type="tel"
+                    placeholder="10-digit mobile number"
+                    {...register('phone')}
+                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                  />
+                </div>
+                {errors.phone && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.phone.message}</p>}
+              </div>
+
+              {/* City */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  Preferred City
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400"><FaMapMarkerAlt className="h-4 w-4" /></span>
+                  <select
+                    {...register('city')}
+                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                  >
+                    <option value="">Select City</option>
+                    {CITIES.map((c, i) => (
+                      <option key={i} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                {errors.city && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.city.message}</p>}
+              </div>
+            </div>
+
+            {/* Bio */}
+            <div>
+              <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                Professional Bio / Teaching Philosophy
+              </label>
+              <textarea
+                rows="4"
+                placeholder="Introduce yourself and explain your teaching methodology (min 30 characters)..."
+                {...register('bio')}
+                className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+              />
+              {errors.bio && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.bio.message}</p>}
+            </div>
+          </div>
+        )}
+
+        {/* STEP 2: Qualifications & Experience */}
+        {currentStep === 1 && (
+          <div className="space-y-5">
+            <h4 className="text-lg font-bold text-slate-855 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
+              Academic Qualifications & Work Experience
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {/* Degree */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  Highest Degree / Qualification
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400"><FaGraduationCap className="h-4 w-4" /></span>
+                  <input
+                    type="text"
+                    placeholder="e.g. M.Sc. in Physics, B.Ed."
+                    {...register('degree')}
+                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                  />
+                </div>
+                {errors.degree && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.degree.message}</p>}
+              </div>
+
+              {/* Institution */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  University / College / School
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400"><FaGraduationCap className="h-4 w-4" /></span>
+                  <input
+                    type="text"
+                    placeholder="e.g. Delhi University, IIT Bombay"
+                    {...register('institution')}
+                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                  />
+                </div>
+                {errors.institution && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.institution.message}</p>}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {/* Passing Year */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  Year of Graduation
+                </label>
+                <input
+                  type="number"
+                  placeholder="e.g. 2018"
+                  {...register('passingYear')}
+                  className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                />
+                {errors.passingYear && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.passingYear.message}</p>}
+              </div>
+
+              {/* Experience Years */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  Total Teaching Experience (Years)
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-slate-400"><FaBriefcase className="h-4 w-4" /></span>
+                  <input
+                    type="number"
+                    placeholder="e.g. 5"
+                    {...register('experienceYears')}
+                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                  />
+                </div>
+                {errors.experienceYears && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.experienceYears.message}</p>}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: Teaching Preferences */}
+        {currentStep === 2 && (
+          <div className="space-y-5">
+            <h4 className="text-lg font-bold text-slate-855 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
+              Teaching Preferences
+            </h4>
+
+            {/* Subjects Selection */}
+            <div>
+              <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
+                Subjects You Can Teach (Select all that apply)
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {SUBJECTS.map((sub, idx) => {
+                  const isChecked = watchedSubjects?.includes(sub);
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => toggleSubject(sub)}
+                      className={`py-2 px-3 text-xs font-semibold rounded-lg border text-center transition-all duration-200 ${
+                        isChecked
+                          ? 'bg-primary/10 border-primary text-primary dark:bg-blue-900/20 dark:border-blue-500 dark:text-blue-400'
+                          : 'border-slate-200 text-slate-650 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-350 dark:hover:bg-slate-800/50'
+                      }`}
+                    >
+                      {sub}
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.subjects && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.subjects.message}</p>}
+            </div>
+
+            {/* Classes Selection */}
+            <div>
+              <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
+                Grades / Classes (Select all that apply)
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                {CLASSES.map((cls, idx) => {
+                  const isChecked = watchedClasses?.includes(cls);
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => toggleClass(cls)}
+                      className={`py-2.5 px-3 text-xs font-semibold rounded-lg border text-center transition-all duration-200 ${
+                        isChecked
+                          ? 'bg-primary/10 border-primary text-primary dark:bg-blue-900/20 dark:border-blue-500 dark:text-blue-400'
+                          : 'border-slate-200 text-slate-650 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-350 dark:hover:bg-slate-800/50'
+                      }`}
+                    >
+                      {cls}
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.classes && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.classes.message}</p>}
+            </div>
+
+            {/* Teaching Mode */}
+            <div>
+              <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2.5 uppercase tracking-wide">
+                Preferred Teaching Mode
+              </label>
+              <div className="grid grid-cols-3 gap-3">
+                {['Online', 'Offline', 'Both'].map((m) => (
+                  <label
+                    key={m}
+                    className="flex items-center justify-center p-3 rounded-xl border text-sm font-semibold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-200"
+                  >
+                    <input
+                      type="radio"
+                      value={m}
+                      {...register('teachingMode')}
+                      className="sr-only"
+                    />
+                    <span className="text-slate-700 dark:text-slate-300">{m}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.teachingMode && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.teachingMode.message}</p>}
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: Resume & Locations */}
+        {currentStep === 3 && (
+          <div className="space-y-5">
+            <h4 className="text-lg font-bold text-slate-855 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
+              Location & Document Upload
+            </h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-5">
+              {/* Detailed Address */}
+              <div className="sm:col-span-3">
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  Street Address
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter your detailed home address"
+                  {...register('address')}
+                  className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                />
+                {errors.address && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.address.message}</p>}
+              </div>
+
+              {/* Pin Code */}
+              <div>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                  Pin Code
+                </label>
+                <input
+                  type="text"
+                  placeholder="6-digit code"
+                  {...register('pincode')}
+                  className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+                />
+                {errors.pincode && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.pincode.message}</p>}
+              </div>
+            </div>
+
+            {/* Resume Upload */}
+            <div>
+              <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
+                Upload Resume (PDF, DOC, DOCX - Max 5MB)
+              </label>
+              <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all duration-200">
+                <input
+                  type="file"
+                  id="resume"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <div className="space-y-2.5">
+                  <div className="mx-auto h-12 w-12 text-slate-400 dark:text-slate-500 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+                    <FaUpload className="h-5 w-5" />
+                  </div>
+                  <div className="text-sm">
+                    <span className="font-semibold text-primary dark:text-blue-500 hover:underline">Click to upload</span> or drag and drop
+                  </div>
+                  <p className="text-xs text-slate-400">PDF, DOC, or DOCX up to 5MB</p>
+                </div>
+              </div>
+              {resumeFile && (
+                <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-250/20 rounded-xl flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 bg-primary/10 dark:bg-blue-500/10 text-primary dark:text-blue-450 rounded-lg flex items-center justify-center font-bold text-xs">
+                      {resumeFile.name.split('.').pop().toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-850 dark:text-slate-200 max-w-[200px] truncate">{resumeFile.name}</p>
+                      <p className="text-[10px] text-slate-400">{(resumeFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setResumeFile(null)}
+                    className="text-xs font-bold text-rose-500 hover:underline"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+              {(resumeError || errors.resume) && (
+                <p className="text-red-500 text-xs mt-1.5 font-medium">
+                  {resumeError || errors.resume?.message}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Navigation buttons */}
+        <div className="pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-between gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleBack}
+            className={`${currentStep === 0 ? 'invisible' : ''}`}
+          >
+            Back
+          </Button>
+
+          {currentStep < STEPS.length - 1 ? (
+            <Button type="button" variant="primary" onClick={handleNext}>
+              Next Step
+            </Button>
+          ) : (
+            <Button type="submit" variant="primary" loading={loading}>
+              Submit Application
+            </Button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default BecomeTutorForm;
