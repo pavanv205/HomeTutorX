@@ -4,19 +4,18 @@ import api from '../services/api';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
 import { SUBJECTS, CLASSES, STATES } from '../constants';
-import { FaGraduationCap, FaEnvelope, FaPhone, FaMapMarkerAlt, FaFileAlt, FaLock, FaUsers } from 'react-icons/fa';
+import { FaGraduationCap, FaEnvelope, FaPhone, FaMapMarkerAlt, FaFileAlt, FaLock } from 'react-icons/fa';
 
 const TutorDashboard = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('Leads'); // 'Leads', 'Profile', 'Documents', 'Settings'
+  const [activeTab, setActiveTab] = useState('Profile'); // 'Profile', 'Settings'
   const [tutorProfile, setTutorProfile] = useState(null);
-  const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' }); // type: 'success' or 'error'
   const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '' });
 
-  // Load Tutor Profile & Leads
+  // Load Tutor Profile
   const loadDashboardData = async () => {
     if (!user || !user.tutorProfile) {
       setLoading(false);
@@ -30,11 +29,7 @@ const TutorDashboard = () => {
       const profileRes = await api.get(`/tutors/${tutorId}`);
       setTutorProfile(profileRes.data || null);
 
-      // 2. Fetch Leads (Bookings assigned to this tutor)
-      const leadsRes = await api.get('/bookings');
-      if (leadsRes.data && leadsRes.data.success) {
-        setLeads(leadsRes.data.data);
-      }
+
     } catch (err) {
       console.error(err);
       setMessage({ text: 'Failed to load dashboard data.', type: 'error' });
@@ -86,20 +81,7 @@ const TutorDashboard = () => {
     }
   };
 
-  // Lead Status Change (Tutor can mark contacted/etc)
-  const handleLeadStatusChange = async (leadId, newStatus) => {
-    setMessage({ text: '', type: '' });
-    try {
-      const res = await api.put(`/bookings/${leadId}`, { status: newStatus });
-      if (res.data && res.data.success) {
-        setLeads(prev => prev.map(l => l._id === leadId ? { ...l, status: newStatus } : l));
-        setMessage({ text: 'Lead status updated!', type: 'success' });
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage({ text: 'Failed to update lead status.', type: 'error' });
-    }
-  };
+
 
   // Settings: Change Password
   const handlePasswordChange = async (e) => {
@@ -122,7 +104,7 @@ const TutorDashboard = () => {
 
   return (
     <>
-      <SEO title="Tutor Dashboard" description="Manage your student leads, update tuition availability, rates, and profile credentials." />
+      <SEO title="Tutor Dashboard" description="Update your tuition availability, rates, and profile credentials." />
 
       <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto space-y-8">
@@ -130,7 +112,7 @@ const TutorDashboard = () => {
           <div className="border-b border-slate-200 dark:border-slate-800 pb-5">
             <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Tutor Dashboard</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 font-semibold mt-1">
-              Welcome back, {tutorProfile?.fullName || user?.name || 'Tutor'}. Manage your student enquiries and details here.
+              Welcome back, {tutorProfile?.fullName || user?.name || 'Tutor'}. Manage your tutor profile and settings here.
             </p>
           </div>
 
@@ -148,7 +130,7 @@ const TutorDashboard = () => {
 
           {/* Navigation Tabs */}
           <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6">
-            {['Leads', 'Profile', 'Settings'].map(tab => (
+            {['Profile', 'Settings'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -170,80 +152,6 @@ const TutorDashboard = () => {
             </div>
           ) : (
             <>
-              {/* TAB 1: LEADS / INQUIRIES */}
-              {activeTab === 'Leads' && (
-                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm overflow-hidden">
-                  <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100 mb-4 flex items-center gap-2">
-                    <FaUsers className="text-primary dark:text-blue-500" />
-                    Assigned Student Trial Enquiries (Leads)
-                  </h3>
-                  
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
-                          <th className="pb-3 pl-2">Student Name</th>
-                          <th className="pb-3">Subject & Class</th>
-                          <th className="pb-3">Phone & Mode</th>
-                          <th className="pb-3">Status</th>
-                          <th className="pb-3 pr-2 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60 text-xs text-slate-700 dark:text-slate-350">
-                        {leads.length === 0 ? (
-                          <tr>
-                            <td colSpan="5" className="py-8 text-center text-slate-400 font-medium">No leads assigned to your profile yet.</td>
-                          </tr>
-                        ) : (
-                          leads.map(lead => (
-                            <tr key={lead._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40">
-                              <td className="py-3.5 pl-2">
-                                <p className="font-bold text-slate-850 dark:text-slate-200">{lead.studentName}</p>
-                                <p className="text-[9px] text-slate-400">{lead.studentEmail || 'No Email'}</p>
-                              </td>
-                              <td className="py-3.5 font-semibold">
-                                <p className="text-slate-800 dark:text-slate-350">{lead.subject}</p>
-                                <p className="text-[9px] text-slate-400">Class {lead.gradeClass}</p>
-                              </td>
-                              <td className="py-3.5">
-                                <p className="font-semibold">{lead.studentPhone}</p>
-                                <p className="text-[9px] text-slate-450">{lead.preferredMode} Mode</p>
-                              </td>
-                              <td className="py-3.5">
-                                <span className={`px-2.5 py-0.5 text-[9px] font-bold rounded ${
-                                  lead.status === 'Assigned' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950/30' :
-                                  lead.status === 'Contacted' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/30' :
-                                  'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30'
-                                }`}>
-                                  {lead.status}
-                                </span>
-                              </td>
-                              <td className="py-3.5 pr-2 text-right space-x-2">
-                                <Button
-                                  variant="outline"
-                                  size="xs"
-                                  onClick={() => handleLeadStatusChange(lead._id, 'Contacted')}
-                                  className={lead.status === 'Contacted' ? 'hidden' : ''}
-                                >
-                                  Mark Contacted
-                                </Button>
-                                <Button
-                                  variant="accent"
-                                  size="xs"
-                                  onClick={() => handleLeadStatusChange(lead._id, 'Rejected')}
-                                  className={lead.status === 'Rejected' ? 'hidden' : ''}
-                                >
-                                  Reject
-                                </Button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
 
               {/* TAB 2: PROFILE MANAGEMENT */}
               {activeTab === 'Profile' && tutorProfile && (

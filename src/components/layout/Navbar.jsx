@@ -5,13 +5,11 @@ import { FaGraduationCap, FaBars, FaTimes } from 'react-icons/fa';
 import { NAV_LINKS } from '../../constants';
 import ThemeToggle from '../common/ThemeToggle';
 import Button from '../common/Button';
-import { useBookingModal } from '../../context/BookingModalContext';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { openBookingModal } = useBookingModal();
   const { isAuthenticated, user, role, logout } = useAuth();
 
   useEffect(() => {
@@ -132,10 +130,6 @@ const Navbar = () => {
                   </div>
                 </div>
               )}
-
-              <Button variant="primary" size="sm" onClick={() => openBookingModal(null)}>
-                Book Free Demo
-              </Button>
             </div>
 
             {/* Mobile Actions Header */}
@@ -233,20 +227,6 @@ const Navbar = () => {
                   </>
                 )}
               </nav>
-
-              {/* Mobile CTA */}
-              <div className="mt-8">
-                <Button
-                  variant="primary"
-                  className="w-full text-center py-3"
-                  onClick={() => {
-                    setIsOpen(false);
-                    openBookingModal(null);
-                  }}
-                >
-                  Book Free Demo
-                </Button>
-              </div>
             </motion.div>
           </>
         )}

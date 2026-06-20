@@ -1,5 +1,20 @@
 import api from './api';
 
+// Normalize backend tutor data to match frontend field expectations
+function normalizeTutor(t) {
+  if (!t) return t;
+  return {
+    ...t,
+    id: t.id || t._id || '',
+    name: t.name || t.fullName || 'Anonymous Tutor',
+    about: t.about || t.bio || 'No biography details provided.',
+    modes: t.modes || (t.teachingMode
+      ? (t.teachingMode === 'Both' ? ['Online', 'Offline'] : [t.teachingMode])
+      : ['Online']),
+    experience: t.experience !== undefined ? t.experience : (t.experienceYears || 3),
+  };
+}
+
 export const tutorService = {
   async registerTutor(formData) {
     const debugObj = {};
@@ -18,18 +33,20 @@ export const tutorService = {
 
   async getTutors(filters = {}) {
     const response = await api.get('/tutors', { params: filters });
-    console.log('API Response (Get Tutors):', response.data);
-    return response.data;
+    const data = Array.isArray(response.data) ? response.data.map(normalizeTutor) : response.data;
+    console.log('API Response (Get Tutors):', data);
+    return data;
   },
 
   async getTutorById(id) {
     const response = await api.get(`/tutors/${id}`);
-    return response.data;
+    return normalizeTutor(response.data);
   },
 
   async getFeaturedTutors() {
     const response = await api.get('/tutors', { params: { featured: true } });
-    return Array.isArray(response.data) ? response.data.filter(t => t.featured) : [];
+    const list = Array.isArray(response.data) ? response.data.map(normalizeTutor) : [];
+    return list.filter(t => t.featured);
   },
 
   async updateTutor(id, data) {
@@ -42,3 +59,4 @@ export const tutorService = {
     return response.data;
   }
 };
+

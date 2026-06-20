@@ -56,7 +56,7 @@ const Login = () => {
       setPassword('adminpassword123');
       setActiveTab('Admin');
     } else {
-      setEmail('tutor_demo@tutorconnect.com');
+      setEmail('tutor@tutorconnect.com');
       setPassword('tutor123');
       setActiveTab('Tutor');
     }
@@ -66,7 +66,7 @@ const Login = () => {
     <>
       <SEO
         title={`${activeTab} Login`}
-        description="Access the secure Tutor Connect portal to manage classes, leads, tutor profile, and trial requests."
+        description="Access the secure Tutor Connect portal to manage classes, tutor profile, and settings."
         keywords="login, tutor login, admin portal, tutor connect auth"
       />
 
@@ -207,7 +207,7 @@ const Login = () => {
                 className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 p-2.5 rounded-xl text-left focus:outline-none"
               >
                 <p className="text-[10px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-0.5">Tutor Login</p>
-                <p className="text-[9px] text-slate-450 dark:text-slate-500 font-semibold truncate">tutor_demo@tutorconnect.com</p>
+                <p className="text-[9px] text-slate-450 dark:text-slate-500 font-semibold truncate">tutor@tutorconnect.com</p>
               </button>
               <button
                 type="button"

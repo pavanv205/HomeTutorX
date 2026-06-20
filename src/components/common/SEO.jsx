@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 
 const SEO = ({ title, description, keywords, ogImage, canonicalUrl }) => {
   const defaultTitle = 'TutorConnect | Find Verified Home & Online Tutors';
-  const defaultDesc = 'Connect with top-rated, qualified home and online tutors for CBSE, ICSE, Boards, JEE, NEET, and university courses. Book a free 30-min demo class today!';
+  const defaultDesc = 'Connect with top-rated, qualified home and online tutors for CBSE, ICSE, Boards, JEE, NEET, and university courses.';
   
   const siteTitle = title ? `${title} | TutorConnect` : defaultTitle;
   const siteDesc = description || defaultDesc;

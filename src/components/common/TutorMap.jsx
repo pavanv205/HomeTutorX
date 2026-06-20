@@ -68,7 +68,7 @@ const TutorMap = ({ tutors, userCoords }) => {
         className: 'custom-avatar-icon-wrapper',
         html: `
           <div class="tutor-avatar-marker">
-            <img src="${tutor.photo}" alt="${tutor.name}" />
+            <img src="${tutor.photo}" alt="${tutor.name || tutor.fullName}" />
           </div>
         `,
         iconSize: [44, 44],
@@ -94,12 +94,9 @@ const TutorMap = ({ tutors, userCoords }) => {
       const popupHtml = `
         <div class="p-1 min-w-[200px] text-slate-800 font-sans">
           <div class="flex items-center gap-3 mb-2">
-            <img src="${tutor.photo}" alt="${tutor.name}" class="h-10 w-10 rounded-lg object-cover border border-slate-200" />
+            <img src="${tutor.photo}" alt="${tutor.name || tutor.fullName}" class="h-10 w-10 rounded-lg object-cover border border-slate-200" />
             <div>
-              <h4 class="font-extrabold text-[13px] m-0 text-slate-900 leading-tight">${tutor.name}</h4>
-              <div class="flex items-center gap-1 text-[10px] mt-0.5 text-amber-500 font-bold">
-                ★ ${tutor.rating || 'New'} <span class="text-slate-400 font-normal">(${tutor.reviewsCount || 0})</span>
-              </div>
+              <h4 class="font-extrabold text-[13px] m-0 text-slate-900 leading-tight">${tutor.name || tutor.fullName}</h4>
             </div>
           </div>
           <p class="text-[10px] text-slate-500 font-semibold m-0 leading-tight truncate">${tutor.qualification}</p>

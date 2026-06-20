@@ -14,14 +14,14 @@ import {
 } from 'react-icons/fa';
 import SEO from '../components/common/SEO';
 import { tutorService } from '../services/tutorService';
-import { useBookingModal } from '../context/BookingModalContext';
 import { TutorProfileSkeleton } from '../components/common/Skeleton';
 import Button from '../components/common/Button';
+
+
 
 const TutorProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { openBookingModal } = useBookingModal();
   const [tutor, setTutor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -77,7 +77,7 @@ const TutorProfile = () => {
   }
 
   // Defensive fallbacks to prevent crashes if some fields are missing
-  const name = tutor.name || 'Anonymous Tutor';
+  const name = tutor.name || tutor.fullName || 'Anonymous Tutor';
   const photo = tutor.photo || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80';
   const qualification = tutor.qualification || 'Verified Educator';
   const gender = tutor.gender || '';
@@ -92,10 +92,8 @@ const TutorProfile = () => {
   if (city) fullAddressParts.push(city);
   if (state) fullAddressParts.push(state);
   const fullAddress = fullAddressParts.length > 0 ? fullAddressParts.join(', ') : city;
-  const rating = tutor.rating !== undefined ? tutor.rating : 'New';
-  const reviewsCount = tutor.reviewsCount || 0;
   const modes = Array.isArray(tutor.modes) ? tutor.modes : ['Online'];
-  const about = tutor.about || 'No biography details provided.';
+  const about = tutor.about || tutor.bio || 'No biography details provided.';
   const subjects = Array.isArray(tutor.subjects) ? tutor.subjects : [];
   const classes = Array.isArray(tutor.classes) ? tutor.classes : [];
   const reviews = Array.isArray(tutor.reviews) ? tutor.reviews : [];
@@ -107,7 +105,7 @@ const TutorProfile = () => {
     <>
       <SEO
         title={name}
-        description={`Read qualifications, experience, reviews, and subjects taught by ${name}. Book a free trial class now.`}
+        description={`Read qualifications, experience, reviews, and subjects taught by ${name}.`}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
@@ -134,9 +132,7 @@ const TutorProfile = () => {
               <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">
                 {name}
               </h2>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-450 border border-emerald-100 dark:border-emerald-900/40">
-                <FaCheckCircle className="h-3.5 w-3.5" /> Verified Tutor
-              </span>
+
             </div>
 
             <p className="text-sm font-bold text-slate-655 dark:text-slate-300 flex items-center justify-center md:justify-start gap-1.5">
@@ -292,19 +288,7 @@ const TutorProfile = () => {
               </div>
 
 
-              {/* Free demo class action button */}
-              <div className="pt-2">
-                <Button
-                  variant="primary"
-                  className="w-full py-4 text-sm font-bold shadow-md shadow-primary/10"
-                  onClick={() => openBookingModal(tutor)}
-                >
-                  Book
-                </Button>
-                <p className="text-[10px] text-center text-slate-400 mt-3 font-semibold">
-                  No commitment required for first session.
-                </p>
-              </div>
+              {/* Rate informational only - Booking system removed */}
             </div>
 
 

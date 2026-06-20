@@ -7147,19 +7147,15 @@ export const SUBJECT_CATEGORIES = [
 export const FAQS = [
   {
     question: "How does TutorConnect connect me with a tutor?",
-    answer: "You can use our 'Find Tutors' page to search and filter through verified tutor profiles based on subject, class, mode (online/offline), and city. Once you find a tutor you like, click 'Book Demo Class' to schedule a trial session. We will handle the coordination."
+    answer: "You can use our 'Find Tutors' page to search and filter through verified tutor profiles based on subject, class, mode (online/offline), and city. Once you find a tutor you like, you can contact them to schedule your lessons."
   },
   {
     question: "Are the tutors verified?",
     answer: "Yes, every tutor goes through a comprehensive verification process. We verify their academic qualifications (degrees, transcripts), teaching experience, identity proofs, and conduct basic background checks before listing them."
   },
   {
-    question: "Is there a charge for the first demo class?",
-    answer: "The first 30-minute demo class is completely free of charge! This allows you to evaluate the teaching style and compatibility before making a monthly commitment."
-  },
-  {
     question: "Can I choose between online and offline classes?",
-    answer: "Yes, many of our tutors offer both online (via our interactive video tools) and offline (home visit) classes. You can filter tutors by their teaching mode on the search page."
+    answer: "Yes, many of our tutors offer both online (interactive learning) and offline (home visit) classes. You can filter tutors by their teaching mode on the search page."
   },
   {
     question: "How are payments handled?",

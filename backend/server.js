@@ -61,12 +61,10 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tutorconn
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
-const bookingRoutes = require('./routes/bookingRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const tutorRoutes = require('./routes/tutorRoutes');
 
 app.use('/api/auth', authRoutes);
-app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tutors', tutorRoutes);
 

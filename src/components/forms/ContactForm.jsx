@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FaUser, FaEnvelope, FaTag, FaComments, FaArrowRight } from 'react-icons/fa';
-import { bookingService } from '../../services/bookingService';
+import { generalService } from '../../services/generalService';
 import Button from '../common/Button';
 
 // Validation schema
@@ -36,7 +36,7 @@ const ContactForm = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const response = await bookingService.submitContact(data);
+      const response = await generalService.submitContact(data);
       if (response.success) {
         setSuccessMsg(response.message);
         reset();

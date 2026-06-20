@@ -124,26 +124,71 @@ exports.getTutors = async (req, res, next) => {
       console.log('🔌 MongoDB is offline. Running getTutors in Fallback mode.');
       let list = await dbFallback.getTutors();
       
-      const { search, subject } = req.query || {};
+      const { search, subject, gradeClass, mode, state, division, maxPrice } = req.query || {};
       if (search) {
         const q = String(search).toLowerCase();
         list = list.filter(t => 
           (t.fullName && t.fullName.toLowerCase().includes(q)) ||
           (t.qualification && t.qualification.toLowerCase().includes(q)) ||
           (t.bio && t.bio.toLowerCase().includes(q)) ||
-          (t.subjects || []).some(s => s.toLowerCase().includes(q))
+          (t.subjects || []).some(s => s.toLowerCase().includes(q)) ||
+          (t.state && t.state.toLowerCase().includes(q)) ||
+          (t.city && t.city.toLowerCase().includes(q))
         );
       }
-      if (subject) {
+      if (subject && subject !== 'All') {
         list = list.filter(t => (t.subjects || []).some(s => s.toLowerCase() === String(subject).toLowerCase()));
+      }
+      if (gradeClass && gradeClass !== 'All') {
+        list = list.filter(t => (t.classes || []).some(c => c.toLowerCase() === String(gradeClass).toLowerCase()));
+      }
+      if (mode && mode !== 'All') {
+        list = list.filter(t => t.teachingMode && t.teachingMode.toLowerCase() === mode.toLowerCase());
+      }
+      if (state && state !== 'All') {
+        list = list.filter(t => t.state && t.state.toLowerCase() === state.toLowerCase());
+      }
+      if (division && division !== 'All') {
+        list = list.filter(t => t.city && t.city.toLowerCase() === division.toLowerCase());
+      }
+      if (maxPrice) {
+        list = list.filter(t => t.hourlyRate && t.hourlyRate <= Number(maxPrice));
       }
       
       return res.json(list);
     }
 
     const filters = {};
-    if (req.query.subject) filters.subjects = { $in: [req.query.subject] };
-    if (req.query.search) filters.$text = { $search: req.query.search };
+    if (req.query.subject && req.query.subject !== 'All') {
+      filters.subjects = { $in: [req.query.subject] };
+    }
+    if (req.query.search) {
+      const q = String(req.query.search);
+      filters.$or = [
+        { fullName: { $regex: q, $options: 'i' } },
+        { qualification: { $regex: q, $options: 'i' } },
+        { bio: { $regex: q, $options: 'i' } },
+        { subjects: { $elemMatch: { $regex: q, $options: 'i' } } },
+        { state: { $regex: q, $options: 'i' } },
+        { city: { $regex: q, $options: 'i' } }
+      ];
+    }
+    if (req.query.gradeClass && req.query.gradeClass !== 'All') {
+      filters.classes = { $in: [req.query.gradeClass] };
+    }
+    if (req.query.mode && req.query.mode !== 'All') {
+      filters.teachingMode = req.query.mode;
+    }
+    if (req.query.state && req.query.state !== 'All') {
+      filters.state = req.query.state;
+    }
+    if (req.query.division && req.query.division !== 'All') {
+      filters.city = req.query.division; // division is stored in 'city' field in database
+    }
+    if (req.query.maxPrice) {
+      filters.hourlyRate = { $lte: Number(req.query.maxPrice) };
+    }
+
     const tutors = await Tutor.find(filters).sort({ createdAt: -1 }).limit(100);
     res.json(tutors);
   } catch (err) {

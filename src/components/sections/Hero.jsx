@@ -100,7 +100,6 @@ const Hero = () => {
               className="pt-6 flex flex-wrap justify-center lg:justify-start items-center gap-6 text-xs text-slate-400 font-semibold uppercase tracking-wider"
             >
               <span className="flex items-center gap-1.5">✓ 100% Verified Profiles</span>
-              <span className="flex items-center gap-1.5">✓ Free 30-Min Demo</span>
               <span className="flex items-center gap-1.5">✓ Personal Support</span>
             </motion.div>
           </motion.div>
@@ -135,7 +134,6 @@ const Hero = () => {
               </div>
               <div>
                 <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Happy Students</p>
-                <p className="text-base font-bold text-slate-850 dark:text-slate-100">10,000+</p>
               </div>
             </motion.div>
 
@@ -151,7 +149,6 @@ const Hero = () => {
               </div>
               <div>
                 <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Expert Tutors</p>
-                <p className="text-base font-bold text-slate-850 dark:text-slate-100">1,500+</p>
               </div>
             </motion.div>
           </motion.div>

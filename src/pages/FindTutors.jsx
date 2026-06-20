@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FaSearch, FaFilter, FaTimes, FaUndo, FaMap, FaList, FaLocationArrow } from 'react-icons/fa';
 import SEO from '../components/common/SEO';
-import { SUBJECTS, CLASSES, CITIES, MODES } from '../constants';
+import { SUBJECTS, CLASSES, MODES, STATES, STATE_CITIES } from '../constants';
 import { tutorService } from '../services/tutorService';
 import { TutorCard } from '../components/sections/FeaturedTutors';
 import { TutorListSkeleton } from '../components/common/Skeleton';
@@ -31,13 +31,61 @@ const FindTutors = () => {
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState(null);
 
+  const [isStateDropdownOpen, setIsStateDropdownOpen] = useState(false);
+  const [stateSearchQuery, setStateSearchQuery] = useState('');
+  
+  const [isDivisionDropdownOpen, setIsDivisionDropdownOpen] = useState(false);
+  const [divisionSearchQuery, setDivisionSearchQuery] = useState('');
+
+  // Mobile states
+  const [isMobileStateDropdownOpen, setIsMobileStateDropdownOpen] = useState(false);
+  const [mobileStateSearchQuery, setMobileStateSearchQuery] = useState('');
+  
+  const [isMobileDivisionDropdownOpen, setIsMobileDivisionDropdownOpen] = useState(false);
+  const [mobileDivisionSearchQuery, setMobileDivisionSearchQuery] = useState('');
+
   // Read initial states from URL query params
   const searchVal = searchParams.get('search') || '';
   const subjectVal = searchParams.get('subject') || 'All';
   const classVal = searchParams.get('class') || 'All';
   const modeVal = searchParams.get('mode') || 'All';
-  const cityVal = searchParams.get('city') || 'All';
-  const maxPriceVal = searchParams.get('price') || '1200';
+  const stateVal = searchParams.get('state') || 'All';
+  const divisionVal = searchParams.get('division') || 'All';
+  const maxPriceVal = searchParams.get('price') || '500';
+
+  const filteredStates = React.useMemo(() => {
+    return STATES.filter(s =>
+      s.toLowerCase().includes(stateSearchQuery.toLowerCase())
+    );
+  }, [stateSearchQuery]);
+
+  const mobileFilteredStates = React.useMemo(() => {
+    return STATES.filter(s =>
+      s.toLowerCase().includes(mobileStateSearchQuery.toLowerCase())
+    );
+  }, [mobileStateSearchQuery]);
+
+  const sortedDivisions = React.useMemo(() => {
+    const allStateDivisions = stateVal !== 'All' ? (STATE_CITIES[stateVal] || []) : [];
+    if (!divisionSearchQuery.trim()) {
+      return allStateDivisions;
+    }
+    const query = divisionSearchQuery.toLowerCase();
+    const matches = allStateDivisions.filter(d => d.toLowerCase().includes(query));
+    const nonMatches = allStateDivisions.filter(d => !d.toLowerCase().includes(query));
+    return [...matches, ...nonMatches];
+  }, [stateVal, divisionSearchQuery]);
+
+  const mobileSortedDivisions = React.useMemo(() => {
+    const allStateDivisions = stateVal !== 'All' ? (STATE_CITIES[stateVal] || []) : [];
+    if (!mobileDivisionSearchQuery.trim()) {
+      return allStateDivisions;
+    }
+    const query = mobileDivisionSearchQuery.toLowerCase();
+    const matches = allStateDivisions.filter(d => d.toLowerCase().includes(query));
+    const nonMatches = allStateDivisions.filter(d => !d.toLowerCase().includes(query));
+    return [...matches, ...nonMatches];
+  }, [stateVal, mobileDivisionSearchQuery]);
 
   // Apply filters and fetch tutors
   useEffect(() => {
@@ -49,7 +97,8 @@ const FindTutors = () => {
           subject: subjectVal,
           gradeClass: classVal,
           mode: modeVal,
-          city: cityVal,
+          state: stateVal,
+          division: divisionVal,
           maxPrice: maxPriceVal
         };
         let data = await tutorService.getTutors(filters);
@@ -79,7 +128,7 @@ const FindTutors = () => {
     };
 
     fetchFilteredTutors();
-  }, [searchVal, subjectVal, classVal, modeVal, cityVal, maxPriceVal, userCoords]);
+  }, [searchVal, subjectVal, classVal, modeVal, stateVal, divisionVal, maxPriceVal, userCoords]);
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
@@ -114,6 +163,17 @@ const FindTutors = () => {
     } else {
       newParams.set(key, value);
     }
+    setSearchParams(newParams);
+  };
+
+  const handleStateChange = (stateName) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (stateName === 'All' || stateName === '') {
+      newParams.delete('state');
+    } else {
+      newParams.set('state', stateName);
+    }
+    newParams.delete('division'); // Reset division when state changes
     setSearchParams(newParams);
   };
 
@@ -282,48 +342,163 @@ const FindTutors = () => {
                   ))}
                 </select>
               </div>
-
-              {/* City */}
+                        {/* State */}
               <div>
-                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
-                  City
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-505 mb-2 uppercase tracking-wide">
+                  State
                 </label>
-                <select
-                  value={cityVal}
-                  onChange={(e) => updateParam('city', e.target.value)}
-                  className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-primary"
-                >
-                  <option value="All">All Cities</option>
-                  {CITIES.map((c, idx) => (
-                    <option key={idx} value={c}>{c}</option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsStateDropdownOpen(!isStateDropdownOpen)}
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-750 dark:text-slate-200 rounded-xl py-2.5 px-3 text-sm text-left focus:outline-none focus:border-primary flex items-center justify-between shadow-sm"
+                  >
+                    <span className={stateVal !== 'All' ? 'text-slate-800 dark:text-slate-200 font-semibold' : 'text-slate-400 dark:text-slate-500'}>
+                      {stateVal !== 'All' ? stateVal : 'All States'}
+                    </span>
+                    <span className="text-slate-400 text-xs">▼</span>
+                  </button>
+
+                  {isStateDropdownOpen && (
+                    <>
+                      <div className="fixed inset-0 z-40 bg-transparent" onClick={() => { setIsStateDropdownOpen(false); setStateSearchQuery(''); }} />
+                      <div className="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2.5 flex flex-col gap-2 max-h-72">
+                        <div className="relative flex items-center">
+                          <span className="absolute left-3 text-slate-400 text-xs">🔍</span>
+                          <input
+                            type="text"
+                            value={stateSearchQuery}
+                            onChange={(e) => setStateSearchQuery(e.target.value)}
+                            placeholder="Search state..."
+                            autoFocus
+                            className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-1.5 pl-8 pr-3 text-xs focus:outline-none focus:border-primary transition-all duration-200"
+                          />
+                        </div>
+                        <div className="overflow-y-auto flex-1 space-y-0.5 max-h-48 pr-1 custom-scrollbar">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleStateChange('All');
+                              setIsStateDropdownOpen(false);
+                              setStateSearchQuery('');
+                            }}
+                            className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                              stateVal === 'All'
+                                ? 'bg-primary text-white dark:bg-blue-500'
+                                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                            }`}
+                          >
+                            All States
+                          </button>
+                          {filteredStates.map((s, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                handleStateChange(s);
+                                setIsStateDropdownOpen(false);
+                                setStateSearchQuery('');
+                              }}
+                              className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                                stateVal === s
+                                  ? 'bg-primary text-white dark:bg-blue-500'
+                                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
-              {/* Price Range Slider */}
+              {/* Division */}
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
-                    Max Hourly Rate
-                  </label>
-                  <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
-                    ₹{maxPriceVal}
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="400"
-                  max="1200"
-                  step="50"
-                  value={maxPriceVal}
-                  onChange={(e) => updateParam('price', e.target.value)}
-                  className="w-full cursor-pointer"
-                />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-semibold">
-                  <span>₹400</span>
-                  <span>₹1200</span>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-505 mb-2 uppercase tracking-wide">
+                  Division
+                </label>
+                <div className="relative">
+                  <button
+                    type="button"
+                    disabled={stateVal === 'All'}
+                    onClick={() => setIsDivisionDropdownOpen(!isDivisionDropdownOpen)}
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-750 dark:text-slate-200 rounded-xl py-2.5 px-3 text-sm text-left focus:outline-none focus:border-primary flex items-center justify-between shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className={divisionVal !== 'All' ? 'text-slate-800 dark:text-slate-200 font-semibold' : 'text-slate-400 dark:text-slate-500'}>
+                      {divisionVal !== 'All' ? divisionVal : stateVal !== 'All' ? 'All Divisions' : 'Select state first'}
+                    </span>
+                    <span className="text-slate-400 text-xs">▼</span>
+                  </button>
+
+                  {isDivisionDropdownOpen && stateVal !== 'All' && (
+                    <>
+                      <div className="fixed inset-0 z-40 bg-transparent" onClick={() => { setIsDivisionDropdownOpen(false); setDivisionSearchQuery(''); }} />
+                      <div className="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2.5 flex flex-col gap-2 max-h-72">
+                        <div className="relative flex items-center">
+                          <span className="absolute left-3 text-slate-400 text-xs">🔍</span>
+                          <input
+                            type="text"
+                            value={divisionSearchQuery}
+                            onChange={(e) => setDivisionSearchQuery(e.target.value)}
+                            placeholder="Search division..."
+                            autoFocus
+                            className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-1.5 pl-8 pr-3 text-xs focus:outline-none focus:border-primary transition-all duration-200"
+                          />
+                        </div>
+                        <div className="overflow-y-auto flex-1 space-y-0.5 max-h-48 pr-1 custom-scrollbar">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              updateParam('division', 'All');
+                              setIsDivisionDropdownOpen(false);
+                              setDivisionSearchQuery('');
+                            }}
+                            className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                              divisionVal === 'All'
+                                ? 'bg-primary text-white dark:bg-blue-500'
+                                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                            }`}
+                          >
+                            All Divisions
+                          </button>
+                          {sortedDivisions.map((d, idx) => {
+                            const isMatch = !divisionSearchQuery.trim() || d.toLowerCase().includes(divisionSearchQuery.toLowerCase());
+                            return (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => {
+                                  updateParam('division', d);
+                                  setIsDivisionDropdownOpen(false);
+                                  setDivisionSearchQuery('');
+                                }}
+                                className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-150 flex items-center justify-between ${
+                                  divisionVal === d
+                                    ? 'bg-primary text-white dark:bg-blue-500'
+                                    : isMatch
+                                    ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                                    : 'text-slate-400 dark:text-slate-505 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 opacity-65'
+                                }`}
+                              >
+                                <span>{d}</span>
+                                {divisionSearchQuery.trim() !== '' && isMatch && (
+                                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-bold shrink-0">
+                                    Match
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
+
             </div>
           </aside>
 
@@ -338,7 +513,7 @@ const FindTutors = () => {
             >
               Filter Options
             </Button>
-            {(searchVal || subjectVal !== 'All' || classVal !== 'All' || modeVal !== 'All' || cityVal !== 'All') && (
+            {(searchVal || subjectVal !== 'All' || classVal !== 'All' || modeVal !== 'All' || stateVal !== 'All' || divisionVal !== 'All') && (
               <Button
                 variant="outline"
                 size="sm"
@@ -460,43 +635,163 @@ const FindTutors = () => {
                   </select>
                 </div>
 
-                {/* City */}
+                {/* State */}
                 <div>
                   <label className="block text-xs font-bold text-slate-455 mb-2 uppercase tracking-wide">
-                    City
+                    State
                   </label>
-                  <select
-                    value={cityVal}
-                    onChange={(e) => updateParam('city', e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-xl py-3 px-3 text-sm focus:outline-none"
-                  >
-                    <option value="All">All Cities</option>
-                    {CITIES.map((c, idx) => (
-                      <option key={idx} value={c}>{c}</option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileStateDropdownOpen(!isMobileStateDropdownOpen)}
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-xl py-3 px-3 text-sm text-left focus:outline-none flex items-center justify-between shadow-sm"
+                    >
+                      <span className={stateVal !== 'All' ? 'text-slate-850 dark:text-slate-200 font-semibold' : 'text-slate-400 dark:text-slate-500'}>
+                        {stateVal !== 'All' ? stateVal : 'All States'}
+                      </span>
+                      <span className="text-slate-400 text-xs">▼</span>
+                    </button>
+
+                    {isMobileStateDropdownOpen && (
+                      <>
+                        <div className="fixed inset-0 z-40 bg-transparent" onClick={() => { setIsMobileStateDropdownOpen(false); setMobileStateSearchQuery(''); }} />
+                        <div className="absolute left-0 right-0 bottom-full mb-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2.5 flex flex-col gap-2 max-h-72">
+                          <div className="relative flex items-center">
+                            <span className="absolute left-3 text-slate-400 text-xs">🔍</span>
+                            <input
+                              type="text"
+                              value={mobileStateSearchQuery}
+                              onChange={(e) => setMobileStateSearchQuery(e.target.value)}
+                              placeholder="Search state..."
+                              autoFocus
+                              className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-1.5 pl-8 pr-3 text-xs focus:outline-none focus:border-primary transition-all duration-200"
+                            />
+                          </div>
+                          <div className="overflow-y-auto flex-1 space-y-0.5 max-h-48 pr-1 custom-scrollbar">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleStateChange('All');
+                                setIsMobileStateDropdownOpen(false);
+                                setMobileStateSearchQuery('');
+                              }}
+                              className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                                stateVal === 'All'
+                                  ? 'bg-primary text-white dark:bg-blue-500'
+                                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                              }`}
+                            >
+                              All States
+                            </button>
+                            {mobileFilteredStates.map((s, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => {
+                                  handleStateChange(s);
+                                  setIsMobileStateDropdownOpen(false);
+                                  setMobileStateSearchQuery('');
+                                }}
+                                className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                                  stateVal === s
+                                    ? 'bg-primary text-white dark:bg-blue-500'
+                                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                                }`}
+                              >
+                                {s}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
 
-                {/* Price range */}
+                {/* Division */}
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="text-xs font-bold text-slate-455 uppercase tracking-wide">
-                      Max Rate
-                    </label>
-                    <span className="text-sm font-extrabold text-slate-800 dark:text-slate-200">
-                      ₹{maxPriceVal}
-                    </span>
+                  <label className="block text-xs font-bold text-slate-455 mb-2 uppercase tracking-wide">
+                    Division
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      disabled={stateVal === 'All'}
+                      onClick={() => setIsMobileDivisionDropdownOpen(!isMobileDivisionDropdownOpen)}
+                      className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-xl py-3 px-3 text-sm text-left focus:outline-none flex items-center justify-between shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <span className={divisionVal !== 'All' ? 'text-slate-850 dark:text-slate-200 font-semibold' : 'text-slate-400 dark:text-slate-500'}>
+                        {divisionVal !== 'All' ? divisionVal : stateVal !== 'All' ? 'All Divisions' : 'Select state first'}
+                      </span>
+                      <span className="text-slate-400 text-xs">▼</span>
+                    </button>
+
+                    {isMobileDivisionDropdownOpen && stateVal !== 'All' && (
+                      <>
+                        <div className="fixed inset-0 z-40 bg-transparent" onClick={() => { setIsMobileDivisionDropdownOpen(false); setMobileDivisionSearchQuery(''); }} />
+                        <div className="absolute left-0 right-0 bottom-full mb-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2.5 flex flex-col gap-2 max-h-72">
+                          <div className="relative flex items-center">
+                            <span className="absolute left-3 text-slate-400 text-xs">🔍</span>
+                            <input
+                              type="text"
+                              value={mobileDivisionSearchQuery}
+                              onChange={(e) => setMobileDivisionSearchQuery(e.target.value)}
+                              placeholder="Search division..."
+                              autoFocus
+                              className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-1.5 pl-8 pr-3 text-xs focus:outline-none focus:border-primary transition-all duration-200"
+                            />
+                          </div>
+                          <div className="overflow-y-auto flex-1 space-y-0.5 max-h-48 pr-1 custom-scrollbar">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                updateParam('division', 'All');
+                                setIsMobileDivisionDropdownOpen(false);
+                                setMobileDivisionSearchQuery('');
+                              }}
+                              className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-150 ${
+                                divisionVal === 'All'
+                                  ? 'bg-primary text-white dark:bg-blue-500'
+                                  : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                              }`}
+                            >
+                              All Divisions
+                            </button>
+                            {mobileSortedDivisions.map((d, idx) => {
+                              const isMatch = !mobileDivisionSearchQuery.trim() || d.toLowerCase().includes(mobileDivisionSearchQuery.toLowerCase());
+                              return (
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  onClick={() => {
+                                    updateParam('division', d);
+                                    setIsMobileDivisionDropdownOpen(false);
+                                    setMobileDivisionSearchQuery('');
+                                  }}
+                                  className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold transition-all duration-150 flex items-center justify-between ${
+                                    divisionVal === d
+                                      ? 'bg-primary text-white dark:bg-blue-500'
+                                      : isMatch
+                                      ? 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+                                      : 'text-slate-400 dark:text-slate-505 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 opacity-65'
+                                  }`}
+                                >
+                                  <span>{d}</span>
+                                  {mobileDivisionSearchQuery.trim() !== '' && isMatch && (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-bold shrink-0">
+                                      Match
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <input
-                    type="range"
-                    min="400"
-                    max="1200"
-                    step="50"
-                    value={maxPriceVal}
-                    onChange={(e) => updateParam('price', e.target.value)}
-                    className="w-full cursor-pointer animate-none"
-                  />
                 </div>
+
               </div>
             </div>
 

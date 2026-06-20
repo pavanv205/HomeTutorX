@@ -44,7 +44,7 @@ TutorConnect is a responsive web application built with **React 19**, **Vite**, 
    - 4-step wizard collecting Personal, Education, Preferences, and Resume files.
    - Strict validation preventing progression with missing fields.
 
-5. **Demo Booking System**:
+5. **Trial Booking System**:
    - Global booking modal launcher accessible from any card or profile.
    - Captures student requirements and schedules trial classes.
 

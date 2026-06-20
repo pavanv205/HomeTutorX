@@ -10,11 +10,9 @@ import HowItWorks from '../components/sections/HowItWorks';
 import reviewsData from '../data/reviews.json';
 import { FAQS } from '../constants';
 import Button from '../components/common/Button';
-import { useBookingModal } from '../context/BookingModalContext';
 
 const Home = () => {
   const navigate = useNavigate();
-  const { openBookingModal } = useBookingModal();
   const [openFaq, setOpenFaq] = useState(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
@@ -38,7 +36,7 @@ const Home = () => {
     <>
       <SEO
         title="Home"
-        description="Find verified local home tutors and interactive online tuition for boards prep, school levels, JEE, NEET, and language learning. Start with a free trial."
+        description="Find verified local home tutors and interactive online tuition for boards prep, school levels, JEE, NEET, and language learning."
         keywords="home tuition, online classes, physics tutor, math tutor, private teachers, JEE NEET prep"
       />
 
@@ -213,15 +211,15 @@ const Home = () => {
             Ready to Accelerate Learning?
           </h3>
           <p className="text-base text-blue-100 dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
-            Register as a student to book your free trial, or sign up as a private tutor to join India's fastest-growing tuition network today!
+            Find the perfect private tutor for home or online lessons, or sign up as a tutor to join our network today!
           </p>
           <div className="flex flex-wrap gap-4 justify-center pt-2">
             <Button
               variant="accent"
               size="lg"
-              onClick={() => openBookingModal(null)}
+              onClick={() => navigate('/tutors')}
             >
-              Book Trial Class
+              Find a Tutor
             </Button>
             <Button
               variant="secondary"

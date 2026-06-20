@@ -6,23 +6,16 @@ const STEPS = [
   {
     step: '01',
     title: 'Search & Choose',
-    description: 'Browse verified tutor profiles, compare qualifications, teaching experience, modes (online/offline), rates, and ratings.',
+    description: 'Browse verified tutor profiles, compare qualifications, teaching experience, modes (online/offline), and rates.',
     icon: <FaSearch className="h-6 w-6" />,
     color: 'bg-blue-50 text-primary border-blue-100 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/50'
   },
   {
     step: '02',
-    title: 'Book a Free Demo',
-    description: 'Select your preferred subject, enter class levels, and book a free 30-minute demo session to check learning compatibility.',
-    icon: <FaCalendarCheck className="h-6 w-6" />,
-    color: 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/50'
-  },
-  {
-    step: '03',
     title: 'Begin Learning',
     description: 'Finalize schedules, pay securely through the platform, and start customized home or online learning classes.',
     icon: <FaBookReader className="h-6 w-6" />,
-    color: 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/50'
+    color: 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-450 dark:border-emerald-900/50'
   }
 ];
 
@@ -62,7 +55,7 @@ const HowItWorks = () => {
             How TutorConnect Works
           </h3>
           <p className="text-base text-slate-650 dark:text-slate-400 font-medium">
-            Get personalized learning for your student in three easy steps.
+            Get personalized learning for your student in two easy steps.
           </p>
         </div>
 

@@ -4,7 +4,6 @@ const path = require('path');
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const TUTORS_FILE = path.join(DATA_DIR, 'tutors.json');
-const BOOKINGS_FILE = path.join(DATA_DIR, 'bookings.json');
 
 // Ensure database directory and files exist
 const initDb = async () => {
@@ -29,7 +28,7 @@ const initDb = async () => {
       }, {
         _id: 'mock-tutor-user-id',
         name: 'Anita Sharma',
-        email: 'tutor_demo@tutorconnect.com',
+        email: 'tutor@tutorconnect.com',
         password: await bcrypt.hash('tutor123', salt),
         role: 'Tutor',
         tutorProfile: 'mock-tutor-profile-id',
@@ -46,7 +45,7 @@ const initDb = async () => {
         _id: 'mock-tutor-profile-id',
         userId: 'mock-tutor-user-id',
         fullName: 'Anita Sharma',
-        email: 'tutor_demo@tutorconnect.com',
+        email: 'tutor@tutorconnect.com',
         mobile: '9876543210',
         gender: 'Female',
         age: 28,
@@ -67,15 +66,11 @@ const initDb = async () => {
         photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80',
         resumeUrl: '',
         isVerified: true,
+        verifiedAt: new Date().toISOString(),
+        verifiedDate: new Date().toISOString(),
         createdAt: new Date().toISOString()
       }];
       await fs.writeFile(TUTORS_FILE, JSON.stringify(defaultTutor, null, 2), 'utf8');
-    }
-
-    try {
-      await fs.access(BOOKINGS_FILE);
-    } catch {
-      await fs.writeFile(BOOKINGS_FILE, '[]', 'utf8');
     }
   } catch (err) {
     console.error('Failed to initialize fallback file database:', err);
@@ -133,22 +128,5 @@ module.exports = {
     const filtered = tutors.filter(t => t._id !== id);
     await writeJson(TUTORS_FILE, filtered);
     return true;
-  },
-
-  // Bookings Fallback Methods
-  getBookings: () => readJson(BOOKINGS_FILE),
-  saveBooking: async (booking) => {
-    const bookings = await readJson(BOOKINGS_FILE);
-    bookings.push(booking);
-    await writeJson(BOOKINGS_FILE, bookings);
-    return booking;
-  },
-  updateBooking: async (id, data) => {
-    const bookings = await readJson(BOOKINGS_FILE);
-    const idx = bookings.findIndex(b => b._id === id);
-    if (idx === -1) return null;
-    bookings[idx] = { ...bookings[idx], ...data };
-    await writeJson(BOOKINGS_FILE, bookings);
-    return bookings[idx];
   }
 };

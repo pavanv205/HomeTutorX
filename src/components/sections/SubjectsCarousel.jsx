@@ -91,7 +91,7 @@ const SubjectsCarousel = () => {
               key={idx}
               whileHover={{ y: -6, scale: 1.02 }}
               onClick={() => handleCategoryClick(cat.name)}
-              className="flex-shrink-0 w-64 snap-start cursor-pointer bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 transition-all duration-300 group flex flex-col justify-between"
+              className="flex-shrink-0 w-64 snap-start cursor-pointer bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 transition-all duration-300 group flex flex-col"
             >
               <div>
                 {/* Icon box with gradient background on hover */}
@@ -102,13 +102,6 @@ const SubjectsCarousel = () => {
                 <h4 className="text-lg font-bold text-slate-850 dark:text-slate-200 mt-6 mb-1 group-hover:text-primary dark:group-hover:text-blue-450 transition-colors">
                   {cat.name}
                 </h4>
-              </div>
-              
-              <div className="mt-8 flex justify-between items-center text-xs font-bold text-slate-450 dark:text-slate-500">
-                <span>{cat.count}</span>
-                <span className="text-primary dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  Explore →
-                </span>
               </div>
             </motion.div>
           ))}

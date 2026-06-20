@@ -33,7 +33,9 @@ const TutorSchema = new mongoose.Schema({
   lng: { type: Number },
   hourlyRate: { type: Number },
   monthlyRate: { type: Number },
-  isVerified: { type: Boolean, default: false }
+  isVerified: { type: Boolean, default: false },
+  verifiedAt: { type: Date },
+  verifiedDate: { type: Date }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Tutor', TutorSchema);

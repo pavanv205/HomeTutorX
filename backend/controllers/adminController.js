@@ -1,5 +1,4 @@
 const Tutor = require('../models/Tutor');
-const Booking = require('../models/Booking');
 const User = require('../models/User');
 const mongoose = require('mongoose');
 const dbFallback = require('../utils/dbFallback');
@@ -13,16 +12,10 @@ exports.getDashboardStats = async (req, res, next) => {
     if (mongoose.connection.readyState !== 1) {
       console.log('🔌 MongoDB is offline. Running getDashboardStats in Fallback mode.');
       const tutorsList = await dbFallback.getTutors();
-      const bookingsList = await dbFallback.getBookings();
 
       const totalTutors = tutorsList.length;
       const verifiedTutors = tutorsList.filter(t => t.isVerified).length;
       const pendingTutors = tutorsList.filter(t => !t.isVerified).length;
-
-      const totalBookings = bookingsList.length;
-      const pendingBookings = bookingsList.filter(b => b.status === 'Pending').length;
-      const contactedBookings = bookingsList.filter(b => b.status === 'Contacted').length;
-      const assignedBookings = bookingsList.filter(b => b.status === 'Assigned').length;
 
       return res.status(200).json({
         success: true,
@@ -33,10 +26,10 @@ exports.getDashboardStats = async (req, res, next) => {
             pending: pendingTutors
           },
           bookings: {
-            total: totalBookings,
-            pending: pendingBookings,
-            contacted: contactedBookings,
-            assigned: assignedBookings
+            total: 0,
+            pending: 0,
+            contacted: 0,
+            assigned: 0
           }
         }
       });
@@ -45,11 +38,6 @@ exports.getDashboardStats = async (req, res, next) => {
     const totalTutors = await Tutor.countDocuments();
     const verifiedTutors = await Tutor.countDocuments({ isVerified: true });
     const pendingTutors = await Tutor.countDocuments({ isVerified: false });
-
-    const totalBookings = await Booking.countDocuments();
-    const pendingBookings = await Booking.countDocuments({ status: 'Pending' });
-    const contactedBookings = await Booking.countDocuments({ status: 'Contacted' });
-    const assignedBookings = await Booking.countDocuments({ status: 'Assigned' });
 
     res.status(200).json({
       success: true,
@@ -60,10 +48,10 @@ exports.getDashboardStats = async (req, res, next) => {
           pending: pendingTutors
         },
         bookings: {
-          total: totalBookings,
-          pending: pendingBookings,
-          contacted: contactedBookings,
-          assigned: assignedBookings
+          total: 0,
+          pending: 0,
+          contacted: 0,
+          assigned: 0
         }
       }
     });
@@ -78,12 +66,20 @@ exports.getDashboardStats = async (req, res, next) => {
 exports.verifyTutor = async (req, res, next) => {
   try {
     const { isVerified } = req.body;
+    const targetStatus = isVerified !== undefined ? isVerified : true;
+    const updateData = {
+      isVerified: targetStatus,
+      verifiedAt: targetStatus ? new Date() : null,
+      verifiedDate: targetStatus ? new Date() : null
+    };
 
     // Fallback if MongoDB is offline
     if (mongoose.connection.readyState !== 1) {
       console.log('🔌 MongoDB is offline. Running verifyTutor in Fallback mode.');
       const updated = await dbFallback.updateTutor(req.params.id, {
-        isVerified: isVerified !== undefined ? isVerified : true
+        isVerified: targetStatus,
+        verifiedAt: targetStatus ? new Date().toISOString() : null,
+        verifiedDate: targetStatus ? new Date().toISOString() : null
       });
 
       if (!updated) {
@@ -99,7 +95,7 @@ exports.verifyTutor = async (req, res, next) => {
 
     const tutor = await Tutor.findByIdAndUpdate(
       req.params.id,
-      { isVerified: isVerified !== undefined ? isVerified : true },
+      updateData,
       { new: true }
     );
 

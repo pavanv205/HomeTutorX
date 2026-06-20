@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaStar, FaBriefcase, FaGraduationCap, FaMapMarkerAlt, FaUser, FaCalendarAlt } from 'react-icons/fa';
+import { FaBriefcase, FaGraduationCap, FaMapMarkerAlt, FaUser, FaCalendarAlt } from 'react-icons/fa';
 import { tutorService } from '../../services/tutorService';
-import { useBookingModal } from '../../context/BookingModalContext';
 import { TutorCardSkeleton } from '../common/Skeleton';
 import Button from '../common/Button';
 
+
+
 export const TutorCard = ({ tutor }) => {
   const navigate = useNavigate();
-  const { openBookingModal } = useBookingModal();
 
   if (!tutor) return null;
 
   // Safeguards for tutor properties to prevent UI crashes if some fields are missing
   const photo = tutor.photo || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80';
-  const name = tutor.name || 'Anonymous Tutor';
+  const name = tutor.name || tutor.fullName || 'Anonymous Tutor';
   const qualification = (tutor.qualification || 'Verified Educator').split('(')[0];
   const gender = tutor.gender || '';
   const age = tutor.age ? `${tutor.age} yrs` : '';
-  const rating = tutor.rating !== undefined ? tutor.rating : 'New';
-  const reviewsCount = tutor.reviewsCount || 0;
+
   const experience = tutor.experience !== undefined ? tutor.experience : 3;
   
   const state = tutor.state || '';
@@ -33,7 +32,7 @@ export const TutorCard = ({ tutor }) => {
   const fullAddress = fullAddressParts.length > 0 ? fullAddressParts.join(', ') : (tutor.city || 'Bangalore');
 
   const monthlyRate = tutor.monthlyRate || 3000;
-  const about = tutor.about || 'No biography details provided.';
+  const about = tutor.about || tutor.bio || 'No biography details provided.';
   const subjects = Array.isArray(tutor.subjects) ? tutor.subjects : [];
   const hourlyRate = tutor.hourlyRate || 500;
   const id = tutor.id || '';
@@ -62,13 +61,8 @@ export const TutorCard = ({ tutor }) => {
               <FaGraduationCap className="text-slate-400 text-sm" />
               <span className="truncate max-w-[150px]">{qualification}</span>
             </p>
-            {/* Rating */}
-            <div className="flex items-center gap-1.5 text-xs">
-              <span className="flex items-center gap-0.5 text-amber-500 font-bold">
-                <FaStar className="h-3.5 w-3.5 fill-current" /> {rating}
-              </span>
-              <span className="text-slate-400">({reviewsCount} reviews)</span>
-            </div>
+
+
           </div>
         </div>
 
@@ -133,20 +127,14 @@ export const TutorCard = ({ tutor }) => {
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(`/tutors/${id}`)}
-          >
-            Details
-          </Button>
+        <div className="flex gap-2 w-full">
           <Button
             variant="primary"
             size="sm"
-            onClick={() => openBookingModal(tutor)}
+            className="w-full"
+            onClick={() => navigate(`/tutors/${id}`)}
           >
-            Book
+            View Profile
           </Button>
         </div>
       </div>
