@@ -31,6 +31,16 @@ const CONTACT_INFO = [
       { label: '4th Floor, EduSpace Tech Park', href: null },
       { label: 'Indiranagar, Bangalore, 560038', href: null }
     ]
+  },
+  {
+    icon: <FaClock />,
+    title: 'Support Hours',
+    color: 'text-blue-500',
+    type: 'text',
+    details: [
+      { label: 'Mon - Sat: 9:00 AM – 7:00 PM (IST)', href: null },
+      { label: 'Sundays: Closed (Email only)', href: null }
+    ]
   }
 ];
 
@@ -58,7 +68,7 @@ const ContactUs = () => {
         </section>
 
         {/* Contact Info Cards */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {CONTACT_INFO.map((info, idx) => (
             <div
               key={idx}
@@ -92,42 +102,14 @@ const ContactUs = () => {
         </section>
 
         {/* Form and Google Map splits */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+        <section className="max-w-3xl mx-auto w-full">
           
           {/* Query Form */}
-          <div className="lg:col-span-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm">
+          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-10 shadow-sm">
             <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-6">
               Send Us a Message
             </h3>
             <ContactForm />
-          </div>
-
-          {/* Interactive Google Map Iframe */}
-          <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
-            <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-4 shadow-sm flex-grow min-h-[350px]">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.9677028445107!2d77.6412497!3d12.9739775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae16572f3e827f%3A0xe54d320bd074f76!2sIndiranagar%2C+Bengaluru%2C+Karnataka+560038!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                width="100%"
-                height="100%"
-                style={{ border: 0, borderRadius: '1.25rem', minHeight: '320px' }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Office Location Indiranagar Bengaluru"
-              />
-            </div>
-
-            {/* Support timings card */}
-            <div className="bg-slate-900 text-white dark:bg-slate-900/60 border border-slate-800 dark:border-slate-800 rounded-3xl p-6 flex items-start gap-4">
-              <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
-                <FaClock className="h-5 w-5" />
-              </div>
-              <div className="space-y-1 text-sm font-semibold">
-                <h4 className="text-white">Customer Support Hours</h4>
-                <p className="text-slate-400 text-xs">Monday to Saturday: 9:00 AM – 7:00 PM (IST)</p>
-                <p className="text-slate-400 text-xs">Sundays: Emergency email support only</p>
-              </div>
-            </div>
           </div>
 
         </section>
