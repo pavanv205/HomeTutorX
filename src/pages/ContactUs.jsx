@@ -27,8 +27,7 @@ const CONTACT_INFO = [
     color: 'text-rose-500',
     type: 'text',
     details: [
-      { label: '4th Floor, EduSpace Tech Park', href: null },
-      { label: 'Indiranagar, Bangalore, 560038', href: null }
+      { label: 'Vizianagaram, Andhrapradesh, India', href: null }
     ]
   }
 ];
