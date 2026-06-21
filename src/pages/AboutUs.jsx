@@ -3,27 +3,6 @@ import { FaRocket, FaEye, FaGraduationCap, FaUserCheck, FaSmileBeam } from 'reac
 import SEO from '../components/common/SEO';
 import reviewsData from '../data/reviews.json';
 
-const TEAM = [
-  {
-    name: 'Siddharth Sen',
-    role: 'Founder & CEO',
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&h=200&q=80',
-    bio: 'EdTech pioneer with 12+ years experience in curriculum designing and school systems.'
-  },
-  {
-    name: 'Dr. Kriti Nair',
-    role: 'Head of Academic Quality',
-    photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&h=200&q=80',
-    bio: 'Former school principal, oversees tutor evaluation frameworks and study material quality.'
-  },
-  {
-    name: 'Amit Singhal',
-    role: 'Technology Lead',
-    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&h=200&q=80',
-    bio: 'Full stack architect, driving secure matching algorithms and virtual classroom integrations.'
-  }
-];
-
 const VALUES = [
   {
     icon: <FaGraduationCap />,
@@ -146,40 +125,6 @@ const AboutUs = () => {
                 <h4 className="font-bold text-slate-850 dark:text-slate-205 text-base">{val.title}</h4>
                 <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                   {val.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Leadership Crew */}
-        <section className="space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-xs font-bold text-primary dark:text-blue-500 uppercase tracking-widest">
-              Founders & Builders
-            </h2>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white">
-              Meet Our Team
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {TEAM.map((member, idx) => (
-              <div
-                key={idx}
-                className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm text-center flex flex-col items-center space-y-4 hover:shadow-md transition-shadow group"
-              >
-                <img
-                  src={member.photo}
-                  alt={member.name}
-                  className="h-24 w-24 rounded-full object-cover border-2 border-slate-100 dark:border-slate-800 group-hover:scale-105 transition-transform duration-350 shadow-md"
-                />
-                <div className="space-y-1">
-                  <h4 className="font-bold text-slate-850 dark:text-slate-205 text-base">{member.name}</h4>
-                  <p className="text-xs text-primary dark:text-blue-400 font-bold uppercase tracking-wider">{member.role}</p>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                  {member.bio}
                 </p>
               </div>
             ))}
