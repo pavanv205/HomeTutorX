@@ -1,6 +1,6 @@
 import SEO from '../components/common/SEO';
 import ContactForm from '../components/forms/ContactForm';
-import { FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp } from 'react-icons/fa';
+import { FaEnvelope, FaMapMarkerAlt, FaWhatsapp } from 'react-icons/fa';
 
 const CONTACT_INFO = [
   {
@@ -31,16 +31,6 @@ const CONTACT_INFO = [
       { label: '4th Floor, EduSpace Tech Park', href: null },
       { label: 'Indiranagar, Bangalore, 560038', href: null }
     ]
-  },
-  {
-    icon: <FaClock />,
-    title: 'Support Hours',
-    color: 'text-blue-500',
-    type: 'text',
-    details: [
-      { label: 'Mon - Sat: 9:00 AM – 7:00 PM (IST)', href: null },
-      { label: 'Sundays: Closed (Email only)', href: null }
-    ]
   }
 ];
 
@@ -68,7 +58,7 @@ const ContactUs = () => {
         </section>
 
         {/* Contact Info Cards */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {CONTACT_INFO.map((info, idx) => (
             <div
               key={idx}
@@ -101,17 +91,12 @@ const ContactUs = () => {
           ))}
         </section>
 
-        {/* Form and Google Map splits */}
-        <section className="max-w-3xl mx-auto w-full">
-          
-          {/* Query Form */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-10 shadow-sm">
-            <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-6">
-              Send Us a Message
-            </h3>
-            <ContactForm />
-          </div>
-
+        {/* Centered Query Form */}
+        <section className="max-w-2xl mx-auto bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm">
+          <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-6 text-center">
+            Send Us a Message
+          </h3>
+          <ContactForm />
         </section>
 
       </div>
