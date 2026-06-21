@@ -15,6 +15,7 @@ exports.protect = async (req, res, next) => {
 
   // Check if token exists
   if (!token) {
+    console.error(`[AUTH ERROR] ${req.method} ${req.originalUrl} - Status: 401 - Message: No token provided.`);
     return res.status(401).json({
       success: false,
       message: 'Not authorized to access this route. No token provided.'
@@ -28,17 +29,11 @@ exports.protect = async (req, res, next) => {
       process.env.JWT_SECRET || 'tutorconnect_secret_key_123'
     );
 
-    // Get user from DB (or fallback file database if MongoDB is down)
-    let user;
-    if (mongoose.connection.readyState !== 1) {
-      const dbFallback = require('../utils/dbFallback');
-      const users = await dbFallback.getUsers();
-      user = users.find(u => String(u._id) === String(decoded.id));
-    } else {
-      user = await User.findById(decoded.id);
-    }
+    // Get user from DB
+    const user = await User.findById(decoded.id);
 
     if (!user) {
+      console.error(`[AUTH ERROR] ${req.method} ${req.originalUrl} - Status: 401 - Message: User not found with ID ${decoded.id}.`);
       return res.status(401).json({
         success: false,
         message: 'No user found with this id'
@@ -48,6 +43,7 @@ exports.protect = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
+    console.error(`[AUTH ERROR] ${req.method} ${req.originalUrl} - Status: 401 - Message: Invalid or expired token. Error: ${err.message}`);
     return res.status(401).json({
       success: false,
       message: 'Not authorized to access this route. Invalid or expired token.'
@@ -59,6 +55,7 @@ exports.protect = async (req, res, next) => {
 exports.authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
+      console.error(`[AUTH ERROR] ${req.method} ${req.originalUrl} - Status: 403 - Message: Role '${req.user ? req.user.role : 'Guest'}' is not authorized.`);
       return res.status(403).json({
         success: false,
         message: `User role '${req.user ? req.user.role : 'Guest'}' is not authorized to access this route.`
