@@ -38,14 +38,14 @@ const Navbar = () => {
   const activeStyle = ({ isActive }) =>
     `relative text-sm font-semibold transition-colors duration-200 py-2 ${
       isActive
-        ? 'text-primary dark:text-blue-400 font-bold'
+        ? 'text-primary dark:text-blue-400'
         : 'text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-blue-400'
     }`;
 
   return (
     <>
       <header
-        className={`sticky top-0 z-40 w-full transition-all duration-300 ${
+        className={`sticky top-0 z-40 w-full transition-[padding,background-color,border-color,box-shadow] duration-300 ${
           isScrolled
             ? 'glass shadow-md shadow-slate-100/10 dark:shadow-none py-3 border-b border-slate-100/80 dark:border-slate-800/80'
             : 'bg-transparent py-5 border-b border-transparent'
@@ -179,7 +179,7 @@ const Navbar = () => {
                     className={({ isActive }) =>
                       `text-lg font-semibold transition-colors duration-200 ${
                         isActive
-                          ? 'text-primary dark:text-blue-400 font-bold'
+                          ? 'text-primary dark:text-blue-400'
                           : 'text-slate-700 hover:text-primary dark:text-slate-300 dark:hover:text-blue-400'
                       }`
                     }
