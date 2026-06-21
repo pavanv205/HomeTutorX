@@ -238,11 +238,6 @@ const BecomeTutorForm = () => {
   };
 
   const onSubmit = async (data) => {
-    let fileToUpload = resumeFile;
-    if (!fileToUpload) {
-      fileToUpload = new File([new Blob(['mock photo bytes'], { type: 'image/png' })], 'mock_photo.png', { type: 'image/png' });
-    }
-
     try {
       setLoading(true);
       const formData = new FormData();
@@ -255,7 +250,9 @@ const BecomeTutorForm = () => {
           formData.append(key, val ?? '');
         }
       }
-      formData.append('resume', fileToUpload);
+      if (resumeFile) {
+        formData.append('resume', resumeFile);
+      }
       if (certificateFile) {
         formData.append('certificate', certificateFile);
       }
@@ -928,7 +925,7 @@ const BecomeTutorForm = () => {
             {/* Profile Photo Upload */}
             <div>
               <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
-                Upload Profile Photo (IMAGE - 1MB to 10MB)
+                Upload Profile Photo (Optional) (IMAGE - 1MB to 10MB)
               </label>
               <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all duration-200">
                 <input
