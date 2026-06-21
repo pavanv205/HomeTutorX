@@ -904,8 +904,16 @@ const BecomeTutorForm = () => {
                     : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
                 }`}
               >
-                <span>📍</span>
-                {locLoading ? 'Fetching Location...' : hasFetchedLoc ? 'Live Location Linked ✓' : 'Use Live Location 📍'}
+                {locLoading ? (
+                  <span>Fetching Location...</span>
+                ) : hasFetchedLoc ? (
+                  <span>Live Location Linked ✓</span>
+                ) : (
+                  <>
+                    <span>Use Live Location</span>
+                    <span className="loader scale-pin"></span>
+                  </>
+                )}
               </button>
               {locError && <span className="text-xs text-rose-500 font-semibold">{locError}</span>}
               {hasFetchedLoc && (

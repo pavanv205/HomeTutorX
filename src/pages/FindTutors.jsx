@@ -237,7 +237,17 @@ const FindTutors = () => {
               }`}
             >
               <FaLocationArrow className={`h-3 w-3 ${geoLoading ? 'animate-spin' : ''} ${userCoords ? 'text-emerald-500' : 'text-slate-400'}`} />
-              {geoLoading ? "Locating..." : userCoords ? "Location Active 📍" : "Find Near Me 📍"}
+              {geoLoading ? (
+                "Locating..."
+              ) : userCoords ? (
+                <span className="inline-flex items-center gap-1">
+                  Location Active <span className="loader scale-pin"></span>
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1">
+                  Find Near Me <span className="loader scale-pin"></span>
+                </span>
+              )}
             </Button>
 
             {/* List / Map view mode toggle */}
