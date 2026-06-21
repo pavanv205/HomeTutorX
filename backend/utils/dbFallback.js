@@ -66,6 +66,8 @@ const initDb = async () => {
         photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80',
         resumeUrl: '',
         certificateUrl: '',
+        leadsCount: 12,
+        viewsCount: 142,
         isVerified: true,
         verifiedAt: new Date().toISOString(),
         verifiedDate: new Date().toISOString(),

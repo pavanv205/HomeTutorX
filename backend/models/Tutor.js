@@ -26,6 +26,8 @@ const TutorSchema = new mongoose.Schema({
   resumeUrl: { type: String },
   photo: { type: String },
   certificateUrl: { type: String },
+  leadsCount: { type: Number, default: 0 },
+  viewsCount: { type: Number, default: 0 },
   streetAddress: { type: String },
   city: { type: String },
   state: { type: String },

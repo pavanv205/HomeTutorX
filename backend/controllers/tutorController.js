@@ -60,6 +60,8 @@ exports.createTutor = async (req, res, next) => {
         photo: photoUrl,
         resumeUrl: photoUrl,
         certificateUrl: certificateUrl,
+        leadsCount: 0,
+        viewsCount: 0,
         isVerified: false,
         createdAt: new Date().toISOString()
       };

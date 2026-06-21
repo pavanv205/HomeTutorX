@@ -213,3 +213,72 @@ input[type="range"] {
   vertical-align: middle;
 }
 
+/* From Uiverse.io by catraco - adapted for TutorConnect */
+.eye-loader {
+  --eye: #8b5cf6;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.dark .eye-loader {
+  --eye: #a78bfa;
+}
+
+.eye-loader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  border: 5px solid var(--eye);
+  border-radius: 100%;
+  animation: translate-keyframes 2s infinite linear;
+}
+
+.eye-loader span {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  border-top: 12px solid var(--eye);
+  border-bottom: 5px solid var(--eye);
+  outline: 2px solid var(--eye);
+  animation: rotate-keyframes 2s infinite linear;
+}
+
+@keyframes translate-keyframes {
+  0% {
+    transform: translate(-100%, -50%);
+  }
+
+  95% {
+    transform: translate(50%, -50%);
+  }
+
+  96% {
+    transform: translate(-50%, -50%);
+  }
+
+  100% {
+    transform: translate(-100%, -50%);
+  }
+}
+
+@keyframes rotate-keyframes {
+  90% {
+    height: 40px;
+  }
+
+  95% {
+    height: 0px;
+  }
+
+  100% {
+    height: 40px;
+  }
+}
+
