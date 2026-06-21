@@ -18,8 +18,7 @@ const CONTACT_INFO = [
     color: 'text-amber-500',
     type: 'email',
     details: [
-      { label: 'support@tutorconnect.com', href: 'mailto:support@tutorconnect.com' },
-      { label: 'careers@tutorconnect.com', href: 'mailto:careers@tutorconnect.com' }
+      { label: 'supporttutorconnect@gmail.com', href: 'mailto:supporttutorconnect@gmail.com' }
     ]
   },
   {
