@@ -213,72 +213,95 @@ input[type="range"] {
   vertical-align: middle;
 }
 
-/* From Uiverse.io by catraco - adapted for TutorConnect */
+/* From Uiverse.io by Shoh2008 - adapted for TutorConnect */
 .eye-loader {
-  --eye: #8b5cf6;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: #fff;
+  border: 8px solid #131a1d;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: inline-block;
 }
 
-.dark .eye-loader {
-  --eye: #a78bfa;
+.eye-loader::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -50%;
+  width: 100%;
+  height: 100%;
+  background: #263238;
+  z-index: 5;
+  border-bottom: 8px solid #131a1d;
+  box-sizing: border-box;
+  animation: eyeShade 3s infinite;
 }
 
 .eye-loader::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(-50%, -50%);
-  border: 5px solid var(--eye);
-  border-radius: 100%;
-  animation: translate-keyframes 2s infinite linear;
+  left: 20px;
+  bottom: 15px;
+  width: 32px;
+  z-index: 2;
+  height: 32px;
+  background: #111;
+  border-radius: 50%;
+  animation: eyeMove 3s infinite;
 }
 
-.eye-loader span {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  border-radius: 100%;
-  border-top: 12px solid var(--eye);
-  border-bottom: 5px solid var(--eye);
-  outline: 2px solid var(--eye);
-  animation: rotate-keyframes 2s infinite linear;
-}
-
-@keyframes translate-keyframes {
+@keyframes eyeShade {
   0% {
-    transform: translate(-100%, -50%);
+    transform: translateY(0)
   }
 
-  95% {
-    transform: translate(50%, -50%);
+  20% {
+    transform: translateY(5px)
   }
 
-  96% {
-    transform: translate(-50%, -50%);
+  40% , 50% {
+    transform: translateY(-5px)
+  }
+
+  60% {
+    transform: translateY( -8px)
+  }
+
+  75% {
+    transform: translateY( 5px)
   }
 
   100% {
-    transform: translate(-100%, -50%);
+    transform: translateY(10px)
   }
 }
 
-@keyframes rotate-keyframes {
-  90% {
-    height: 40px;
+@keyframes eyeMove {
+  0% {
+    transform: translate(0 , 0)
   }
 
-  95% {
-    height: 0px;
+  20% {
+    transform: translate(0px , 5px)
+  }
+
+  45% , 50% {
+    transform: translate(0px , -5px)
+  }
+
+  60% {
+    transform: translate(-10px , -5px)
+  }
+
+  75% {
+    transform: translate(-20px , 5px)
   }
 
   100% {
-    height: 40px;
+    transform: translate(0 , 10px)
   }
 }
 

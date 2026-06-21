@@ -201,8 +201,7 @@ const TutorDashboard = () => {
                 {/* Total Views Card */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                   <div className="h-12 w-12 rounded-2xl bg-violet-50 dark:bg-violet-950/20 text-violet-600 dark:text-violet-400 flex items-center justify-center shrink-0">
-                    <div className="eye-loader scale-[0.6] origin-center">
-                      <span></span>
+                    <div className="eye-loader scale-[0.35] origin-center">
                     </div>
                   </div>
                   <div>
