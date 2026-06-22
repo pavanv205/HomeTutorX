@@ -203,10 +203,24 @@ const BecomeTutorForm = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const filename = file.name.toLowerCase();
+      
+      // 1. Reject invalid temporary files
+      if (filename.includes('.trashed-') || filename.startsWith('.trashed-')) {
+        setResumeError('Invalid file type: temporary trashed files are not allowed');
+        setResumeFile(null);
+        return;
+      }
+      
+      // 2. Validate types
+      const allowedExts = ['.jpg', '.jpeg', '.png', '.webp'];
+      const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
+      const isAllowedType = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type);
+      
       if (file.size > 2 * 1024 * 1024) {
         setResumeError('File size should be less than 2MB');
         setResumeFile(null);
-      } else if (!file.type.startsWith('image/')) {
+      } else if (!isAllowedType && !hasAllowedExt) {
         setResumeError('Only image files (JPEG, PNG, WEBP) are allowed');
         setResumeFile(null);
       } else {
@@ -219,10 +233,24 @@ const BecomeTutorForm = () => {
   const handleCertificateChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const filename = file.name.toLowerCase();
+      
+      // 1. Reject invalid temporary files
+      if (filename.includes('.trashed-') || filename.startsWith('.trashed-')) {
+        setCertificateError('Invalid file type: temporary trashed files are not allowed');
+        setCertificateFile(null);
+        return;
+      }
+      
+      // 2. Validate types
+      const allowedExts = ['.jpg', '.jpeg', '.png', '.pdf'];
+      const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
+      const isAllowedType = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'].includes(file.type);
+      
       if (file.size > 2 * 1024 * 1024) {
         setCertificateError('File size should be less than 2MB');
         setCertificateFile(null);
-      } else if (!file.type.startsWith('image/') && file.type !== 'application/pdf') {
+      } else if (!isAllowedType && !hasAllowedExt) {
         setCertificateError('Only image files (JPEG, PNG, WEBP) or PDFs are allowed');
         setCertificateFile(null);
       } else {
