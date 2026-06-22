@@ -53,7 +53,8 @@ const connectDB = () => {
     serverSelectionTimeoutMS: 5000,  // Fail fast on cold starts (5s instead of default 30s)
     socketTimeoutMS: 10000,          // Close sockets after 10s of inactivity
   }).then(async () => {
-    console.log('MongoDB Connected Successfully');
+    const maskedUri = uri.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@');
+    console.log(`MongoDB Connected Successfully to: ${maskedUri}`);
     // Seed default admin account if none exists
     try {
       const User = require('./models/User');
