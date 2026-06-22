@@ -7110,7 +7110,7 @@ export const SUBJECT_CATEGORIES = [
     name: "Physics",
     count: "32+ Tutors",
     icon: "FaAtom",
-    color: "from-purple-500 to-pink-600"
+    color: "from-red-600 to-amber-900"
   },
   {
     name: "Chemistry",
