@@ -128,9 +128,7 @@ const connectDB = () => {
       console.error('Tutor seeding failed:', seedErr.message);
     }
   }).catch((err) => {
-    console.log('MongoDB Connection Failed');
-    console.error(err.message);
-    process.exit(1);
+    console.error('MongoDB Connection Failed:', err.message);
   });
 
   return dbConnectionPromise;
