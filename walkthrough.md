@@ -50,6 +50,11 @@ This document walks through the implementation of the **Live Location Proximity 
 - **Andaman and Nicobar Islands Excluded**: Excluded "Andaman and Nicobar Islands" from the selectable states list (`STATES`) and cities/divisions database to prevent selection.
 - **Bio Length Validation Removed**: Removed the 30-character minimum validation constraint from the "Professional Bio / Teaching Philosophy" field, allowing shorter descriptions to be submitted.
 
+### 7. API URL Placeholder Detection & Fallback
+- **Placeholder Detection**: Added check to determine if the environment variable `VITE_API_URL` contains placeholders (such as `<` or `>` or `"placeholder"`).
+- **Relative Fallback**: If placeholders are present, the API Base URL in [config.js](file:///d:/desktop/Tutor%20connect/src/config.js) falls back to the relative `/api` route.
+- **Warning Banner UI**: Added a prominent red warning banner in [App.jsx](file:///d:/desktop/Tutor%20connect/src/App.jsx) that alerts developers/users if the placeholder is present, explaining that the system has safely fallen back to `/api`.
+
 ---
 
 ## 🚀 Verification and Validation Results

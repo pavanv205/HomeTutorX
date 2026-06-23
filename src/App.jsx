@@ -15,7 +15,9 @@ import ErrorBoundary from './components/common/ErrorBoundary';
 import { API_BASE_URL } from './config';
 
 function App() {
-  const isApiUrlMissing = !import.meta.env.VITE_API_URL;
+  const rawApiUrl = import.meta.env.VITE_API_URL || '';
+  const hasPlaceholder = rawApiUrl.includes('<') || rawApiUrl.includes('>') || rawApiUrl.includes('placeholder');
+  const isApiUrlMissing = !rawApiUrl;
 
   return (
     <HelmetProvider>
@@ -23,7 +25,12 @@ function App() {
         <AuthProvider>
             <Router>
               <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-[#0B0F19] text-slate-705 dark:text-slate-200 transition-colors duration-300">
-                {isApiUrlMissing && (
+                {hasPlaceholder && (
+                  <div className="bg-red-600 text-white px-4 py-2.5 text-center text-xs font-bold z-50 sticky top-0 shadow-md">
+                    ⚠️ API Configuration Warning: VITE_API_URL contains unresolved placeholders ( <code className="bg-white/20 px-1.5 py-0.5 rounded font-mono text-white">{rawApiUrl}</code> ). Please configure your actual deployment domain. Falling back to relative route <code className="bg-white/20 px-1.5 py-0.5 rounded font-mono text-white">/api</code>.
+                  </div>
+                )}
+                {isApiUrlMissing && !hasPlaceholder && (
                   <div className="bg-amber-500 text-slate-900 px-4 py-2.5 text-center text-xs font-bold z-50 sticky top-0 shadow-md">
                     ⚠️ API Configuration Warning: The environment variable <code className="bg-slate-900/10 px-1.5 py-0.5 rounded font-mono">VITE_API_URL</code> is not configured. Frontend operations might fail if not proxying relative routes.
                   </div>
