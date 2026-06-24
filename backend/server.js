@@ -44,16 +44,24 @@ mongoose.connection.on('error', (err) => {
 // Cached connection promise for serverless environments (avoid re-connecting on every invocation)
 let dbConnectionPromise = null;
 
-const connectDB = () => {
-  if (dbConnectionPromise) return dbConnectionPromise;
+const connectDB = async () => {
+  // If connection is already established and active, return it
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+  
+  if (dbConnectionPromise) {
+    return dbConnectionPromise;
+  }
 
   const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tutorconnect';
+  const maskedUri = uri.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@');
+  console.log(`Initiating MongoDB Connection to: ${maskedUri}`);
 
   dbConnectionPromise = mongoose.connect(uri, {
     serverSelectionTimeoutMS: 5000,  // Fail fast on cold starts (5s instead of default 30s)
     socketTimeoutMS: 10000,          // Close sockets after 10s of inactivity
-  }).then(async () => {
-    const maskedUri = uri.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@');
+  }).then(async (m) => {
     console.log(`MongoDB Connected Successfully to: ${maskedUri}`);
     // Seed default admin account if none exists
     try {
@@ -127,15 +135,15 @@ const connectDB = () => {
     } catch (seedErr) {
       console.error('Tutor seeding failed:', seedErr.message);
     }
+    return m;
   }).catch((err) => {
     console.error('MongoDB Connection Failed:', err.message);
+    dbConnectionPromise = null; // Reset promise so a retry can occur on next call
+    throw err;
   });
 
   return dbConnectionPromise;
 };
-
-// Initiate connection on startup
-connectDB();
 
 // ─── Health Check Endpoint ──────────────────────────────────────────────────
 app.get('/api/health', async (req, res) => {
@@ -222,10 +230,15 @@ app.use((err, req, res, next) => {
 
 // ─── Start Server (only when not running on Vercel) ─────────────────────────
 if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`Backend server running on port ${PORT}`);
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`Backend server running on port ${PORT}`);
+    });
+  }).catch((err) => {
+    console.error('Startup connection failed. Server not started:', err.message);
   });
 }
 
-// Export app for Vercel serverless functions
+// Export app and connectDB utility for serverless environment wrapping
+app.connectDB = connectDB;
 module.exports = app;
