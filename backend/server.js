@@ -1,7 +1,7 @@
-// Trigger Vercel rebuild to apply new environment variables
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const helmet = require('helmet');
 const dotenv = require('dotenv');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -45,9 +45,30 @@ const apiLimiter = rateLimit({
 });
 
 // ─── Middleware ──────────────────────────────────────────────────────────────
-app.use(cors());
+app.use(helmet());
+
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000'
+].filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(apiLimiter);
+app.use('/api', apiLimiter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ─── MongoDB Connection ─────────────────────────────────────────────────────
@@ -68,14 +89,16 @@ app.get('/api/health', async (req, res) => {
     const dbStatus = dbState === 1 ? 'connected' : dbState === 2 ? 'connecting' : 'disconnected';
     
     res.status(200).json({
-      status: 'ok',
-      database: dbStatus
+      success: true,
+      data: {
+        status: 'ok',
+        database: dbStatus
+      }
     });
   } catch (err) {
     console.error('[API ERROR] Health check error:', err);
     res.status(500).json({
-      status: 'error',
-      database: 'disconnected',
+      success: false,
       message: err.message
     });
   }

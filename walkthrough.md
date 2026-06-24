@@ -73,7 +73,9 @@ This document walks through the implementation of the **Live Location Proximity 
 - **Direct Local Executable block**: Updated the local startup inside `backend/server.js` to only connect to Mongoose and fire up the listener when the file is run directly (using `require.main === module` check).
 
 ### 11. Backend Code Quality & Security Optimizations
-- **Centralized Error Handling ([errorMiddleware.js](file:///d:/desktop/Tutor%20connect/backend/middleware/errorMiddleware.js))**: Extracted error formatting and validation response mapping to a standalone Express middleware. Integrates cleanly with backend/server.js to reduce codebase duplications.
+- **Centralized Error Handling ([errorMiddleware.js](file:///d:/desktop/Tutor%20connect/backend/middleware/errorMiddleware.js))**: Extracted error formatting and validation response mapping to a standalone Express middleware. Cleans up stack traces and database internal error metadata in non-development environments to prevent information disclosure.
+- **Request Rate Limiting ([server.js](file:///d:/desktop/Tutor%20connect/backend/server.js))**: Integrated `express-rate-limit` middleware on `/api` routes (max 100 requests per 15 mins). Configured `trust proxy` settings on Express to ensure client IPs are correctly tracked when deployed behind Vercel's proxy.
+- **Input Validation checks ([authController.js](file:///d:/desktop/Tutor%20connect/backend/controllers/authController.js))**: Augmented validation rules in `registerTutor` with email format verification (regex) and minimum password length constraints (6 chars) to throw 400 Bad Request if validation checks fail.
 - **Read-Only Database Query Optimization**: Added `.lean()` to lookup/find operations inside the tutor controller and auth controller to return plain JS objects, minimizing Mongoose overhead.
 - **Mongoose Indexing Suggestions ([Tutor.js](file:///d:/desktop/Tutor%20connect/backend/models/Tutor.js))**: Added compound indexes (state/city) and key query tag indexes (subjects, classes, isVerified, hourlyRate) to optimize search latency.
 

@@ -5,9 +5,25 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { getFileUrl } = require('../utils/uploadHelper');
 
+// Helper to log only in development mode
+const devLog = (...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(...args);
+  }
+};
+
+const devError = (...args) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.error(...args);
+  }
+};
+
 // Helper to generate JWT token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'tutorconnect_secret_key_123', {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is missing.');
+  }
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d'
   });
 };
@@ -16,7 +32,7 @@ const generateToken = (id) => {
 // @route   POST /api/auth/register
 // @access  Public
 exports.registerTutor = async (req, res, next) => {
-  console.log('--- [TUTOR REGISTRATION REQUEST RECEIVED] ---');
+  devLog('--- [TUTOR REGISTRATION REQUEST RECEIVED] ---');
   let user = null;
   try {
     const data = req.body || {};
@@ -25,7 +41,7 @@ exports.registerTutor = async (req, res, next) => {
     // 1. Log Form Data Received (masking password)
     const logData = { ...data };
     if (logData.password) logData.password = '********';
-    console.log('Form data received:', logData);
+    devLog('Form data received:', logData);
 
     // 2. Validate Missing Required Fields
     const requiredFields = [
@@ -44,8 +60,7 @@ exports.registerTutor = async (req, res, next) => {
     });
 
     if (missing.length > 0) {
-      console.warn('[VALIDATION WARNING] Missing required fields:', missing);
-      console.log('API response status: 400 Bad Request');
+      devLog('[VALIDATION WARNING] Missing required fields:', missing);
       return res.status(400).json({
         success: false,
         message: `Missing required fields: ${missing.join(', ')}`
@@ -69,12 +84,34 @@ exports.registerTutor = async (req, res, next) => {
       });
     }
 
+    // Validate positive numbers
+    const numAge = Number(data.age);
+    if (isNaN(numAge) || numAge <= 0) {
+      return res.status(400).json({ success: false, message: 'Age must be a valid positive number' });
+    }
+
+    const numPassingYear = Number(data.passingYear);
+    if (isNaN(numPassingYear) || numPassingYear <= 1900 || numPassingYear > new Date().getFullYear() + 10) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid passing year' });
+    }
+
+    const numExp = Number(data.experienceYears);
+    if (isNaN(numExp) || numExp < 0) {
+      return res.status(400).json({ success: false, message: 'Experience years must be a non-negative number' });
+    }
+
+    const numHourly = Number(data.hourlyRate);
+    const numMonthly = Number(data.monthlyRate);
+    if (isNaN(numHourly) || numHourly < 0 || isNaN(numMonthly) || numMonthly < 0) {
+      return res.status(400).json({ success: false, message: 'Rates must be valid non-negative numbers' });
+    }
+
     // 3. Log Uploaded File Details
     if (req.files) {
       Object.keys(req.files).forEach(fieldName => {
         const file = req.files[fieldName][0];
         if (file) {
-          console.log(`Uploaded file for field "${fieldName}":`, {
+          devLog(`Uploaded file for field "${fieldName}":`, {
             filename: file.originalname,
             size: file.size,
             mimetype: file.mimetype,
@@ -89,17 +126,15 @@ exports.registerTutor = async (req, res, next) => {
     try {
       userExists = await User.findOne({ email });
     } catch (dbErr) {
-      console.error('[DATABASE ERROR] Failed to query existing user:', dbErr);
-      console.log('API response status: 500 Internal Server Error');
+      devError('[DATABASE ERROR] Failed to query existing user:', dbErr);
       return res.status(500).json({
         success: false,
-        message: `Database save failed: Failed to check user existence. ${dbErr.message}`
+        message: `Database save failed: Failed to check user existence.`
       });
     }
 
     if (userExists) {
-      console.warn(`[REGISTRATION FAILED] Email already registered: ${email}`);
-      console.log('API response status: 400 Bad Request');
+      devLog(`[REGISTRATION FAILED] Email already registered: ${email}`);
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
 
@@ -111,13 +146,12 @@ exports.registerTutor = async (req, res, next) => {
         password,
         role: 'Tutor'
       });
-      console.log(`[DATABASE SAVE] Created User document, ID: ${user._id}`);
+      devLog(`[DATABASE SAVE] Created User document, ID: ${user._id}`);
     } catch (userErr) {
-      console.error('[DATABASE ERROR] Failed to create User document:', userErr);
-      console.log('API response status: 500 Internal Server Error');
+      devError('[DATABASE ERROR] Failed to create User document:', userErr);
       return res.status(500).json({
         success: false,
-        message: `Database save failed: User registration failed. ${userErr.message}`
+        message: `Database save failed: User registration failed.`
       });
     }
 
@@ -132,9 +166,9 @@ exports.registerTutor = async (req, res, next) => {
       certificateUrl = getFileUrl(req.files['certificate'][0]);
     }
 
-    console.log('Cloudinary Upload Results:');
-    console.log(`- Profile Photo (field "resume") URL: ${photoUrl}`);
-    console.log(`- Certificate URL: ${certificateUrl}`);
+    devLog('Cloudinary Upload Results:');
+    devLog(`- Profile Photo (field "resume") URL: ${photoUrl}`);
+    devLog(`- Certificate URL: ${certificateUrl}`);
 
     const parseIfJson = (val) => {
       if (!val) return [];
@@ -154,16 +188,16 @@ exports.registerTutor = async (req, res, next) => {
         mobile: phone || mobile || 'N/A',
         email: email,
         gender: data.gender,
-        age: data.age ? Number(data.age) : undefined,
+        age: numAge,
         qualification: data.degree || data.qualification,
         university: data.institution || data.university,
-        graduationYear: data.passingYear ? Number(data.passingYear) : undefined,
-        experience: data.experienceYears ? Number(data.experienceYears) : undefined,
+        graduationYear: numPassingYear,
+        experience: numExp,
         subjects: parseIfJson(data.subjects),
         classes: parseIfJson(data.classes),
         teachingMode: data.teachingMode || 'Both',
-        hourlyRate: data.hourlyRate ? Number(data.hourlyRate) : undefined,
-        monthlyRate: data.monthlyRate ? Number(data.monthlyRate) : undefined,
+        hourlyRate: numHourly,
+        monthlyRate: numMonthly,
         streetAddress: data.streetAddress,
         city: data.city,
         state: data.state,
@@ -175,20 +209,19 @@ exports.registerTutor = async (req, res, next) => {
         resumeUrl: photoUrl,
         certificateUrl: certificateUrl
       });
-      console.log(`[DATABASE SAVE] Created Tutor profile, ID: ${tutor._id}`);
+      devLog(`[DATABASE SAVE] Created Tutor profile, ID: ${tutor._id}`);
     } catch (tutorErr) {
-      console.error('[DATABASE ERROR] Failed to create Tutor profile:', tutorErr);
+      devError('[DATABASE ERROR] Failed to create Tutor profile:', tutorErr);
       
       // Rollback User creation to prevent orphan user documents
       if (user) {
-        console.log(`[DATABASE ROLLBACK] Deleting User document due to Tutor profile creation failure, ID: ${user._id}`);
+        devLog(`[DATABASE ROLLBACK] Deleting User document due to Tutor profile creation failure, ID: ${user._id}`);
         await User.findByIdAndDelete(user._id);
       }
       
-      console.log('API response status: 500 Internal Server Error');
       return res.status(500).json({
         success: false,
-        message: `Database save failed: Tutor profile creation failed. ${tutorErr.message}`
+        message: `Database save failed: Tutor profile creation failed.`
       });
     }
 
@@ -196,40 +229,39 @@ exports.registerTutor = async (req, res, next) => {
     try {
       user.tutorProfile = tutor._id;
       await user.save();
-      console.log(`[DATABASE UPDATE] Linked Tutor profile ${tutor._id} back to User ${user._id}`);
+      devLog(`[DATABASE UPDATE] Linked Tutor profile ${tutor._id} back to User ${user._id}`);
     } catch (linkErr) {
-      console.error('[DATABASE ERROR] Failed to link Tutor profile to User:', linkErr);
+      devError('[DATABASE ERROR] Failed to link Tutor profile to User:', linkErr);
       
       // Rollback both
       if (tutor) await Tutor.findByIdAndDelete(tutor._id);
       if (user) await User.findByIdAndDelete(user._id);
       
-      console.log('API response status: 500 Internal Server Error');
       return res.status(500).json({
         success: false,
-        message: `Database save failed: Failed to complete profile association. ${linkErr.message}`
+        message: `Database save failed: Failed to complete profile association.`
       });
     }
 
     // 9. Generate token & Respond
     const token = generateToken(user._id);
-    console.log('[REGISTRATION SUCCESS] Tutor registered successfully!');
-    console.log('API response status: 201 Created');
+    devLog('[REGISTRATION SUCCESS] Tutor registered successfully!');
 
     res.status(201).json({
       success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        tutorProfile: tutor._id
+      data: {
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          tutorProfile: tutor._id
+        }
       }
     });
   } catch (err) {
-    console.error('[API SYSTEM ERROR] Uncaught error in registerTutor:', err);
-    console.log('API response status: 500 Internal Server Error');
+    devError('[API SYSTEM ERROR] Uncaught error in registerTutor:', err);
     next(err);
   }
 };
@@ -241,9 +273,15 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validate email & password
+    // Validate email & password presence
     if (!email || !password) {
       return res.status(400).json({ success: false, message: 'Please provide an email and password' });
+    }
+
+    // Validate email format
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
     }
 
     // Check for user
@@ -263,13 +301,15 @@ exports.login = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        tutorProfile: user.tutorProfile
+      data: {
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          tutorProfile: user.tutorProfile
+        }
       }
     });
   } catch (err) {
@@ -282,7 +322,6 @@ exports.login = async (req, res, next) => {
 // @access  Private
 exports.getMe = async (req, res, next) => {
   try {
-    // req.user is attached by protect middleware
     const user = await User.findById(req.user._id).populate('tutorProfile').lean();
     res.status(200).json({
       success: true,

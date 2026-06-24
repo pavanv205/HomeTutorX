@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.post('/auth/login', { email, password });
       if (res.data && res.data.success) {
-        const { token: userToken, user: userData } = res.data;
+        const { token: userToken, user: userData } = res.data.data;
         localStorage.setItem('token', userToken);
         setToken(userToken);
         setUser(userData);
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
         }
       });
       if (res.data && res.data.success) {
-        const { token: userToken, user: userData } = res.data;
+        const { token: userToken, user: userData } = res.data.data;
         localStorage.setItem('token', userToken);
         setToken(userToken);
         setUser(userData);

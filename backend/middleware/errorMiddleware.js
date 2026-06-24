@@ -1,17 +1,26 @@
 const errorHandler = (err, req, res, next) => {
+  const devMode = process.env.NODE_ENV === 'development';
   const isAuthError = err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError' || err.status === 401 || err.status === 403;
   const isDatabaseError = err.name === 'ValidationError' || err.code === 11000 || err.name.includes('Mongo') || err.message.includes('Mongoose') || err.message.includes('Mongo');
 
-  if (isAuthError) {
-    console.error(`[AUTH ERROR] ${req.method} ${req.originalUrl} - Status: ${err.status || 401} - Message: ${err.message}`);
-  } else if (isDatabaseError) {
-    console.error(`[DATABASE ERROR] ${req.method} ${req.originalUrl} - Message: ${err.message}`);
+  if (devMode) {
+    if (isAuthError) {
+      console.error(`[AUTH ERROR] ${req.method} ${req.originalUrl} - Status: ${err.status || 401} - Message: ${err.message}`);
+    } else if (isDatabaseError) {
+      console.error(`[DATABASE ERROR] ${req.method} ${req.originalUrl} - Message: ${err.message}`);
+    } else {
+      console.error(`[API SYSTEM ERROR] ${req.method} ${req.originalUrl} - Status: ${err.status || 500} - Message: ${err.message}`);
+    }
+    if (err.stack) {
+      console.error('Stack:', err.stack);
+    }
   } else {
-    console.error(`[API SYSTEM ERROR] ${req.method} ${req.originalUrl} - Status: ${err.status || 500} - Message: ${err.message}`);
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    console.error('Stack:', err.stack);
+    // In production, keep simple non-leaky logs
+    if (isAuthError) {
+      console.error(`[AUTH ERROR] ${req.method} ${req.originalUrl} - Status: ${err.status || 401}`);
+    } else {
+      console.error(`[API ERROR] ${req.method} ${req.originalUrl} - Status: ${err.status || 500}`);
+    }
   }
 
   // Mongoose validation errors
@@ -47,12 +56,10 @@ const errorHandler = (err, req, res, next) => {
   }
 
   const statusCode = err.status || 500;
-  const devMode = process.env.NODE_ENV === 'development';
 
   res.status(statusCode).json({
     success: false,
-    message: statusCode === 500 && !devMode ? 'An unexpected server error occurred.' : err.message || 'Server Error',
-    stack: devMode ? err.stack : undefined
+    message: statusCode === 500 && !devMode ? 'An unexpected server error occurred.' : err.message || 'Server Error'
   });
 };
 
