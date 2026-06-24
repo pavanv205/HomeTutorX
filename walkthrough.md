@@ -66,6 +66,11 @@ This document walks through the implementation of the **Live Location Proximity 
 - **ESM CommonJS interoperability**: Leveraged `createRequire` in `api/index.js` to require the CommonJS-based Express server file (`backend/server.js`) inside the ESM runtime space.
 - **Config rewrites updating ([vercel.json](file:///d:/desktop/Tutor%20connect/vercel.json))**: Reconfigured the rewrite destination path from `/api/index.cjs` to `/api/index.js`.
 
+### 10. Serverless MongoDB Connection Orchestration
+- **Mongoose Connection Caching ([server.js](file:///d:/desktop/Tutor%20connect/backend/server.js))**: Added connection caching to avoid multiple parallel connections in serverless cold/warm starts, and exported the `connectDB` promise.
+- **Serverless Request Wrapping ([index.js](file:///d:/desktop/Tutor%20connect/api/index.js))**: Wrapped the main serverless function in `api/index.js` to explicitly await the database connection check on every invocation before Express processes routes. This eliminates the `"Cannot call users.findOne() before initial connection is complete"` race condition.
+- **Startup Connection Flow**: Updated the local start script to await the database connection before firing up the Express HTTP listener, maintaining robust startup synchronization.
+
 ---
 
 ## 🚀 Verification and Validation Results
