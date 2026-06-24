@@ -2,7 +2,12 @@ import { createRequire } from 'module';
 import mongoose from 'mongoose';
 
 const require = createRequire(import.meta.url);
+
+// Validate environment variables on startup
+require('../backend/config/env.js');
+
 const app = require('../backend/server.js');
+
 
 // Standard Vercel/Serverless MongoDB connection caching pattern using global object
 let cached = global.mongoose;

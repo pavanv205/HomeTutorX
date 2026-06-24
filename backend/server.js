@@ -2,13 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
-const dotenv = require('dotenv');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const errorHandler = require('./middleware/errorMiddleware');
 
-dotenv.config();
-dotenv.config({ path: path.join(__dirname, '.env') });
+// Validate environment variables upfront on startup
+require('./config/env');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,21 +15,6 @@ const PORT = process.env.PORT || 5000;
 // Enable trust proxy so express-rate-limit can see the actual client IP behind Vercel reverse proxy
 app.set('trust proxy', 1);
 
-// ─── Environment Variable Validation ────────────────────────────────────────
-const requiredVars = ['MONGODB_URI'];
-const recommendedVars = ['JWT_SECRET'];
-
-requiredVars.forEach(varName => {
-  if (!process.env[varName]) {
-    console.warn(`⚠️  WARNING: Required environment variable ${varName} is not set.`);
-  }
-});
-
-recommendedVars.forEach(varName => {
-  if (!process.env[varName]) {
-    console.warn(`⚠️  WARNING: Recommended environment variable ${varName} is not set. Using insecure default.`);
-  }
-});
 
 // ─── Rate Limiter Configuration ─────────────────────────────────────────────
 const apiLimiter = rateLimit({
@@ -88,11 +72,16 @@ app.get('/api/health', async (req, res) => {
     const dbState = mongoose.connection.readyState;
     const dbStatus = dbState === 1 ? 'connected' : dbState === 2 ? 'connecting' : 'disconnected';
     
+    // Safely check required variables without leaking sensitive values
+    const criticalVars = ['MONGODB_URI', 'JWT_SECRET', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+    const missingVars = criticalVars.filter(key => !process.env[key] || process.env[key].trim() === '');
+
     res.status(200).json({
       success: true,
       data: {
         status: 'ok',
-        database: dbStatus
+        database: dbStatus,
+        configStatus: missingVars.length === 0 ? 'valid' : `Missing: ${missingVars.join(', ')}`
       }
     });
   } catch (err) {
