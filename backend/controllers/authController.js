@@ -290,6 +290,8 @@ exports.login = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
+    console.log("STEP 1: User found");
+
     // Safety check to prevent crashes if user document doesn't have a password field
     if (!user.password) {
       console.error(`[AUTH ERROR] User document for ${email} is missing a password field in the database.`);
@@ -305,6 +307,8 @@ exports.login = async (req, res, next) => {
       return res.status(500).json({ success: false, message: 'Internal server error during authentication.' });
     }
 
+    console.log("STEP 2: Password match:", isMatch);
+
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
@@ -314,6 +318,8 @@ exports.login = async (req, res, next) => {
       console.error('[CRITICAL CONFIG ERROR] JWT_SECRET environment variable is missing on token generation request.');
       return res.status(500).json({ success: false, message: 'Internal server configuration error.' });
     }
+
+    console.log("STEP 3: Generating token");
 
     // Generate token
     const token = generateToken(user._id);
