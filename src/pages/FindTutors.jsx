@@ -25,6 +25,7 @@ const FindTutors = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
   const [userCoords, setUserCoords] = useState(null);
@@ -89,9 +90,12 @@ const FindTutors = () => {
 
   // Apply filters and fetch tutors
   useEffect(() => {
+    let active = true;
+
     const fetchFilteredTutors = async () => {
       try {
         setLoading(true);
+        setError(null);
         const filters = {
           search: searchVal,
           subject: subjectVal,
@@ -101,11 +105,28 @@ const FindTutors = () => {
           division: divisionVal,
           maxPrice: maxPriceVal
         };
-        let data = await tutorService.getTutors(filters);
+        const responseData = await tutorService.getTutors(filters);
+
+        if (!active) return;
+
+        // Ensure tutor data is parsed safely as an array
+        let data = [];
+        if (Array.isArray(responseData)) {
+          data = responseData;
+        } else if (responseData && Array.isArray(responseData.data)) {
+          data = responseData.data;
+        } else if (responseData && Array.isArray(responseData.tutors)) {
+          data = responseData.tutors;
+        } else if (responseData) {
+          data = typeof responseData === 'object' ? [responseData] : [];
+        }
+
+        // Filter out any potential invalid/null records
+        data = data.filter(Boolean);
 
         if (userCoords) {
           data = data.map(tutor => {
-            if (tutor.lat && tutor.lng) {
+            if (tutor && tutor.lat && tutor.lng) {
               const dist = calculateDistance(userCoords.lat, userCoords.lng, tutor.lat, tutor.lng);
               return { ...tutor, distance: dist };
             }
@@ -113,21 +134,30 @@ const FindTutors = () => {
           });
           // Sort closest first
           data.sort((a, b) => {
-            if (a.distance === undefined) return 1;
-            if (b.distance === undefined) return -1;
+            if (!a || a.distance === undefined) return 1;
+            if (!b || b.distance === undefined) return -1;
             return a.distance - b.distance;
           });
         }
 
         setTutors(data);
-      } catch (error) {
-        console.error('Error fetching filtered tutors:', error);
+      } catch (err) {
+        if (!active) return;
+        console.error('Error fetching filtered tutors:', err);
+        setError(err.message || 'Failed to fetch tutors. Please check your internet connection.');
+        setTutors([]); // Safely fallback to empty array
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     };
 
     fetchFilteredTutors();
+
+    return () => {
+      active = false;
+    };
   }, [searchVal, subjectVal, classVal, modeVal, stateVal, divisionVal, maxPriceVal, userCoords]);
 
   const handleGetLocation = () => {
@@ -538,11 +568,26 @@ const FindTutors = () => {
 
           {/* Tutors Listing Main Grid */}
           <main className="lg:col-span-3">
-            {loading ? (
+            {error ? (
+              <div className="text-center py-20 bg-white dark:bg-slate-900 border border-rose-100 dark:border-rose-950/20 rounded-3xl p-8 shadow-sm">
+                <div className="h-16 w-16 bg-rose-50 dark:bg-rose-950/20 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-xl">⚠️</span>
+                </div>
+                <h3 className="text-xl font-bold text-slate-855 dark:text-slate-100 mb-2">
+                  Failed to Load Tutors
+                </h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm max-w-md mx-auto mb-6">
+                  {error}
+                </p>
+                <Button variant="primary" onClick={handleResetFilters}>
+                  Reset Filters & Retry
+                </Button>
+              </div>
+            ) : loading ? (
               <TutorListSkeleton count={6} />
-            ) : tutors.length === 0 ? (
+            ) : !Array.isArray(tutors) || tutors.length === 0 ? (
               <div className="text-center py-20 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 shadow-sm">
-                <div className="h-16 w-16 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="h-16 w-16 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-505 rounded-full flex items-center justify-center mx-auto mb-6">
                   <FaUndo className="h-6 w-6" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-850 dark:text-slate-100 mb-2">
@@ -560,7 +605,7 @@ const FindTutors = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {tutors.map((tutor) => (
-                  <TutorCard key={tutor.id} tutor={tutor} />
+                  <TutorCard key={tutor.id || tutor._id} tutor={tutor} />
                 ))}
               </div>
             )}
