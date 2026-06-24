@@ -72,6 +72,11 @@ This document walks through the implementation of the **Live Location Proximity 
 - **State-free server import ([server.js](file:///d:/desktop/Tutor%20connect/backend/server.js))**: Cleaned up the Express application entrypoint (`backend/server.js`) so that importing it is entirely side-effect-free (no automatic database connections or listener initialization).
 - **Direct Local Executable block**: Updated the local startup inside `backend/server.js` to only connect to Mongoose and fire up the listener when the file is run directly (using `require.main === module` check).
 
+### 11. Backend Code Quality & Security Optimizations
+- **Centralized Error Handling ([errorMiddleware.js](file:///d:/desktop/Tutor%20connect/backend/middleware/errorMiddleware.js))**: Extracted error formatting and validation response mapping to a standalone Express middleware. Integrates cleanly with backend/server.js to reduce codebase duplications.
+- **Read-Only Database Query Optimization**: Added `.lean()` to lookup/find operations inside the tutor controller and auth controller to return plain JS objects, minimizing Mongoose overhead.
+- **Mongoose Indexing Suggestions ([Tutor.js](file:///d:/desktop/Tutor%20connect/backend/models/Tutor.js))**: Added compound indexes (state/city) and key query tag indexes (subjects, classes, isVerified, hourlyRate) to optimize search latency.
+
 ---
 
 ## 🚀 Verification and Validation Results
