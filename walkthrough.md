@@ -68,6 +68,7 @@ This document walks through the implementation of the **Live Location Proximity 
 
 ### 10. Serverless MongoDB Connection Orchestration
 - **Global connection caching ([index.js](file:///d:/desktop/Tutor%20connect/api/index.js))**: Relocated `connectDB()` to `api/index.js` and implemented the standard `global.mongoose` caching pattern for serverless environments. This caches the database connection and the active connection promise, avoiding multiple concurrent handshakes on cold starts and ensuring that concurrent incoming requests await the same connection promise.
+- **Dedicated Seeding script ([seed.js](file:///d:/desktop/Tutor%20connect/backend/seed.js))**: Removed all seeding routines from the serverless request lifecycle to save execution time/cost and moved them to a dedicated `backend/seed.js` script. Added corresponding NPM commands (`npm run db:seed` and `npm run seed`) for manual seeding.
 - **State-free server import ([server.js](file:///d:/desktop/Tutor%20connect/backend/server.js))**: Cleaned up the Express application entrypoint (`backend/server.js`) so that importing it is entirely side-effect-free (no automatic database connections or listener initialization).
 - **Direct Local Executable block**: Updated the local startup inside `backend/server.js` to only connect to Mongoose and fire up the listener when the file is run directly (using `require.main === module` check).
 
