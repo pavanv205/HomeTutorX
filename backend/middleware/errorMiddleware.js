@@ -59,8 +59,7 @@ const errorHandler = (err, req, res, next) => {
 
   res.status(statusCode).json({
     success: false,
-    message: err.message || 'Server Error',
-    stack: err.stack
+    message: statusCode === 500 && !devMode ? 'An unexpected server error occurred.' : err.message || 'Server Error'
   });
 };
 
