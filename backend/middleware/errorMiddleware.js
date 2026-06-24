@@ -56,10 +56,11 @@ const errorHandler = (err, req, res, next) => {
   }
 
   const statusCode = err.status || 500;
+  const devMode = process.env.NODE_ENV === 'development';
 
   res.status(statusCode).json({
     success: false,
-    message: err.message || 'Server Error'
+    message: statusCode === 500 && !devMode ? 'An unexpected server error occurred.' : err.message || 'Server Error'
   });
 };
 
