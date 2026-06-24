@@ -126,8 +126,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ─── Start Server (only when not running on Vercel) ─────────────────────────
-if (!process.env.VERCEL) {
+// ─── Start Server (only when executed directly, not on import) ─────────────────────────
+if (require.main === module) {
   const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/tutorconnect';
   const maskedUri = uri.replace(/\/\/([^:]+):([^@]+)@/, '//***:***@');
   console.log(`[Local Startup] Connecting to MongoDB: ${maskedUri}`);
