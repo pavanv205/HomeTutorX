@@ -17,7 +17,7 @@ import { API_BASE_URL } from './config';
 function App() {
   const rawApiUrl = import.meta.env.VITE_API_URL || '';
   const hasPlaceholder = rawApiUrl.includes('<') || rawApiUrl.includes('>') || rawApiUrl.includes('placeholder');
-  const isApiUrlMissing = !rawApiUrl;
+  const isApiUrlMissing = !rawApiUrl && import.meta.env.DEV;
 
   return (
     <HelmetProvider>
