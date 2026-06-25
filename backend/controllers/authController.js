@@ -270,27 +270,34 @@ exports.registerTutor = async (req, res, next) => {
 // @route   POST /api/auth/login
 // @access  Public
 exports.login = async (req, res, next) => {
+  let requestEmail = 'unknown';
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
+    requestEmail = email || 'unknown';
+
+    console.log(`[LOGIN START] Login process initiated for email: ${requestEmail}`);
 
     // Validate email & password presence
     if (!email || !password) {
+      console.log(`[LOGIN INFO] Login validation failed: Missing email or password for: ${requestEmail}`);
       return res.status(400).json({ success: false, message: 'Please provide an email and password' });
     }
 
     // Validate email format
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (!emailRegex.test(email)) {
+      console.log(`[LOGIN INFO] Login validation failed: Invalid email format for: ${email}`);
       return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
     }
 
     // Check for user
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
+      console.log(`[LOGIN INFO] User lookup failed: User not found for email: ${email}`);
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    console.log("STEP 1: User found");
+    console.log(`[LOGIN INFO] User lookup succeeded: User found for email: ${email}`);
 
     // Safety check to prevent crashes if user document doesn't have a password field
     if (!user.password) {
@@ -303,13 +310,17 @@ exports.login = async (req, res, next) => {
     try {
       isMatch = await user.matchPassword(password);
     } catch (bcryptErr) {
-      console.error('[AUTH ERROR] Password comparison failed:', bcryptErr.message);
+      console.error(`[LOGIN ERROR] Password comparison failed for email ${email}:`, bcryptErr.message);
+      if (bcryptErr.stack) {
+        console.error(bcryptErr.stack);
+      }
       return res.status(500).json({ success: false, message: 'Internal server error during authentication.' });
     }
 
-    console.log("STEP 2: Password match:", isMatch);
+    console.log(`[LOGIN INFO] Password comparison result for ${email}: match = ${isMatch}`);
 
     if (!isMatch) {
+      console.log(`[LOGIN INFO] Login failed: Password mismatch for email: ${email}`);
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
@@ -319,10 +330,12 @@ exports.login = async (req, res, next) => {
       return res.status(500).json({ success: false, message: 'Internal server configuration error.' });
     }
 
-    console.log("STEP 3: Generating token");
+    console.log(`[LOGIN INFO] Generating JWT token for user: ${email}`);
 
     // Generate token
     const token = generateToken(user._id);
+
+    console.log(`[LOGIN SUCCESS] User successfully authenticated: ${email}`);
 
     res.status(200).json({
       success: true,
@@ -338,8 +351,11 @@ exports.login = async (req, res, next) => {
       }
     });
   } catch (err) {
-    // Explicitly log the real error message to server stdout/stderr so it shows in Vercel logs
-    console.error('[LOGIN SYSTEM ERROR] Uncaught exception in login controller:', err);
+    // Explicitly log the real error message and stack trace to server stdout/stderr
+    console.error(`[LOGIN SYSTEM ERROR] Uncaught exception in login controller for email ${requestEmail}:`, err.message);
+    if (err.stack) {
+      console.error(err.stack);
+    }
     next(err);
   }
 };
