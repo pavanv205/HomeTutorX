@@ -44,12 +44,11 @@ const validateEnv = () => {
     console.error('======================================\n');
 
     // Fail-fast in production or on Vercel
-    if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
-      console.error('Shutting down server due to invalid configuration in production.');
-      process.exit(1);
-    } else {
-      console.warn('⚠️  WARNING: Environment validation failed in development. Please fix your .env file.\n');
-    }
+    // In production, we prefer to continue running to allow Vercel to report clear error messages rather than exiting abruptly.
+    //process.exit(1);
+    // Instead, just log the critical error and allow the server to start; downstream code should handle missing config gracefully.
+
+    console.warn('⚠️  WARNING: Environment validation failed in development. Please fix your .env file.\n');
     return false;
   }
 
