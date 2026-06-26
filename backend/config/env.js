@@ -38,27 +38,22 @@ const validateEnv = () => {
   }
 
   if (errors.length > 0) {
-    console.error('\n❌ CRITICAL CONFIGURATION ERROR:');
+    console.error('\n❌ CONFIGURATION WARNINGS:');
     console.error('======================================');
     errors.forEach(err => console.error(` - ${err}`));
     console.error('======================================\n');
-
-    // Fail-fast in production or on Vercel
-    // In production, we prefer to continue running to allow Vercel to report clear error messages rather than exiting abruptly.
-    //process.exit(1);
-    // Instead, just log the critical error and allow the server to start; downstream code should handle missing config gracefully.
-
-    console.warn('⚠️  WARNING: Environment validation failed in development. Please fix your .env file.\n');
-    return false;
+    console.warn('⚠️  WARNING: Environment validation issues detected. Continuing execution in production.');
   }
-
+  // Always return true to avoid fatal exit in production
   return true;
 };
 
 // Run validation immediately on import
-const isValid = validateEnv();
+// Run validation on import (logs warnings if any)
+validateEnv();
 
 module.exports = {
-  isValid,
+  // isValid retained for backward compatibility but always true
+  isValid: true,
   validateEnv
 };

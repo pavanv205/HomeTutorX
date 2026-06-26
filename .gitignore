@@ -31,3 +31,4 @@ dist-ssr
 # Local database and uploads fallback
 backend/data/
 backend/uploads/
+.vercel
