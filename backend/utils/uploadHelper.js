@@ -1,40 +1,63 @@
 const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('cloudinary').v2;
+const path = require('path');
+const fs = require('fs');
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
+let storage;
+let hasCloudinary = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
 
-// Configure Cloudinary Storage dynamically to handle images & raw files (like PDFs)
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: async (req, file) => {
-    const filename = file.originalname.toLowerCase();
-    const isPdf = file.mimetype === 'application/pdf' || filename.endsWith('.pdf');
-    return {
-      folder: 'tutor_profiles',
-      resource_type: isPdf ? 'raw' : 'image',
-      format: isPdf ? 'pdf' : undefined,
-    };
+if (hasCloudinary) {
+  try {
+    const { CloudinaryStorage } = require('multer-storage-cloudinary');
+    const cloudinary = require('cloudinary').v2;
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+    storage = new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: async (req, file) => {
+        const filename = file.originalname.toLowerCase();
+        const isPdf = file.mimetype === 'application/pdf' || filename.endsWith('.pdf');
+        return {
+          folder: 'tutor_profiles',
+          resource_type: isPdf ? 'raw' : 'image',
+          format: isPdf ? 'pdf' : undefined,
+        };
+      }
+    });
+  } catch (err) {
+    console.warn('⚠️ Cloudinary setup failed, falling back to local storage:', err.message);
+    hasCloudinary = false;
   }
-});
+}
 
-// File filter to validate file types and reject temporary trashed files
+if (!hasCloudinary) {
+  const uploadDir = path.join(__dirname, '..', 'uploads');
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+  });
+}
+
+// File filter to validate file types
 const fileFilter = (req, file, cb) => {
   const filename = file.originalname.toLowerCase();
   
-  // 1. Reject invalid temporary files
   if (filename.includes('.trashed-') || filename.startsWith('.trashed-')) {
     console.error(`[UPLOAD REJECTED] Rejected temporary trashed file: ${file.originalname}`);
     return cb(new Error('Invalid file type: temporary trashed files are not allowed'), false);
   }
 
-  // 2. Validate based on field name
   if (file.fieldname === 'resume') {
-    // Profile Photo
     const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     const allowedExts = ['.jpg', '.jpeg', '.png', '.webp'];
     const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
@@ -43,11 +66,9 @@ const fileFilter = (req, file, cb) => {
     if (hasAllowedMime || hasAllowedExt) {
       cb(null, true);
     } else {
-      console.error(`[UPLOAD REJECTED] Profile Photo invalid type: ${file.originalname} (${file.mimetype})`);
       cb(new Error('Invalid file type: Profile Photo must be JPG, JPEG, PNG, or WEBP'), false);
     }
   } else if (file.fieldname === 'certificate') {
-    // Educational Certificate
     const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
     const allowedExts = ['.jpg', '.jpeg', '.png', '.pdf'];
     const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
@@ -56,7 +77,6 @@ const fileFilter = (req, file, cb) => {
     if (hasAllowedMime || hasAllowedExt) {
       cb(null, true);
     } else {
-      console.error(`[UPLOAD REJECTED] Certificate invalid type: ${file.originalname} (${file.mimetype})`);
       cb(new Error('Invalid file type: Educational Certificate must be PDF, JPG, JPEG, or PNG'), false);
     }
   } else {
@@ -72,7 +92,10 @@ const upload = multer({
 
 const getFileUrl = (file) => {
   if (!file) return null;
-  return file.path;
+  if (hasCloudinary && file.path) {
+    return file.path;
+  }
+  return `/uploads/${file.filename}`;
 };
 
 module.exports = {

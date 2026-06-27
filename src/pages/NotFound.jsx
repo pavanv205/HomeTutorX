@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '../components/common/SEO';
 import Button from '../components/common/Button';

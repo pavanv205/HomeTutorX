@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { FaSearch, FaCalendarCheck, FaBookReader } from 'react-icons/fa';
+import { FaSearch, FaBookReader } from 'react-icons/fa';
 
 const STEPS = [
   {

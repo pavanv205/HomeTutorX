@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
 const Button = ({
@@ -28,17 +27,6 @@ const Button = ({
     sm: 'px-3.5 py-1.5 text-xs',
     md: 'px-5 py-2.5 text-sm',
     lg: 'px-7 py-3.5 text-base'
-  };
-
-  const spinAnimation = {
-    loop: {
-      rotate: 360,
-      transition: {
-        duration: 1,
-        ease: 'linear',
-        repeat: Infinity
-      }
-    }
   };
 
   return (

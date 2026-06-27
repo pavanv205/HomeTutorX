@@ -1,30 +1,5 @@
-import React from 'react';
 import SEO from '../components/common/SEO';
 import BecomeTutorForm from '../components/forms/BecomeTutorForm';
-import { FaGraduationCap, FaClock, FaRupeeSign, FaShieldAlt } from 'react-icons/fa';
-
-const BENEFITS = [
-  {
-    icon: <FaRupeeSign className="h-6 w-6" />,
-    title: 'Attractive Earnings',
-    description: 'Set your own hourly tutoring rates and earn according to your completed lecture hours.'
-  },
-  {
-    icon: <FaClock className="h-6 w-6" />,
-    title: 'Flexible Schedules',
-    description: 'Choose your own class hours. Tutor online from home or conduct offline sessions in your vicinity.'
-  },
-  {
-    icon: <FaShieldAlt className="h-6 w-6" />,
-    title: 'Verified Payments',
-    description: 'Enjoy timely monthly payouts directly to your bank account. No billing hassle with students.'
-  },
-  {
-    icon: <FaGraduationCap className="h-6 w-6" />,
-    title: 'Teaching Materials',
-    description: 'Access curriculum guidelines, sample question papers, worksheets, and resources.'
-  }
-];
 
 const BecomeTutor = () => {
   return (

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaBriefcase, FaBook, FaUpload } from 'react-icons/fa';
-import { SUBJECTS, CLASSES, CITIES, STATES, STATE_CITIES } from '../../constants';
-import { tutorService } from '../../services/tutorService';
+import { FaUser, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaBriefcase, FaBook, FaUpload } from 'react-icons/fa';
+import { SUBJECTS, CLASSES, STATES, STATE_CITIES } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
 
@@ -119,8 +118,6 @@ const BecomeTutorForm = () => {
     }
   }, [watchedState, setValue]);
 
-  const citiesForSelectedState = watchedState ? (STATE_CITIES[watchedState] || []) : [];
-
   const [locLoading, setLocLoading] = useState(false);
   const [locError, setLocError] = useState('');
 
@@ -134,7 +131,7 @@ const BecomeTutorForm = () => {
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const [citySearchQuery, setCitySearchQuery] = useState('');
 
-  const sortedCities = React.useMemo(() => {
+  const sortedCities = useMemo(() => {
     const allStateCities = STATE_CITIES[watchedState] || [];
     if (!citySearchQuery.trim()) {
       return allStateCities;
@@ -692,7 +689,7 @@ const BecomeTutorForm = () => {
         {/* STEP 2: Qualifications & Experience */}
         {currentStep === 1 && (
           <div className="space-y-5">
-            <h4 className="text-lg font-bold text-slate-855 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
               Academic Qualifications & Work Experience
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -769,7 +766,7 @@ const BecomeTutorForm = () => {
         {/* STEP 3: Teaching Preferences */}
         {currentStep === 2 && (
           <div className="space-y-5">
-            <h4 className="text-lg font-bold text-slate-855 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
               Teaching Preferences
             </h4>
 
@@ -894,7 +891,7 @@ const BecomeTutorForm = () => {
         {/* STEP 4: Location & Profile */}
         {currentStep === 3 && (
           <div className="space-y-5">
-            <h4 className="text-lg font-bold text-slate-855 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
               Location & Profile
             </h4>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaBriefcase, FaGraduationCap, FaMapMarkerAlt, FaUser, FaCalendarAlt } from 'react-icons/fa';
@@ -56,7 +56,7 @@ export const TutorCard = ({ tutor }) => {
             className="h-16 w-16 rounded-2xl object-cover shrink-0 border border-slate-100 dark:border-slate-800"
           />
           <div className="flex-1 space-y-1">
-            <h4 className="font-bold text-slate-855 dark:text-slate-100 text-base group-hover:text-primary dark:group-hover:text-blue-450 transition-colors">
+            <h4 className="font-bold text-slate-800 dark:text-slate-100 text-base group-hover:text-primary dark:group-hover:text-blue-450 transition-colors">
               {name}
             </h4>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
@@ -117,13 +117,13 @@ export const TutorCard = ({ tutor }) => {
         <div className="flex gap-4 shrink-0">
           <div>
             <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Hourly</span>
-            <span className="text-sm font-extrabold text-slate-855 dark:text-slate-100">
+            <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100">
               ₹{hourlyRate}
             </span>
           </div>
           <div>
             <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Monthly</span>
-            <span className="text-sm font-extrabold text-slate-855 dark:text-slate-100">
+            <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100">
               ₹{monthlyRate}
             </span>
           </div>

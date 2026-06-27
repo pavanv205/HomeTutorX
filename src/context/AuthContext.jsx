@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext(null);
@@ -8,6 +8,14 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Logout action (declared early to prevent TDZ errors in useEffect)
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+    setError(null);
+  };
 
   // Load user data on startup if token exists
   useEffect(() => {
@@ -52,18 +60,10 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       const errMsg = err.message || 'Login failed. Please check credentials.';
       setError(errMsg);
-      throw new Error(errMsg);
+      throw new Error(errMsg, { cause: err });
     } finally {
       setLoading(false);
     }
-  };
-
-  // Logout action
-  const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
-    setError(null);
   };
 
   // Register tutor action (multipart form data)
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       const errMsg = err.message || 'Registration failed. Please try again.';
       setError(errMsg);
-      throw new Error(errMsg);
+      throw new Error(errMsg, { cause: err });
     } finally {
       setLoading(false);
     }

@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaGraduationCap, FaBars, FaTimes } from 'react-icons/fa';
 import { NAV_LINKS } from '../../constants';
-
-import Button from '../common/Button';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { isAuthenticated, user, role, logout } = useAuth();
 
   useEffect(() => {
@@ -36,10 +36,10 @@ const Navbar = () => {
   }, []);
 
   const activeStyle = ({ isActive }) =>
-    `relative text-sm font-semibold transition-colors duration-200 py-2 ${
+    `relative text-sm font-extrabold tracking-tight transition-colors duration-200 py-2 ${
       isActive
-        ? 'text-primary dark:text-blue-400'
-        : 'text-slate-600 hover:text-primary dark:text-slate-300 dark:hover:text-blue-400'
+        ? 'text-primary dark:text-blue-400 font-black'
+        : 'text-slate-950 hover:text-primary dark:text-slate-950 dark:hover:text-primary'
     }`;
 
   return (
@@ -58,8 +58,8 @@ const Navbar = () => {
               <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/20 dark:shadow-none">
                 <FaGraduationCap className="h-6 w-6" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100">
-                Tutor<span className="text-primary dark:text-blue-500">Connect</span>
+              <span className="text-xl font-black tracking-tight text-slate-950 dark:text-slate-950">
+                Tutor<span className="text-primary dark:text-blue-500 font-extrabold">Connect</span>
               </span>
             </Link>
 
@@ -74,6 +74,7 @@ const Navbar = () => {
                         <motion.span
                           layoutId="nav-underline"
                           className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary dark:bg-blue-400 rounded-full"
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                         />
                       )}
                     </>
@@ -84,61 +85,86 @@ const Navbar = () => {
 
             {/* Header Right Actions */}
             <div className="hidden md:flex items-center gap-4">
-
-              
               {isAuthenticated ? (
-                <div className="relative group">
-                  <button className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer">
+                <div
+                  className="relative"
+                  onMouseEnter={() => setIsProfileOpen(true)}
+                  onMouseLeave={() => setIsProfileOpen(false)}
+                >
+                  <button className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-950 dark:text-slate-950 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer">
                     <span>👋 Hi, {user?.name ? user.name.split(' ')[0] : 'User'}</span>
                     <span className="text-[9px] text-slate-400">▼</span>
                   </button>
                   {/* Dropdown Menu */}
-                  <div className="absolute right-0 mt-1.5 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                    <Link
-                      to={role === 'Admin' ? '/admin/dashboard' : '/tutor/dashboard'}
-                      className="block w-full text-left py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                    >
-                      Dashboard
-                    </Link>
-                    <button
-                      onClick={logout}
-                      className="block w-full text-left py-2.5 px-3.5 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer"
-                    >
-                      Logout
-                    </button>
-                  </div>
+                  <AnimatePresence>
+                    {isProfileOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                        transition={{ type: 'spring', stiffness: 350, damping: 26 }}
+                        className="absolute right-0 mt-1.5 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2"
+                      >
+                        <Link
+                          to={role === 'Admin' ? '/admin/dashboard' : '/tutor/dashboard'}
+                          className="block w-full text-left py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                        >
+                          Dashboard
+                        </Link>
+                        <button
+                          onClick={logout}
+                          className="block w-full text-left py-2.5 px-3.5 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer"
+                        >
+                          Logout
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ) : (
-                <div className="relative group">
-                  <button className="text-xs font-bold text-slate-600 hover:text-primary dark:text-slate-350 dark:hover:text-blue-400 py-2.5 px-3 cursor-pointer focus:outline-none">
+                <div
+                  className="relative"
+                  onMouseEnter={() => setIsLoginOpen(true)}
+                  onMouseLeave={() => setIsLoginOpen(false)}
+                >
+                  <button className="text-xs font-bold text-slate-950 hover:text-primary dark:text-slate-950 dark:hover:text-primary py-2.5 px-3 cursor-pointer focus:outline-none">
                     Login ▼
                   </button>
                   {/* Dropdown Menu */}
-                  <div className="absolute right-0 mt-1.5 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                    <Link
-                      to="/login"
-                      className="block py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                    >
-                      Tutor Login
-                    </Link>
-                    <Link
-                      to="/login"
-                      className="block py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                    >
-                      Admin Login
-                    </Link>
-                  </div>
+                  <AnimatePresence>
+                    {isLoginOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                        transition={{ type: 'spring', stiffness: 350, damping: 26 }}
+                        className="absolute right-0 mt-1.5 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2"
+                      >
+                        <Link
+                          to="/login"
+                          className="block py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                        >
+                          Tutor Login
+                        </Link>
+                        <Link
+                          to="/login"
+                          className="block py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                        >
+                          Admin Login
+                        </Link>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
             </div>
 
             {/* Mobile Actions Header */}
             <div className="flex md:hidden items-center gap-3">
-
               {/* Hamburger Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none"
+                className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-slate-950 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none"
                 aria-label="Toggle navigation menu"
               >
                 {isOpen ? <FaTimes className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}
@@ -177,10 +203,10 @@ const Navbar = () => {
                     to={link.path}
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
-                      `text-lg font-semibold transition-colors duration-200 ${
+                      `text-lg font-bold transition-colors duration-200 ${
                         isActive
-                          ? 'text-primary dark:text-blue-400'
-                          : 'text-slate-700 hover:text-primary dark:text-slate-300 dark:hover:text-blue-400'
+                          ? 'text-primary dark:text-blue-400 font-extrabold'
+                          : 'text-slate-950 hover:text-primary dark:text-slate-950 dark:hover:text-primary'
                       }`
                     }
                   >
@@ -194,7 +220,7 @@ const Navbar = () => {
                     <Link
                       to={role === 'Admin' ? '/admin/dashboard' : '/tutor/dashboard'}
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-semibold text-slate-750 dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 transition-colors"
+                      className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
                     >
                       Dashboard
                     </Link>
@@ -203,7 +229,7 @@ const Navbar = () => {
                         setIsOpen(false);
                         logout();
                       }}
-                      className="text-lg font-semibold text-left text-rose-500 hover:text-rose-600 transition-colors cursor-pointer"
+                      className="text-lg font-bold text-left text-rose-500 hover:text-rose-600 transition-colors cursor-pointer"
                     >
                       Logout
                     </button>
@@ -213,14 +239,14 @@ const Navbar = () => {
                     <Link
                       to="/login"
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-semibold text-slate-755 dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 transition-colors"
+                      className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
                     >
                       Tutor Login
                     </Link>
                     <Link
                       to="/login"
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-semibold text-slate-755 dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 transition-colors"
+                      className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
                     >
                       Admin Login
                     </Link>

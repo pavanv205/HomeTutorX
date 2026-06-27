@@ -141,48 +141,106 @@ exports.createTutor = async (req, res, next) => {
   }
 };
 
+// Local filter helper for fallback
+function applyFallbackFilters(list, query) {
+  const { search, subject, gradeClass, mode, state, division, maxPrice } = query || {};
+  let res = list;
+  if (search) {
+    const q = String(search).toLowerCase();
+    res = res.filter(
+      (t) =>
+        (t.fullName && t.fullName.toLowerCase().includes(q)) ||
+        (t.qualification && t.qualification.toLowerCase().includes(q)) ||
+        (t.bio && t.bio.toLowerCase().includes(q)) ||
+        (t.subjects || []).some((s) => s.toLowerCase().includes(q)) ||
+        (t.city && t.city.toLowerCase().includes(q)) ||
+        (t.state && t.state.toLowerCase().includes(q))
+    );
+  }
+  if (subject && subject !== 'All') {
+    res = res.filter((t) => (t.subjects || []).some((s) => s.toLowerCase() === String(subject).toLowerCase()));
+  }
+  if (gradeClass && gradeClass !== 'All') {
+    res = res.filter((t) => (t.classes || []).some((c) => String(c).toLowerCase() === String(gradeClass).toLowerCase()));
+  }
+  if (mode && mode !== 'All') {
+    res = res.filter((t) => String(t.teachingMode).toLowerCase() === String(mode).toLowerCase());
+  }
+  if (state && state !== 'All') {
+    res = res.filter((t) => String(t.state).toLowerCase() === String(state).toLowerCase());
+  }
+  if (division && division !== 'All') {
+    res = res.filter((t) => String(t.city).toLowerCase() === String(division).toLowerCase());
+  }
+  if (maxPrice) {
+    res = res.filter((t) => Number(t.hourlyRate || 0) <= Number(maxPrice));
+  }
+  return res;
+}
+
 exports.getTutors = async (req, res, next) => {
   try {
-    const filters = {};
-    if (req.query.subject && req.query.subject !== 'All') {
-      filters.subjects = { $in: [req.query.subject] };
+    const isOffline = mongoose.connection.readyState !== 1;
+    if (isOffline) {
+      console.log('🔌 MongoDB is offline. Running getTutors in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const tutorsList = await dbFallback.getTutors();
+      const filtered = applyFallbackFilters(tutorsList, req.query);
+      
+      const page = parseInt(req.query.page, 10);
+      const limit = parseInt(req.query.limit, 10) || 10;
+
+      if (!isNaN(page) && page >= 1) {
+        const skip = (page - 1) * limit;
+        const total = filtered.length;
+        const pageData = filtered.slice(skip, skip + limit);
+        return res.json({
+          success: true,
+          data: pageData,
+          tutors: pageData,
+          pagination: {
+            total,
+            page,
+            limit,
+            pages: Math.ceil(total / limit)
+          }
+        });
+      }
+      return res.json(filtered);
     }
-    if (req.query.search) {
-      const q = String(req.query.search);
+
+    // Build filters object for MongoDB query
+    const filters = {};
+    const { search, subject, gradeClass, mode, state, division, maxPrice } = req.query || {};
+
+    if (search) {
+      const searchRegex = new RegExp(search, 'i');
       filters.$or = [
-        { fullName: { $regex: q, $options: 'i' } },
-        { qualification: { $regex: q, $options: 'i' } },
-        { bio: { $regex: q, $options: 'i' } },
-        { subjects: { $elemMatch: { $regex: q, $options: 'i' } } },
-        { state: { $regex: q, $options: 'i' } },
-        { city: { $regex: q, $options: 'i' } }
+        { fullName: searchRegex },
+        { qualification: searchRegex },
+        { bio: searchRegex },
+        { subjects: searchRegex },
+        { city: searchRegex },
+        { state: searchRegex }
       ];
     }
-    if (req.query.gradeClass && req.query.gradeClass !== 'All') {
-      filters.classes = { $in: [req.query.gradeClass] };
+    if (subject && subject !== 'All') {
+      filters.subjects = new RegExp(`^${subject}$`, 'i');
     }
-    if (req.query.mode && req.query.mode !== 'All') {
-      filters.teachingMode = req.query.mode;
+    if (gradeClass && gradeClass !== 'All') {
+      filters.classes = new RegExp(`^${gradeClass}$`, 'i');
     }
-    if (req.query.state && req.query.state !== 'All') {
-      filters.state = req.query.state;
+    if (mode && mode !== 'All') {
+      filters.teachingMode = new RegExp(`^${mode}$`, 'i');
     }
-    if (req.query.division && req.query.division !== 'All') {
-      filters.city = req.query.division; // division is stored in 'city' field in database
+    if (state && state !== 'All') {
+      filters.state = new RegExp(`^${state}$`, 'i');
     }
-    if (req.query.maxPrice) {
-      filters.hourlyRate = { $lte: Number(req.query.maxPrice) };
+    if (division && division !== 'All') {
+      filters.city = new RegExp(`^${division}$`, 'i');
     }
-
-    // Log incoming request details
-    console.log('[GET TUTORS] Query Params:', req.query);
-    console.log('[GET TUTORS] Mongoose readyState:', mongoose.connection.readyState);
-    console.log('[GET TUTORS] Built Filters:', JSON.stringify(filters));
-
-    // Ensure DB is connected
-    if (mongoose.connection.readyState !== 1) {
-      console.error('[GET TUTORS] DB not connected');
-      return res.status(503).json({ success: false, message: 'Database not connected' });
+    if (maxPrice) {
+      filters.hourlyRate = { $lte: Number(maxPrice) };
     }
 
     const page = parseInt(req.query.page, 10);
@@ -228,11 +286,19 @@ exports.getTutors = async (req, res, next) => {
 
 exports.getTutorById = async (req, res, next) => {
   try {
-    const tutor = await Tutor.findById(req.params.id).lean();
+    let tutor;
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running getTutorById in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const tutorsList = await dbFallback.getTutors();
+      tutor = tutorsList.find(t => String(t._id) === String(req.params.id));
+    } else {
+      tutor = await Tutor.findById(req.params.id).lean();
+    }
     if (!tutor) {
       return res.status(404).json({ success: false, message: 'Tutor not found' });
     }
-    // Retain direct object return value for frontend compatibility (normalizeTutor expects top-level fields)
+    // Retain direct object return value for frontend compatibility
     res.json(tutor);
   } catch (err) {
     next(err);
@@ -241,7 +307,17 @@ exports.getTutorById = async (req, res, next) => {
 
 exports.updateTutor = async (req, res, next) => {
   try {
-    const tutor = await Tutor.findById(req.params.id);
+    const isOffline = mongoose.connection.readyState !== 1;
+    let tutor;
+    if (isOffline) {
+      console.log('🔌 MongoDB is offline. Running updateTutor in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const tutorsList = await dbFallback.getTutors();
+      tutor = tutorsList.find(t => String(t._id) === String(req.params.id));
+    } else {
+      tutor = await Tutor.findById(req.params.id);
+    }
+    
     if (!tutor) {
       return res.status(404).json({ success: false, message: 'Tutor not found' });
     }
@@ -265,7 +341,13 @@ exports.updateTutor = async (req, res, next) => {
       data.certificateUrl = getFileUrl(req.files['certificate'][0]);
     }
 
-    const updated = await Tutor.findByIdAndUpdate(req.params.id, data, { new: true });
+    let updated;
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      updated = await dbFallback.updateTutor(req.params.id, { ...tutor, ...data });
+    } else {
+      updated = await Tutor.findByIdAndUpdate(req.params.id, data, { new: true });
+    }
     res.json({ success: true, data: updated });
   } catch (err) {
     next(err);

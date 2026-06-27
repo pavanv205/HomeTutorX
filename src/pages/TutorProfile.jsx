@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   FaStar,
   FaBriefcase,
   FaGraduationCap,
   FaMapMarkerAlt,
-  FaCheckCircle,
-  FaClock,
   FaArrowLeft,
   FaUserGraduate,
   FaUser,
@@ -101,7 +99,6 @@ const TutorProfile = () => {
   const reviews = Array.isArray(tutor.reviews) ? tutor.reviews : [];
   const hourlyRate = tutor.hourlyRate || 500;
   const monthlyRate = tutor.monthlyRate || 3000;
-  const availability = Array.isArray(tutor.availability) ? tutor.availability : ['Mon - Fri (4:00 PM - 7:00 PM)'];
 
   return (
     <>
@@ -137,7 +134,7 @@ const TutorProfile = () => {
 
             </div>
 
-            <p className="text-sm font-bold text-slate-655 dark:text-slate-300 flex items-center justify-center md:justify-start gap-1.5">
+            <p className="text-sm font-bold text-slate-600 dark:text-slate-300 flex items-center justify-center md:justify-start gap-1.5">
               <FaGraduationCap className="text-slate-450 text-lg shrink-0" />
               <span>{qualification}</span>
             </p>
@@ -186,7 +183,7 @@ const TutorProfile = () => {
               <h3 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">
                 Biography & Teaching Philosophy
               </h3>
-              <p className="text-sm text-slate-655 dark:text-slate-400 leading-relaxed font-medium">
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                 {about}
               </p>
             </div>
@@ -255,7 +252,7 @@ const TutorProfile = () => {
                           <FaStar className="fill-current" /> {rev.rating}
                         </div>
                       </div>
-                      <p className="text-sm text-slate-655 dark:text-slate-400 italic leading-relaxed pl-10 font-medium">
+                      <p className="text-sm text-slate-600 dark:text-slate-400 italic leading-relaxed pl-10 font-medium">
                         "{rev.comment}"
                       </p>
                       <p className="text-[10px] text-slate-400 pl-10 font-semibold uppercase tracking-wider">{rev.date}</p>

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
-import { SUBJECTS, CLASSES, STATES } from '../constants';
-import { FaGraduationCap, FaEnvelope, FaPhone, FaMapMarkerAlt, FaFileAlt, FaLock } from 'react-icons/fa';
+import { SUBJECTS, CLASSES } from '../constants';
+import { FaLock } from 'react-icons/fa';
 
 const TutorDashboard = () => {
   const { user } = useAuth();
@@ -16,7 +16,7 @@ const TutorDashboard = () => {
   const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '' });
 
   // Load Tutor Profile
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     if (!user || !user.tutorProfile) {
       setLoading(false);
       return;
@@ -36,11 +36,14 @@ const TutorDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    loadDashboardData();
-  }, [user]);
+    const timer = setTimeout(() => {
+      loadDashboardData();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [loadDashboardData]);
 
   // Handle Text Profile Inputs
   const handleProfileChange = (e) => {
@@ -222,7 +225,7 @@ const TutorDashboard = () => {
               {/* TAB 2: PROFILE MANAGEMENT */}
               {activeTab === 'Profile' && tutorProfile && (
                 <form onSubmit={handleSaveProfile} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
-                  <h3 className="text-base font-extrabold text-slate-855 dark:text-slate-100 border-b pb-3">Edit Profile Details</h3>
+                  <h3 className="text-base font-extrabold text-slate-800 dark:text-slate-100 border-b pb-3">Edit Profile Details</h3>
                   
                   {/* Basic Details */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -378,7 +381,7 @@ const TutorDashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Password Form */}
                   <form onSubmit={handlePasswordChange} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
-                    <h3 className="text-base font-extrabold text-slate-855 dark:text-slate-100 border-b pb-3 flex items-center gap-2">
+                    <h3 className="text-base font-extrabold text-slate-800 dark:text-slate-100 border-b pb-3 flex items-center gap-2">
                       <FaLock className="text-primary dark:text-blue-500" />
                       Change Password
                     </h3>

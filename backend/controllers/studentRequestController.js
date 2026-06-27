@@ -1,4 +1,8 @@
 const StudentRequest = require('../models/StudentRequest');
+const mongoose = require('mongoose');
+
+// Simple in-memory fallback list
+const memoryRequests = [];
 
 exports.createStudentRequest = async (req, res, next) => {
   try {
@@ -6,6 +10,21 @@ exports.createStudentRequest = async (req, res, next) => {
     
     if (!name || !email || !queryType || !message) {
       return res.status(400).json({ success: false, message: 'Please provide all required fields' });
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running createStudentRequest in Fallback mode.');
+      const newRequest = {
+        _id: 'fallback-req-' + Math.random().toString(36).substr(2, 9),
+        name,
+        email,
+        queryType,
+        message,
+        status: 'Pending',
+        createdAt: new Date().toISOString()
+      };
+      memoryRequests.push(newRequest);
+      return res.status(201).json({ success: true, data: newRequest, message: 'Your message has been received! Our support representative will email you shortly.' });
     }
 
     const newRequest = await StudentRequest.create({
@@ -23,6 +42,10 @@ exports.createStudentRequest = async (req, res, next) => {
 
 exports.getStudentRequests = async (req, res, next) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running getStudentRequests in Fallback mode.');
+      return res.status(200).json({ success: true, data: memoryRequests });
+    }
     const requests = await StudentRequest.find().sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: requests });
   } catch (err) {
@@ -33,11 +56,20 @@ exports.getStudentRequests = async (req, res, next) => {
 exports.updateStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
-    const request = await StudentRequest.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true, runValidators: true }
-    );
+    let request;
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running updateStatus in Fallback mode.');
+      request = memoryRequests.find(r => String(r._id) === String(req.params.id));
+      if (request) {
+        request.status = status;
+      }
+    } else {
+      request = await StudentRequest.findByIdAndUpdate(
+        req.params.id,
+        { status },
+        { new: true, runValidators: true }
+      );
+    }
     if (!request) {
       return res.status(404).json({ success: false, message: 'Student request not found' });
     }

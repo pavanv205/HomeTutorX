@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import Button from './Button';
 
 class ErrorBoundary extends Component {
@@ -38,7 +38,7 @@ class ErrorBoundary extends Component {
                 Reload Page
               </Button>
             </div>
-            {process.env.NODE_ENV === 'development' && (
+            {import.meta.env.DEV && (
               <details className="mt-6 text-left p-3 bg-slate-100 dark:bg-slate-900 rounded-lg overflow-auto max-h-40 text-xs font-mono text-red-600 dark:text-red-400">
                 {this.state.error?.toString()}
               </details>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
@@ -11,10 +10,6 @@ import ScrollToTop from './components/common/ScrollToTop';
 import Modal from './components/common/Modal';
 import BookingForm from './components/forms/BookingForm';
 import ErrorBoundary from './components/common/ErrorBoundary';
-
-
-
-import { API_BASE_URL } from './config';
 
 const BookingModalWrapper = () => {
   const { isOpen, selectedTutor, closeBookingModal } = useBookingModal();

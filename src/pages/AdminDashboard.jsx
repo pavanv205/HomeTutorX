@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FaGraduationCap, FaCheck, FaTimes, FaUserSlash, FaUserCheck, FaInfoCircle } from 'react-icons/fa';
+import { useState, useEffect, useCallback } from 'react';
+import { FaGraduationCap, FaUserCheck, FaInfoCircle } from 'react-icons/fa';
 import api from '../services/api';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
@@ -27,7 +26,7 @@ const AdminDashboard = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   // Fetch admin dashboard details
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     setLoading(true);
     setErrorMsg('');
     try {
@@ -52,11 +51,14 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    const timer = setTimeout(() => {
+      fetchDashboardData();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [fetchDashboardData]);
 
   // Verify / Approve Tutor profile
   const handleVerifyTutor = async (tutorId, isCurrentlyVerified) => {

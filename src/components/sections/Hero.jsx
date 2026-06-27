@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaSearch, FaUserPlus, FaStar, FaUserGraduate, FaChalkboardTeacher } from 'react-icons/fa';

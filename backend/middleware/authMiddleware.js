@@ -34,7 +34,15 @@ exports.protect = async (req, res, next) => {
     );
 
     // Get user from DB
-    const user = await User.findById(decoded.id);
+    let user;
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running protect in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      user = usersList.find(u => String(u._id) === String(decoded.id));
+    } else {
+      user = await User.findById(decoded.id);
+    }
 
     if (!user) {
       console.error(`[AUTH ERROR] ${req.method} ${req.originalUrl} - Status: 401 - Message: User not found with ID ${decoded.id}.`);

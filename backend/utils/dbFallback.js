@@ -1,0 +1,100 @@
+const bcrypt = require('bcryptjs');
+
+const memoryBookings = [];
+const memoryTutors = [];
+const memoryUsers = [];
+
+// Seed default users in memory (matching seed.js logic)
+const initializeSeeds = async () => {
+  const adminPasswordHash = await bcrypt.hash('adminpassword123', 10);
+  const tutorPasswordHash = await bcrypt.hash('tutor123', 10);
+
+  const defaultAdmin = {
+    _id: '6a3956421c7fc8576e26c6aa',
+    name: 'System Admin',
+    email: 'admin@tutorconnect.com',
+    password: adminPasswordHash,
+    role: 'Admin',
+    createdAt: new Date().toISOString()
+  };
+
+  const defaultTutorProfileId = '6a3956421c7fc8576e26c6ad';
+  const defaultTutorUser = {
+    _id: '6a3956421c7fc8576e26c6ab',
+    name: 'Default Tutor',
+    email: 'tutor@tutorconnect.com',
+    password: tutorPasswordHash,
+    role: 'Tutor',
+    tutorProfile: defaultTutorProfileId,
+    createdAt: new Date().toISOString()
+  };
+
+  const defaultTutorProfile = {
+    _id: defaultTutorProfileId,
+    userId: '6a3956421c7fc8576e26c6ab',
+    fullName: 'Default Tutor',
+    mobile: '9876543210',
+    email: 'tutor@tutorconnect.com',
+    gender: 'Male',
+    age: 30,
+    qualification: 'M.Sc. Physics',
+    university: 'Stanford University',
+    graduationYear: 2018,
+    experience: 5,
+    subjects: ['Mathematics', 'Physics'],
+    classes: ['Class 9-10', 'Class 11-12'],
+    teachingMode: 'Both',
+    hourlyRate: 50,
+    monthlyRate: 8000,
+    streetAddress: 'Madhapur',
+    city: 'Hyderabad',
+    state: 'Telangana',
+    pincode: '500081',
+    lat: 17.4483,
+    lng: 78.3741,
+    bio: 'Passionate mathematics and physics tutor with 5+ years of experience helping students achieve academic excellence.',
+    photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80',
+    resumeUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80',
+    isVerified: true,
+    leadsCount: 12,
+    viewsCount: 142,
+    createdAt: new Date().toISOString()
+  };
+
+  memoryUsers.push(defaultAdmin, defaultTutorUser);
+  memoryTutors.push(defaultTutorProfile);
+};
+
+initializeSeeds();
+
+exports.getUsers = async () => memoryUsers;
+exports.saveUser = async (user) => {
+  memoryUsers.push(user);
+  return user;
+};
+exports.getTutors = async () => memoryTutors;
+exports.saveTutor = async (tutor) => {
+  memoryTutors.push(tutor);
+  return tutor;
+};
+exports.getBookings = async () => memoryBookings;
+exports.saveBooking = async (booking) => {
+  memoryBookings.push(booking);
+  return booking;
+};
+exports.updateBooking = async (id, updatedBooking) => {
+  const idx = memoryBookings.findIndex(b => String(b._id) === String(id));
+  if (idx !== -1) {
+    memoryBookings[idx] = { ...memoryBookings[idx], ...updatedBooking };
+    return memoryBookings[idx];
+  }
+  return updatedBooking;
+};
+exports.updateTutor = async (id, updatedTutor) => {
+  const idx = memoryTutors.findIndex(t => String(t._id) === String(id));
+  if (idx !== -1) {
+    memoryTutors[idx] = { ...memoryTutors[idx], ...updatedTutor };
+    return memoryTutors[idx];
+  }
+  return updatedTutor;
+};

@@ -8,6 +8,40 @@ const mongoose = require('mongoose');
 // @access  Private (Admin only)
 exports.getDashboardStats = async (req, res, next) => {
   try {
+    const isOffline = mongoose.connection.readyState !== 1;
+    if (isOffline) {
+      console.log('🔌 MongoDB is offline. Running getDashboardStats in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const tutorsList = await dbFallback.getTutors();
+      const bookingsList = await dbFallback.getBookings();
+      
+      const totalTutors = tutorsList.length;
+      const verifiedTutors = tutorsList.filter(t => t.isVerified).length;
+      const pendingTutors = tutorsList.filter(t => !t.isVerified).length;
+
+      const totalRequests = bookingsList.length;
+      const pendingRequests = bookingsList.filter(b => b.status === 'Pending').length;
+      const contactedRequests = bookingsList.filter(b => b.status === 'Contacted').length;
+      const resolvedRequests = bookingsList.filter(b => b.status === 'Assigned' || b.status === 'Resolved').length;
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          tutors: {
+            total: totalTutors,
+            verified: verifiedTutors,
+            pending: pendingTutors
+          },
+          bookings: {
+            total: totalRequests,
+            pending: pendingRequests,
+            contacted: contactedRequests,
+            assigned: resolvedRequests
+          }
+        }
+      });
+    }
+
     const StudentRequest = require('../models/StudentRequest');
 
     const totalTutors = await Tutor.countDocuments();
@@ -53,11 +87,25 @@ exports.verifyTutor = async (req, res, next) => {
       verifiedDate: targetStatus ? new Date() : null
     };
 
-    const tutor = await Tutor.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    );
+    let tutor;
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running verifyTutor in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const tutorsList = await dbFallback.getTutors();
+      tutor = tutorsList.find(t => String(t._id) === String(req.params.id));
+      if (tutor) {
+        tutor.isVerified = targetStatus;
+        tutor.verifiedAt = targetStatus ? new Date() : null;
+        tutor.verifiedDate = targetStatus ? new Date() : null;
+        await dbFallback.updateTutor(req.params.id, tutor);
+      }
+    } else {
+      tutor = await Tutor.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        { new: true }
+      );
+    }
 
     if (!tutor) {
       return res.status(404).json({ success: false, message: 'Tutor not found' });
@@ -78,10 +126,22 @@ exports.verifyTutor = async (req, res, next) => {
 // @access  Private (Admin only)
 exports.adminUpdateTutor = async (req, res, next) => {
   try {
-    const tutor = await Tutor.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
+    let tutor;
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running adminUpdateTutor in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const tutorsList = await dbFallback.getTutors();
+      const existing = tutorsList.find(t => String(t._id) === String(req.params.id));
+      if (existing) {
+        tutor = { ...existing, ...req.body };
+        await dbFallback.updateTutor(req.params.id, tutor);
+      }
+    } else {
+      tutor = await Tutor.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+      });
+    }
 
     if (!tutor) {
       return res.status(404).json({ success: false, message: 'Tutor not found' });

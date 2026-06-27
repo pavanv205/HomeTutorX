@@ -573,7 +573,7 @@ const FindTutors = () => {
                 <div className="h-16 w-16 bg-rose-50 dark:bg-rose-950/20 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="text-xl">⚠️</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-855 dark:text-slate-100 mb-2">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">
                   Failed to Load Tutors
                 </h3>
                 <p className="text-slate-500 dark:text-slate-400 text-sm max-w-md mx-auto mb-6">

@@ -123,22 +123,113 @@ exports.registerTutor = async (req, res, next) => {
 
     // 4. Check if user already exists
     let userExists;
-    try {
-      userExists = await User.findOne({ email });
-    } catch (dbErr) {
-      console.error(`[REGISTRATION DATABASE ERROR] Failed to query existing user | Method: ${req.method} | Path: ${req.originalUrl} | Email: ${email} | Error: ${dbErr.message}`);
-      if (dbErr.stack) {
-        console.error(dbErr.stack);
+    const isOffline = mongoose.connection.readyState !== 1;
+    if (isOffline) {
+      console.log('🔌 MongoDB is offline. Running registerTutor in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      userExists = usersList.find(u => u.email === email);
+    } else {
+      try {
+        userExists = await User.findOne({ email });
+      } catch (dbErr) {
+        console.error(`[REGISTRATION DATABASE ERROR] Failed to query existing user | Method: ${req.method} | Path: ${req.originalUrl} | Email: ${email} | Error: ${dbErr.message}`);
+        return res.status(500).json({
+          success: false,
+          message: `Database save failed: Failed to check user existence.`
+        });
       }
-      return res.status(500).json({
-        success: false,
-        message: `Database save failed: Failed to check user existence.`
-      });
     }
 
     if (userExists) {
       devLog(`[REGISTRATION FAILED] Email already registered: ${email}`);
       return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+
+    // 6. Extract Cloudinary/Local File URLs
+    let photoUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80';
+    let certificateUrl = '';
+    
+    if (req.files && req.files['resume'] && req.files['resume'][0]) {
+      photoUrl = getFileUrl(req.files['resume'][0]);
+    }
+    if (req.files && req.files['certificate'] && req.files['certificate'][0]) {
+      certificateUrl = getFileUrl(req.files['certificate'][0]);
+    }
+
+    const parseIfJson = (val) => {
+      if (!val) return [];
+      if (Array.isArray(val)) return val;
+      if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
+        try { return JSON.parse(val); } catch (e) { return [val]; }
+      }
+      return [val];
+    };
+
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      const userId = 'fallback-user-' + Math.random().toString(36).substr(2, 9);
+      const tutorId = 'fallback-tutor-' + Math.random().toString(36).substr(2, 9);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      user = {
+        _id: userId,
+        name: name || data.fullName,
+        email,
+        password: hashedPassword,
+        role: 'Tutor',
+        tutorProfile: tutorId,
+        createdAt: new Date().toISOString()
+      };
+      
+      const tutor = {
+        _id: tutorId,
+        userId: userId,
+        fullName: name || data.fullName,
+        mobile: phone || mobile || 'N/A',
+        email: email,
+        gender: data.gender,
+        age: numAge,
+        qualification: data.degree || data.qualification,
+        university: data.institution || data.university,
+        graduationYear: numPassingYear,
+        experience: numExp,
+        subjects: parseIfJson(data.subjects),
+        classes: parseIfJson(data.classes),
+        teachingMode: data.teachingMode || 'Both',
+        hourlyRate: numHourly,
+        monthlyRate: numMonthly,
+        streetAddress: data.streetAddress,
+        city: data.city,
+        state: data.state,
+        pincode: data.pincode,
+        lat: data.lat ? Number(data.lat) : undefined,
+        lng: data.lng ? Number(data.lng) : undefined,
+        bio: data.bio,
+        photo: photoUrl,
+        resumeUrl: photoUrl,
+        certificateUrl: certificateUrl,
+        isVerified: false,
+        createdAt: new Date().toISOString()
+      };
+      
+      await dbFallback.saveUser(user);
+      await dbFallback.saveTutor(tutor);
+
+      const token = generateToken(user._id);
+      return res.status(201).json({
+        success: true,
+        data: {
+          token,
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            tutorProfile: tutor._id
+          }
+        }
+      });
     }
 
     // 5. Create User Document
@@ -151,39 +242,12 @@ exports.registerTutor = async (req, res, next) => {
       });
       devLog(`[DATABASE SAVE] Created User document, ID: ${user._id}`);
     } catch (userErr) {
-      console.error(`[REGISTRATION USER ERROR] Failed to create User document | Method: ${req.method} | Path: ${req.originalUrl} | Email: ${email} | Error: ${userErr.message}`);
-      if (userErr.stack) {
-        console.error(userErr.stack);
-      }
+      console.error(`[REGISTRATION USER ERROR] Failed to create User document | Email: ${email} | Error: ${userErr.message}`);
       return res.status(500).json({
         success: false,
         message: `Database save failed: User registration failed.`
       });
     }
-
-    // 6. Extract Cloudinary File URLs
-    let photoUrl = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80';
-    let certificateUrl = '';
-    
-    if (req.files && req.files['resume'] && req.files['resume'][0]) {
-      photoUrl = getFileUrl(req.files['resume'][0]);
-    }
-    if (req.files && req.files['certificate'] && req.files['certificate'][0]) {
-      certificateUrl = getFileUrl(req.files['certificate'][0]);
-    }
-
-    devLog('Cloudinary Upload Results:');
-    devLog(`- Profile Photo (field "resume") URL: ${photoUrl}`);
-    devLog(`- Certificate URL: ${certificateUrl}`);
-
-    const parseIfJson = (val) => {
-      if (!val) return [];
-      if (Array.isArray(val)) return val;
-      if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
-        try { return JSON.parse(val); } catch (e) { return [val]; }
-      }
-      return [val];
-    };
 
     // 7. Create Tutor Profile Document
     let tutor;
@@ -309,8 +373,17 @@ exports.login = async (req, res, next) => {
     }
 
     // Diagnostic: User lookup
-    console.log(`[LOGIN DIAGNOSTIC] User lookup started for email: ${email}. Method: ${req.method} | Path: ${req.originalUrl}`);
-    const user = await User.findOne({ email }).select('+password');
+    console.log(`[LOGIN DIAGNOSTIC] User lookup started for email: ${email}.`);
+    let user;
+    const isOffline = mongoose.connection.readyState !== 1;
+    if (isOffline) {
+      console.log('🔌 MongoDB is offline. Running login in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      user = usersList.find(u => u.email === email);
+    } else {
+      user = await User.findOne({ email }).select('+password');
+    }
     console.log(`[LOGIN DIAGNOSTIC] User lookup completed for email: ${email}. Found user: ${!!user}`);
 
     if (!user) {
@@ -325,15 +398,16 @@ exports.login = async (req, res, next) => {
     }
 
     // Diagnostic: Password comparison
-    console.log(`[LOGIN DIAGNOSTIC] Password comparison started for email: ${email}. Method: ${req.method} | Path: ${req.originalUrl}`);
+    console.log(`[LOGIN DIAGNOSTIC] Password comparison started for email: ${email}.`);
     let isMatch = false;
     try {
-      isMatch = await user.matchPassword(password);
-    } catch (bcryptErr) {
-      console.error(`[LOGIN ERROR] Password comparison failed | Method: ${req.method} | Path: ${req.originalUrl} | Email: ${email} | Error: ${bcryptErr.message}`);
-      if (bcryptErr.stack) {
-        console.error(bcryptErr.stack);
+      if (isOffline) {
+        isMatch = await bcrypt.compare(password, user.password);
+      } else {
+        isMatch = await user.matchPassword(password);
       }
+    } catch (bcryptErr) {
+      console.error(`[LOGIN ERROR] Password comparison failed | Email: ${email} | Error: ${bcryptErr.message}`);
       return res.status(500).json({ success: false, message: 'Internal server error during authentication.' });
     }
 
@@ -388,16 +462,26 @@ exports.login = async (req, res, next) => {
 // @access  Private
 exports.getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id).populate('tutorProfile').lean();
+    let user;
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running getMe in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      const rawUser = usersList.find(u => String(u._id) === String(req.user._id));
+      if (rawUser) {
+        user = { ...rawUser };
+        const tutorsList = await dbFallback.getTutors();
+        user.tutorProfile = tutorsList.find(t => String(t._id) === String(rawUser.tutorProfile)) || null;
+      }
+    } else {
+      user = await User.findById(req.user._id).populate('tutorProfile').lean();
+    }
     res.status(200).json({
       success: true,
       data: user
     });
   } catch (err) {
-    console.error(`[ME SYSTEM ERROR] Uncaught error in getMe | Method: ${req.method} | Path: ${req.originalUrl} | User ID: ${req.user?._id} | Error: ${err.message}`);
-    if (err.stack) {
-      console.error(err.stack);
-    }
+    console.error(`[ME SYSTEM ERROR] Uncaught error in getMe | User ID: ${req.user?._id} | Error: ${err.message}`);
     next(err);
   }
 };

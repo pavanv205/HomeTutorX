@@ -12,12 +12,7 @@ const checkCloudinaryConfig = (req, res, next) => {
   if (!process.env.CLOUDINARY_API_SECRET) missing.push('CLOUDINARY_API_SECRET');
   
   if (missing.length > 0) {
-    const errorMsg = `Cloudinary configuration is incomplete. Missing: ${missing.join(', ')}`;
-    console.error(`[CONFIG ERROR] ${errorMsg}`);
-    return res.status(500).json({
-      success: false,
-      message: errorMsg
-    });
+    console.warn(`[CONFIG WARNING] Cloudinary configuration is incomplete. Missing: ${missing.join(', ')}. Falling back to local upload storage.`);
   }
   next();
 };
