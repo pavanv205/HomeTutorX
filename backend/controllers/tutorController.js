@@ -2,6 +2,31 @@ const Tutor = require('../models/Tutor');
 const mongoose = require('mongoose');
 const { getFileUrl } = require('../utils/uploadHelper');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+// Helper to determine if the request is from an admin
+const checkIsAdmin = async (req) => {
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+    const token = req.headers.authorization.split(' ')[1];
+    try {
+      if (!process.env.JWT_SECRET) return false;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      let user;
+      if (mongoose.connection.readyState !== 1) {
+        const dbFallback = require('../utils/dbFallback');
+        const usersList = await dbFallback.getUsers();
+        user = usersList.find(u => String(u._id) === String(decoded.id));
+      } else {
+        user = await User.findById(decoded.id);
+      }
+      return user && user.role === 'Admin';
+    } catch (err) {
+      return false;
+    }
+  }
+  return false;
+};
 
 // Helper to log only in development mode
 const devLog = (...args) => {
@@ -185,7 +210,11 @@ exports.getTutors = async (req, res, next) => {
       console.log('🔌 MongoDB is offline. Running getTutors in Fallback mode.');
       const dbFallback = require('../utils/dbFallback');
       const tutorsList = await dbFallback.getTutors();
-      const filtered = applyFallbackFilters(tutorsList, req.query);
+      
+      const isAdmin = await checkIsAdmin(req);
+      const tutorsListFiltered = isAdmin ? tutorsList : tutorsList.filter(t => t.isVerified);
+      
+      const filtered = applyFallbackFilters(tutorsListFiltered, req.query);
       
       const page = parseInt(req.query.page, 10);
       const limit = parseInt(req.query.limit, 10) || 10;
@@ -212,6 +241,11 @@ exports.getTutors = async (req, res, next) => {
     // Build filters object for MongoDB query
     const filters = {};
     const { search, subject, gradeClass, mode, state, division, maxPrice } = req.query || {};
+
+    const isAdmin = await checkIsAdmin(req);
+    if (!isAdmin) {
+      filters.isVerified = true;
+    }
 
     if (search) {
       const searchRegex = new RegExp(search, 'i');

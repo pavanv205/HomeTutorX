@@ -124,7 +124,10 @@ if (require.main === module) {
       console.log(`Backend server running on port ${PORT}`);
     });
   }).catch((err) => {
-    console.error('Local startup connection failed. Server not started:', err.message);
+    console.error('Local startup connection failed. Starting server in Fallback mode:', err.message);
+    app.listen(PORT, () => {
+      console.log(`Backend server running on port ${PORT} (Fallback Mode)`);
+    });
   });
 }
 
