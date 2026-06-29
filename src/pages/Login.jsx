@@ -359,7 +359,7 @@ const Login = () => {
 
           {forgotPasswordStep === 'reset' && (
             <form className="mt-8 space-y-6" onSubmit={handleResetPassword}>
-              {devModeOtp && (
+              {devModeOtp && import.meta.env.DEV && (
                 <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50 rounded-2xl p-4 text-xs font-semibold text-blue-650 dark:text-blue-450 flex flex-col gap-1">
                   <span className="font-extrabold uppercase tracking-wide text-[9px] text-blue-500">Local Testing Helper</span>
                   <p>Use OTP: <strong className="text-sm font-black">{devModeOtp}</strong> to reset the password.</p>

@@ -625,22 +625,44 @@ exports.forgotPassword = async (req, res, next) => {
     const emailText = `Hello,\n\nWe received a request to reset your password for your TutorConnect account. Please use the following One-Time Password (OTP) to complete verification:\n\nOTP Code: ${otp}\n\nThis OTP is valid for the next 10 minutes.\n\nIf you did not request this, you can safely ignore this email.\n\nBest regards,\nThe TutorConnect Team`;
 
     try {
-      await sendEmail({
+      const emailResult = await sendEmail({
         email: user.email,
         subject: 'TutorConnect - Password Reset OTP Request',
         html: emailHtml,
         text: emailText
       });
+      if (emailResult && emailResult.success === false) {
+        throw new Error('SMTP send failure');
+      }
     } catch (mailErr) {
-      console.error('[FORGOT PASSWORD MAIL ERROR] Failed to send email via SMTP, carrying on with fallback response:', mailErr.message);
+      console.error('[FORGOT PASSWORD MAIL ERROR]', mailErr.message);
+      
+      const host = process.env.SMTP_HOST;
+      const userMail = process.env.SMTP_USER;
+      const passMail = process.env.SMTP_PASS;
+      const isSmtpConfigured = host && userMail && passMail;
+      
+      if (process.env.NODE_ENV === 'production' || isSmtpConfigured) {
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to send password reset email. Please try again later.'
+        });
+      }
     }
 
     // Send success response (returning OTP in devMode for easy testing)
-    res.status(200).json({
+    const isDev = process.env.NODE_ENV !== 'production';
+    const responsePayload = {
       success: true,
-      message: `OTP sent successfully to your email. (Dev Mode OTP: ${otp})`,
-      devModeOtp: otp
-    });
+      message: 'OTP sent successfully to your email.'
+    };
+    
+    if (isDev) {
+      responsePayload.message = `OTP sent successfully to your email. (Dev Mode OTP: ${otp})`;
+      responsePayload.devModeOtp = otp;
+    }
+    
+    res.status(200).json(responsePayload);
   } catch (err) {
     console.error('[FORGOT PASSWORD ERROR]', err);
     res.status(500).json({ success: false, message: 'Failed to process forgot password request.' });
