@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { getFileUrl } = require('../utils/uploadHelper');
+const sendEmail = require('../utils/sendEmail');
 
 // Helper to log only in development mode
 const devLog = (...args) => {
@@ -526,6 +527,112 @@ exports.forgotPassword = async (req, res, next) => {
       user.resetPasswordToken = otp;
       user.resetPasswordExpire = otpExpiry;
       await user.save({ validateBeforeSave: false }); // Bypass regular validations on partial save
+    }
+
+    // Send email using Nodemailer utility
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            padding: 20px;
+            margin: 0;
+          }
+          .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+          }
+          .header {
+            background-color: #2563eb;
+            color: #ffffff;
+            padding: 30px 20px;
+            text-align: center;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+          }
+          .content {
+            padding: 40px 30px;
+          }
+          .content p {
+            margin-top: 0;
+            margin-bottom: 24px;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #475569;
+          }
+          .otp-box {
+            background-color: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 30px 0;
+          }
+          .otp-code {
+            font-family: monospace;
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: #2563eb;
+            margin: 0;
+          }
+          .footer {
+            background-color: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>TutorConnect</h1>
+          </div>
+          <div class="content">
+            <p>Hello,</p>
+            <p>We received a request to reset your password for your TutorConnect account. Please use the following One-Time Password (OTP) to complete the verification process. This OTP is valid for the next <strong>10 minutes</strong>.</p>
+            <div class="otp-box">
+              <h2 class="otp-code">${otp}</h2>
+            </div>
+            <p>If you did not request a password reset, please ignore this email or secure your account if you suspect unauthorized activity.</p>
+            <p>Best regards,<br>The TutorConnect Team</p>
+          </div>
+          <div class="footer">
+            <p>&copy; 2026 TutorConnect. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const emailText = `Hello,\n\nWe received a request to reset your password for your TutorConnect account. Please use the following One-Time Password (OTP) to complete verification:\n\nOTP Code: ${otp}\n\nThis OTP is valid for the next 10 minutes.\n\nIf you did not request this, you can safely ignore this email.\n\nBest regards,\nThe TutorConnect Team`;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'TutorConnect - Password Reset OTP Request',
+        html: emailHtml,
+        text: emailText
+      });
+    } catch (mailErr) {
+      console.error('[FORGOT PASSWORD MAIL ERROR] Failed to send email via SMTP, carrying on with fallback response:', mailErr.message);
     }
 
     // Send success response (returning OTP in devMode for easy testing)
