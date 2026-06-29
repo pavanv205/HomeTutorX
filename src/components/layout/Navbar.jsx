@@ -91,10 +91,7 @@ const Navbar = () => {
                   onMouseEnter={() => setIsProfileOpen(true)}
                   onMouseLeave={() => setIsProfileOpen(false)}
                 >
-                  <button 
-                    onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-950 dark:text-slate-950 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer"
-                  >
+                  <button className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-950 dark:text-slate-950 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer">
                     <span>👋 Hi, {user?.name ? user.name.split(' ')[0] : 'User'}</span>
                     <span className="text-[9px] text-slate-400">▼</span>
                   </button>

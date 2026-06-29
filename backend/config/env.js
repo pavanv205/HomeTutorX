@@ -36,14 +36,6 @@ const validateEnv = () => {
       errors.push(`${key} is invalid: ${rules.message || 'Validation failed.'}`);
     }
   }
-  
-  // SMTP Configuration Check
-  const smtpVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS'];
-  const missingSmtp = smtpVars.filter(key => !process.env[key] || process.env[key].trim() === '');
-  if (missingSmtp.length > 0) {
-    console.log('\x1b[33m%s\x1b[0m', `\n[SMTP CONFIGURATION NOTICE] SMTP is not fully configured (missing: ${missingSmtp.join(', ')}).`);
-    console.log('\x1b[33m%s\x1b[0m', ` => Reset OTPs will be printed to the backend console and return in API response devModeOtp.\n`);
-  }
 
   if (errors.length > 0) {
     console.error('\n❌ CONFIGURATION WARNINGS:');

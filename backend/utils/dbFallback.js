@@ -72,14 +72,6 @@ exports.saveUser = async (user) => {
   memoryUsers.push(user);
   return user;
 };
-exports.updateUser = async (id, updatedUser) => {
-  const idx = memoryUsers.findIndex(u => String(u._id) === String(id));
-  if (idx !== -1) {
-    memoryUsers[idx] = { ...memoryUsers[idx], ...updatedUser };
-    return memoryUsers[idx];
-  }
-  return updatedUser;
-};
 exports.getTutors = async () => memoryTutors;
 exports.saveTutor = async (tutor) => {
   memoryTutors.push(tutor);

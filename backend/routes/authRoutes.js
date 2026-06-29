@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { upload } = require('../utils/uploadHelper');
-const { registerTutor, login, getMe, forgotPassword, resetPassword } = require('../controllers/authController');
+const { registerTutor, login, getMe } = require('../controllers/authController');
+const { forgotPassword, verifyOtp, resetPassword } = require('../controllers/passwordController');
 const { protect } = require('../middleware/authMiddleware');
 
 // Middleware to check if Cloudinary configuration is complete
@@ -50,6 +51,7 @@ router.post('/register', checkCloudinaryConfig, handleUpload, registerTutor);
 router.post('/login', login);
 router.get('/me', protect, getMe);
 router.post('/forgot-password', forgotPassword);
+router.post('/verify-otp', verifyOtp);
 router.post('/reset-password', resetPassword);
 
 module.exports = router;

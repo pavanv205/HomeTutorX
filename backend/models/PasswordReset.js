@@ -1,0 +1,13 @@
+const mongoose = require('mongoose');
+
+const passwordResetSchema = new mongoose.Schema({
+  email: { type: String, required: true, index: true },
+  otp: { type: String, required: true }, // store as string to preserve leading zeros
+  expiresAt: { type: Date, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
+// Ensure TTL index to auto-remove expired documents
+passwordResetSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
+module.exports = mongoose.model('PasswordReset', passwordResetSchema);
