@@ -31,7 +31,9 @@ const UserSchema = new mongoose.Schema({
   tutorProfile: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tutor'
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date
 }, {
   timestamps: true
 });

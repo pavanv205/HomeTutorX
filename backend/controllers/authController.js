@@ -485,3 +485,120 @@ exports.getMe = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Forgot Password - request OTP
+// @route   POST /api/auth/forgot-password
+// @access  Public
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body || {};
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Please provide an email address' });
+    }
+
+    const isOffline = mongoose.connection.readyState !== 1;
+    let user;
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      user = usersList.find(u => u.email.toLowerCase() === email.toLowerCase());
+    } else {
+      user = await User.findOne({ email: email.toLowerCase() });
+    }
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'No account found with this email address' });
+    }
+
+    // Generate secure 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+
+    console.log(`[PASSWORD RESET OTP] OTP generated for user ${email}: ${otp}`);
+
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      await dbFallback.updateUser(user._id, {
+        resetPasswordToken: otp,
+        resetPasswordExpire: otpExpiry
+      });
+    } else {
+      user.resetPasswordToken = otp;
+      user.resetPasswordExpire = otpExpiry;
+      await user.save({ validateBeforeSave: false }); // Bypass regular validations on partial save
+    }
+
+    // Send success response (returning OTP in devMode for easy testing)
+    res.status(200).json({
+      success: true,
+      message: `OTP sent successfully to your email. (Dev Mode OTP: ${otp})`,
+      devModeOtp: otp
+    });
+  } catch (err) {
+    console.error('[FORGOT PASSWORD ERROR]', err);
+    res.status(500).json({ success: false, message: 'Failed to process forgot password request.' });
+  }
+};
+
+// @desc    Reset Password using OTP
+// @route   POST /api/auth/reset-password
+// @access  Public
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { email, otp, newPassword } = req.body || {};
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Please provide email, OTP, and new password.' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long' });
+    }
+
+    const isOffline = mongoose.connection.readyState !== 1;
+    let user;
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      user = usersList.find(u => u.email.toLowerCase() === email.toLowerCase());
+    } else {
+      user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+    }
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'No account found with this email address' });
+    }
+
+    // Verify OTP and Expiration
+    if (user.resetPasswordToken !== otp) {
+      return res.status(400).json({ success: false, message: 'Invalid OTP' });
+    }
+
+    const expiryTime = new Date(user.resetPasswordExpire).getTime();
+    if (expiryTime < Date.now()) {
+      return res.status(400).json({ success: false, message: 'OTP has expired. Please request a new one.' });
+    }
+
+    // Hash and save new password
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await dbFallback.updateUser(user._id, {
+        password: hashedPassword,
+        resetPasswordToken: undefined,
+        resetPasswordExpire: undefined
+      });
+    } else {
+      user.password = newPassword;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save(); // This will trigger the UserSchema.pre('save') password hashing middleware
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully. You can now log in with your new password.'
+    });
+  } catch (err) {
+    console.error('[RESET PASSWORD ERROR]', err);
+    res.status(500).json({ success: false, message: 'Failed to reset password.' });
+  }
+};
