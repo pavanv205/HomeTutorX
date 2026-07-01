@@ -106,7 +106,7 @@ const Navbar = () => {
                         className="absolute right-0 mt-1.5 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2"
                       >
                         <Link
-                          to={role === 'Admin' ? '/admin/dashboard' : '/tutor/dashboard'}
+                          to={role === 'Admin' ? '/admin/dashboard' : role === 'Tutor' ? '/tutor/dashboard' : '/student/dashboard'}
                           className="block w-full text-left py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
                         >
                           Dashboard
@@ -141,13 +141,19 @@ const Navbar = () => {
                         className="absolute right-0 mt-1.5 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 p-2"
                       >
                         <Link
-                          to="/login"
+                          to="/login?role=student"
                           className="block py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
                         >
-                          Tutor Login
+                          Student Login
                         </Link>
                         <Link
-                          to="/login"
+                          to="/login?role=teacher"
+                          className="block py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
+                        >
+                          Teacher Login
+                        </Link>
+                        <Link
+                          to="/login?role=admin"
                           className="block py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
                         >
                           Admin Login
@@ -218,7 +224,7 @@ const Navbar = () => {
                 {isAuthenticated ? (
                   <>
                     <Link
-                      to={role === 'Admin' ? '/admin/dashboard' : '/tutor/dashboard'}
+                      to={role === 'Admin' ? '/admin/dashboard' : role === 'Tutor' ? '/tutor/dashboard' : '/student/dashboard'}
                       onClick={() => setIsOpen(false)}
                       className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
                     >
@@ -237,14 +243,21 @@ const Navbar = () => {
                 ) : (
                   <>
                     <Link
-                      to="/login"
+                      to="/login?role=student"
                       onClick={() => setIsOpen(false)}
                       className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
                     >
-                      Tutor Login
+                      Student Login
                     </Link>
                     <Link
-                      to="/login"
+                      to="/login?role=teacher"
+                      onClick={() => setIsOpen(false)}
+                      className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
+                    >
+                      Teacher Login
+                    </Link>
+                    <Link
+                      to="/login?role=admin"
                       onClick={() => setIsOpen(false)}
                       className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
                     >

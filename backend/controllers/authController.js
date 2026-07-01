@@ -345,6 +345,122 @@ exports.registerTutor = async (req, res, next) => {
   }
 };
 
+// @desc    Register a new student
+// @route   POST /api/auth/register-student
+// @access  Public
+exports.registerStudent = async (req, res, next) => {
+  devLog('--- [STUDENT REGISTRATION REQUEST RECEIVED] ---');
+  let user = null;
+  try {
+    const data = req.body || {};
+    const { name, email, password, phone } = data;
+
+    // Validate inputs
+    if (!name || !email || !password || !phone) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide name, email, password, and phone number.'
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address'
+      });
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long'
+      });
+    }
+
+    // Check if user already exists
+    let userExists;
+    const isOffline = mongoose.connection.readyState !== 1;
+    if (isOffline) {
+      console.log('🔌 MongoDB is offline. Running registerStudent in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      userExists = usersList.find(u => u.email === email);
+    } else {
+      userExists = await User.findOne({ email });
+    }
+
+    if (userExists) {
+      devLog(`[REGISTRATION FAILED] Email already registered: ${email}`);
+      return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      const userId = 'fallback-student-' + Math.random().toString(36).substr(2, 9);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      user = {
+        _id: userId,
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        role: 'Student',
+        createdAt: new Date().toISOString()
+      };
+      
+      await dbFallback.saveUser(user);
+
+      const token = generateToken(user._id);
+      return res.status(201).json({
+        success: true,
+        data: {
+          token,
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role
+          }
+        }
+      });
+    }
+
+    // Create user document
+    user = await User.create({
+      name,
+      email,
+      password,
+      phone,
+      role: 'Student'
+    });
+
+    devLog(`[DATABASE SAVE] Created Student User document, ID: ${user._id}`);
+
+    const token = generateToken(user._id);
+    res.status(201).json({
+      success: true,
+      data: {
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role
+        }
+      }
+    });
+  } catch (err) {
+    console.error(`[REGISTRATION SYSTEM ERROR] Uncaught error in registerStudent | Error: ${err.message}`);
+    next(err);
+  }
+};
+
 // @desc    Login user (Admin or Tutor)
 // @route   POST /api/auth/login
 // @access  Public
@@ -388,13 +504,13 @@ exports.login = async (req, res, next) => {
 
     if (!user) {
       console.log(`[LOGIN INFO] User lookup failed: User not found for email: ${email}`);
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return res.status(401).json({ success: false, message: 'Please create an account' });
     }
 
     // Safety check to prevent crashes if user document doesn't have a password field
     if (!user.password) {
       console.error(`[AUTH ERROR] User document for ${email} is missing a password field in the database.`);
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return res.status(401).json({ success: false, message: 'Incorrect username or password.' });
     }
 
     // Diagnostic: Password comparison
@@ -415,7 +531,7 @@ exports.login = async (req, res, next) => {
 
     if (!isMatch) {
       console.log(`[LOGIN INFO] Login failed: Password mismatch for email: ${email}`);
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return res.status(401).json({ success: false, message: 'Incorrect username or password.' });
     }
 
     // Safety check for JWT_SECRET before calling generateToken
@@ -443,6 +559,7 @@ exports.login = async (req, res, next) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          phone: user.phone,
           tutorProfile: user.tutorProfile
         }
       }

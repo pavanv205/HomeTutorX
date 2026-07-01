@@ -92,6 +92,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Register student action
+  const registerStudent = async (studentData) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await api.post('/auth/register-student', studentData);
+      if (res.data && res.data.success) {
+        const { token: userToken, user: userData } = res.data.data;
+        localStorage.setItem('token', userToken);
+        setToken(userToken);
+        setUser(userData);
+        return userData;
+      }
+    } catch (err) {
+      const errMsg = err.message || 'Registration failed. Please try again.';
+      setError(errMsg);
+      throw new Error(errMsg, { cause: err });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     user,
     token,
@@ -102,6 +124,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     registerTutor,
+    registerStudent,
     setError
   };
 

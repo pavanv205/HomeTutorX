@@ -294,7 +294,7 @@ const TutorProfile = () => {
                   className="w-full py-4 text-sm font-bold shadow-md shadow-primary/10 animate-pulse hover:animate-none"
                   onClick={() => openBookingModal(tutor)}
                 >
-                  Book Free Demo Class
+                  Book
                 </Button>
                 <p className="text-[10px] text-center text-slate-400 mt-3 font-semibold">
                   No commitment required for first session.

@@ -25,8 +25,11 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['Admin', 'Tutor'],
+    enum: ['Admin', 'Tutor', 'Student'],
     default: 'Tutor'
+  },
+  phone: {
+    type: String
   },
   tutorProfile: {
     type: mongoose.Schema.Types.ObjectId,

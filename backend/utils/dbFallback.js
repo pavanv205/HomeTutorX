@@ -8,6 +8,7 @@ const memoryUsers = [];
 const initializeSeeds = async () => {
   const adminPasswordHash = await bcrypt.hash('adminpassword123', 10);
   const tutorPasswordHash = await bcrypt.hash('tutor123', 10);
+  const studentPasswordHash = await bcrypt.hash('student123', 10);
 
   const defaultAdmin = {
     _id: '6a3956421c7fc8576e26c6aa',
@@ -26,6 +27,16 @@ const initializeSeeds = async () => {
     password: tutorPasswordHash,
     role: 'Tutor',
     tutorProfile: defaultTutorProfileId,
+    createdAt: new Date().toISOString()
+  };
+
+  const defaultStudentUser = {
+    _id: '6a3956421c7fc8576e26c6ac',
+    name: 'Default Student',
+    email: 'student@tutorconnect.com',
+    password: studentPasswordHash,
+    role: 'Student',
+    phone: '9876543222',
     createdAt: new Date().toISOString()
   };
 
@@ -61,7 +72,7 @@ const initializeSeeds = async () => {
     createdAt: new Date().toISOString()
   };
 
-  memoryUsers.push(defaultAdmin, defaultTutorUser);
+  memoryUsers.push(defaultAdmin, defaultTutorUser, defaultStudentUser);
   memoryTutors.push(defaultTutorProfile);
 };
 

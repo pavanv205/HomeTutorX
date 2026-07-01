@@ -14,10 +14,12 @@ exports.getDashboardStats = async (req, res, next) => {
       const dbFallback = require('../utils/dbFallback');
       const tutorsList = await dbFallback.getTutors();
       const bookingsList = await dbFallback.getBookings();
+      const usersList = await dbFallback.getUsers();
       
       const totalTutors = tutorsList.length;
       const verifiedTutors = tutorsList.filter(t => t.isVerified).length;
       const pendingTutors = tutorsList.filter(t => !t.isVerified).length;
+      const totalStudents = usersList.filter(u => u.role === 'Student').length;
 
       const totalRequests = bookingsList.length;
       const pendingRequests = bookingsList.filter(b => b.status === 'Pending').length;
@@ -31,6 +33,9 @@ exports.getDashboardStats = async (req, res, next) => {
             total: totalTutors,
             verified: verifiedTutors,
             pending: pendingTutors
+          },
+          students: {
+            total: totalStudents
           },
           bookings: {
             total: totalRequests,
@@ -47,6 +52,7 @@ exports.getDashboardStats = async (req, res, next) => {
     const totalTutors = await Tutor.countDocuments();
     const verifiedTutors = await Tutor.countDocuments({ isVerified: true });
     const pendingTutors = await Tutor.countDocuments({ isVerified: false });
+    const totalStudents = await User.countDocuments({ role: 'Student' });
 
     const totalRequests = await StudentRequest.countDocuments();
     const pendingRequests = await StudentRequest.countDocuments({ status: 'Pending' });
@@ -60,6 +66,9 @@ exports.getDashboardStats = async (req, res, next) => {
           total: totalTutors,
           verified: verifiedTutors,
           pending: pendingTutors
+        },
+        students: {
+          total: totalStudents
         },
         bookings: {
           total: totalRequests,

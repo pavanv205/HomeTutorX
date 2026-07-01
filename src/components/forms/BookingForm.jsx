@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FaUser, FaPhone, FaCalendarAlt, FaComments } from 'react-icons/fa';
 import { CLASSES, SUBJECTS } from '../../constants';
 import { bookingService } from '../../services/bookingService';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
 
 // Validation schema
@@ -34,7 +36,9 @@ const schema = yup.object().shape({
   message: yup.string().max(300, 'Message cannot exceed 300 characters')
 });
 
-const BookingForm = ({ tutor, onSuccess }) => {
+const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -49,15 +53,52 @@ const BookingForm = ({ tutor, onSuccess }) => {
       studentName: '',
       phone: '',
       gradeClass: '',
-      subject: tutor ? tutor.subjects[0] : '',
+      subject: tutor && tutor.subjects && tutor.subjects.length > 0 ? tutor.subjects[0] : '',
       preferredSlot: '',
-      mode: tutor ? tutor.modes[0] : 'Online',
+      mode: tutor && tutor.modes && tutor.modes.length > 0 ? tutor.modes[0] : 'Online',
       message: ''
     }
   });
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      onSuccess();
+      navigate('/login?role=student');
+      return;
+    }
+
+    const autoSubmit = async () => {
+      if (onSetTitle) onSetTitle('');
+      setLoading(true);
+      try {
+        const payload = {
+          studentName: user?.name || 'Student',
+          phone: user?.phone || '1234567890',
+          gradeClass: tutor && tutor.classes && tutor.classes.length > 0 ? tutor.classes[0] : '10th',
+          subject: tutor && tutor.subjects && tutor.subjects.length > 0 ? tutor.subjects[0] : 'Mathematics',
+          preferredSlot: 'Anytime',
+          mode: tutor && tutor.modes && tutor.modes.length > 0 ? tutor.modes[0] : 'Online',
+          message: 'Instant booking from tutor profile',
+          tutorId: tutor ? (tutor._id || tutor.id) : 'general',
+          tutorName: tutor ? (tutor.name || tutor.fullName) : 'Any Available Tutor'
+        };
+        const response = await bookingService.bookDemo(payload);
+        if (response.success) {
+          setSuccessMsg('Request Sent Successfully! 🎉 The tutor will review your request and contact you shortly.');
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    autoSubmit();
+  }, [isAuthenticated, user, tutor, navigate, onSuccess, onSetTitle]);
+
   const onSubmit = async (data) => {
     try {
+      if (onSetTitle) onSetTitle('');
       setLoading(true);
       const payload = {
         ...data,
@@ -81,6 +122,15 @@ const BookingForm = ({ tutor, onSuccess }) => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+        <div className="h-12 w-12 rounded-full border-4 border-slate-200 border-t-primary dark:border-slate-850 dark:border-t-blue-500 animate-spin mb-4" />
+        <p className="text-xs font-bold text-slate-550 dark:text-slate-400 uppercase tracking-wider">Sending Request...</p>
+      </div>
+    );
+  }
+
   if (successMsg) {
     return (
       <div className="text-center py-8 px-4">
@@ -89,11 +139,11 @@ const BookingForm = ({ tutor, onSuccess }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h4 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">
-          Demo Class Booked!
+        <h4 className="text-xl font-extrabold text-slate-900 dark:text-white mb-2 leading-snug">
+          Request Sent Successfully! 🎉
         </h4>
-        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-sm mx-auto">
-          {successMsg}
+        <p className="text-slate-650 dark:text-slate-350 text-sm leading-relaxed max-w-sm mx-auto font-medium">
+          The tutor will review your request and contact you shortly.
         </p>
       </div>
     );

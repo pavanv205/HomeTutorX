@@ -17,11 +17,13 @@ const Home = lazy(() => import('../pages/Home'));
 const FindTutors = lazy(() => import('../pages/FindTutors'));
 const TutorProfile = lazy(() => import('../pages/TutorProfile'));
 const BecomeTutor = lazy(() => import('../pages/BecomeTutor'));
+const RegisterStudent = lazy(() => import('../pages/RegisterStudent'));
 const AboutUs = lazy(() => import('../pages/AboutUs'));
 const ContactUs = lazy(() => import('../pages/ContactUs'));
 const Login = lazy(() => import('../pages/Login'));
 const AdminDashboard = lazy(() => import('../pages/AdminDashboard'));
 const TutorDashboard = lazy(() => import('../pages/TutorDashboard'));
+const StudentDashboard = lazy(() => import('../pages/StudentDashboard'));
 const NotFound = lazy(() => import('../pages/NotFound'));
 
 const AppRoutes = () => {
@@ -32,6 +34,7 @@ const AppRoutes = () => {
         <Route path="/tutors" element={<FindTutors />} />
         <Route path="/tutors/:id" element={<TutorProfile />} />
         <Route path="/become-tutor" element={<BecomeTutor />} />
+        <Route path="/register-student" element={<RegisterStudent />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/login" element={<Login />} />
@@ -50,6 +53,14 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute allowedRoles={['Tutor']}>
               <TutorDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['Student']}>
+              <StudentDashboard />
             </ProtectedRoute>
           }
         />

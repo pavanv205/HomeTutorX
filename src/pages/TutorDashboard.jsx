@@ -4,16 +4,18 @@ import api from '../services/api';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
 import { SUBJECTS, CLASSES } from '../constants';
-import { FaLock } from 'react-icons/fa';
+import { FaLock, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBookOpen, FaUser, FaCheck, FaTimes, FaGraduationCap } from 'react-icons/fa';
 
 const TutorDashboard = () => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('Profile'); // 'Profile', 'Settings'
+  const [activeTab, setActiveTab] = useState('Profile'); // 'Profile', 'Student Requests', 'Settings'
   const [tutorProfile, setTutorProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' }); // type: 'success' or 'error'
   const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '' });
+  const [bookings, setBookings] = useState([]);
+  const [updatingBookingId, setUpdatingBookingId] = useState(null);
 
   // Load Tutor Profile
   const loadDashboardData = useCallback(async () => {
@@ -29,7 +31,11 @@ const TutorDashboard = () => {
       const profileRes = await api.get(`/tutors/${tutorId}`);
       setTutorProfile(profileRes.data || null);
 
-
+      // 2. Fetch tutor bookings
+      const bookingsRes = await api.get('/bookings');
+      if (bookingsRes.data && bookingsRes.data.success) {
+        setBookings(bookingsRes.data.data || []);
+      }
     } catch (err) {
       console.error(err);
       setMessage({ text: 'Failed to load dashboard data.', type: 'error' });
@@ -37,6 +43,24 @@ const TutorDashboard = () => {
       setLoading(false);
     }
   }, [user]);
+
+  // Update Booking Status
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
+    setUpdatingBookingId(bookingId);
+    setMessage({ text: '', type: '' });
+    try {
+      const res = await api.put(`/bookings/${bookingId}`, { status: newStatus });
+      if (res.data && res.data.success) {
+        setBookings(prev => prev.map(b => b._id === bookingId ? { ...b, status: newStatus } : b));
+        setMessage({ text: `Request status updated to ${newStatus}!`, type: 'success' });
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage({ text: 'Failed to update request status.', type: 'error' });
+    } finally {
+      setUpdatingBookingId(null);
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -133,7 +157,7 @@ const TutorDashboard = () => {
 
           {/* Navigation Tabs */}
           <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6">
-            {['Profile', 'Settings'].map(tab => (
+            {['Profile', 'Student Requests', 'Settings'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -374,6 +398,135 @@ const TutorDashboard = () => {
                     </Button>
                   </div>
                 </form>
+              )}
+
+              {/* TAB 2: STUDENT REQUESTS */}
+              {activeTab === 'Student Requests' && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b pb-3">
+                    <h3 className="text-base font-extrabold text-slate-800 dark:text-slate-100">
+                      Total Requests ({bookings.length})
+                    </h3>
+                  </div>
+
+                  {bookings.length === 0 ? (
+                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-12 text-center shadow-sm">
+                      <div className="w-16 h-16 bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FaEnvelope className="h-6 w-6" />
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">No Student Requests</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto font-medium">
+                        When students request a trial class with you, their contact details and requirements will appear here.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {bookings.map(booking => (
+                        <div 
+                          key={booking._id}
+                          className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 space-y-4 relative overflow-hidden flex flex-col justify-between"
+                        >
+                          <div className="space-y-4">
+                            {/* Card Header */}
+                            <div className="flex items-start justify-between">
+                              <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 bg-primary/10 text-primary dark:bg-blue-900/20 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
+                                  <FaUser className="h-4.5 w-4.5" />
+                                </div>
+                                <div>
+                                  <h4 className="text-sm font-bold text-slate-850 dark:text-slate-100">
+                                    {booking.studentName}
+                                  </h4>
+                                  <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-0.5">
+                                    Trial Lead
+                                  </p>
+                                </div>
+                              </div>
+                              <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                                booking.status === 'Assigned' || booking.status === 'Pending'
+                                  ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400'
+                                  : booking.status === 'Completed'
+                                  ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'
+                                  : 'bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400'
+                              }`}>
+                                {booking.status === 'Assigned' ? 'Assigned' : booking.status}
+                              </span>
+                            </div>
+
+                            {/* Contact Grid */}
+                            <div className="grid grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl text-xs font-semibold text-slate-600 dark:text-slate-400">
+                              <div className="flex items-center gap-2 truncate">
+                                <FaEnvelope className="text-slate-400 shrink-0" />
+                                <span className="truncate" title={booking.studentEmail}>{booking.studentEmail || 'N/A'}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <FaPhone className="text-slate-400 shrink-0" />
+                                <span>{booking.studentPhone || 'N/A'}</span>
+                              </div>
+                            </div>
+
+                            {/* Requirement Details */}
+                            <div className="space-y-2 text-xs font-semibold text-slate-650 dark:text-slate-350">
+                              <div className="flex items-center gap-2">
+                                <FaBookOpen className="text-slate-400 w-4 h-4 shrink-0" />
+                                <span>Subject: <strong className="text-slate-800 dark:text-slate-200">{booking.subject}</strong></span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <FaGraduationCap className="text-slate-400 w-4 h-4 shrink-0" />
+                                <span>Class: <strong className="text-slate-800 dark:text-slate-200">{booking.gradeClass}</strong></span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <FaMapMarkerAlt className="text-slate-400 w-4 h-4 shrink-0" />
+                                <span>Mode: <strong className="text-slate-800 dark:text-slate-200">{booking.preferredMode}</strong></span>
+                              </div>
+                              {booking.location && (
+                                <div className="text-[11px] bg-slate-50 dark:bg-slate-800/20 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 mt-1 italic">
+                                  Address: {booking.location}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Message */}
+                            {booking.message && (
+                              <div className="bg-slate-50 dark:bg-slate-800/20 p-3 rounded-2xl border border-slate-100/50 dark:border-slate-800 text-xs font-medium text-slate-600 dark:text-slate-400">
+                                <p className="font-bold text-[10px] uppercase text-slate-400 dark:text-slate-500 tracking-wider mb-1">Student Notes:</p>
+                                <p className="leading-relaxed">"{booking.message}"</p>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Quick Actions Footer */}
+                          <div className="pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between gap-3 mt-4">
+                            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold">
+                              Received: {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </span>
+
+                            {booking.status === 'Assigned' && (
+                              <div className="flex gap-2">
+                                <button
+                                  disabled={updatingBookingId !== null}
+                                  onClick={() => handleUpdateBookingStatus(booking._id, 'Completed')}
+                                  className="flex items-center gap-1.5 py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40 dark:text-emerald-400 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                                >
+                                  <FaCheck className="h-3 w-3" />
+                                  Complete
+                                </button>
+                                <button
+                                  disabled={updatingBookingId !== null}
+                                  onClick={() => handleUpdateBookingStatus(booking._id, 'Cancelled')}
+                                  className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-450 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                                >
+                                  <FaTimes className="h-3 w-3" />
+                                  Cancel
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               )}
 
               {/* TAB 3: SETTINGS */}

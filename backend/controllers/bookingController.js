@@ -99,6 +99,11 @@ exports.getBookings = async (req, res, next) => {
         bookingsList = bookingsList.filter(b => String(b.assignedTutor) === String(tutor._id));
       }
 
+      // If logged in user is a Student, only show bookings matching their email
+      if (req.user.role === 'Student') {
+        bookingsList = bookingsList.filter(b => String(b.studentEmail).toLowerCase() === String(req.user.email).toLowerCase());
+      }
+
       // Populate tutor details manually
       const populatedBookings = bookingsList.map(booking => {
         const assignedTutor = booking.assignedTutor 
@@ -132,6 +137,11 @@ exports.getBookings = async (req, res, next) => {
         return res.status(404).json({ success: false, message: 'Tutor profile not found' });
       }
       query.assignedTutor = tutor._id;
+    }
+
+    // If logged in user is a Student, only show bookings matching their email
+    if (req.user.role === 'Student') {
+      query.studentEmail = req.user.email;
     }
 
     // Populate tutor details

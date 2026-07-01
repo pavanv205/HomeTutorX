@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
@@ -13,15 +14,26 @@ import ErrorBoundary from './components/common/ErrorBoundary';
 
 const BookingModalWrapper = () => {
   const { isOpen, selectedTutor, closeBookingModal } = useBookingModal();
+  const [modalTitle, setModalTitle] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      setModalTitle(selectedTutor ? 'Book' : 'Request a Trial Class');
+    }
+  }, [isOpen, selectedTutor]);
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={closeBookingModal}
-      title={selectedTutor ? 'Book Free Demo Class' : 'Request a Trial Class'}
+      title={modalTitle}
       size="md"
     >
-      <BookingForm tutor={selectedTutor} onSuccess={closeBookingModal} />
+      <BookingForm 
+        tutor={selectedTutor} 
+        onSuccess={closeBookingModal} 
+        onSetTitle={setModalTitle} 
+      />
     </Modal>
   );
 };

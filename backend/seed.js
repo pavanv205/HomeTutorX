@@ -86,6 +86,24 @@ const seedDatabase = async () => {
       console.log('Tutor account already exists. Skipping...');
     }
 
+    // 3. Seed Student Account
+    const studentExists = await User.findOne({ email: 'student@tutorconnect.com' });
+    if (!studentExists) {
+      await User.create({
+        name: 'Default Student',
+        email: 'student@tutorconnect.com',
+        password: 'student123',
+        role: 'Student',
+        phone: '9876543222'
+      });
+      console.log('ℹ️ Default Student Account Seeded:');
+      console.log('   Email: student@tutorconnect.com');
+      console.log('   Password: student123');
+      console.log('=========================================');
+    } else {
+      console.log('Student account already exists. Skipping...');
+    }
+
     console.log('Database seeding process completed.');
   } catch (error) {
     console.error('Seeding error:', error.message);

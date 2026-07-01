@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaLock, FaUserShield, FaChalkboardTeacher, FaEye, FaEyeSlash, FaUndo } from 'react-icons/fa';
+import { FaEnvelope, FaLock, FaUserShield, FaChalkboardTeacher, FaEye, FaEyeSlash, FaUndo, FaGraduationCap, FaExclamationTriangle } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
+import Modal from '../components/common/Modal';
 import api from '../services/api';
 
 const Login = () => {
@@ -21,10 +22,13 @@ const Login = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [showUserNotFoundModal, setShowUserNotFoundModal] = useState(false);
+  const [showIncorrectPasswordModal, setShowIncorrectPasswordModal] = useState(false);
   
   const { login, isAuthenticated, role } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const hasRoleQuery = new URLSearchParams(location.search).has('role');
 
   const handleRequestOtp = async (e) => {
     e.preventDefault();
@@ -103,9 +107,27 @@ const Login = () => {
         navigate(from || '/admin/dashboard', { replace: true });
       } else if (role === 'Tutor') {
         navigate(from || '/tutor/dashboard', { replace: true });
+      } else if (role === 'Student') {
+        navigate(from || '/student/dashboard', { replace: true });
       }
     }
   }, [isAuthenticated, role, navigate, location]);
+
+  // Parse query parameters to set the default active tab
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const roleParam = params.get('role');
+    if (roleParam === 'student') {
+      setActiveTab('Student');
+      setErrorMsg('');
+    } else if (roleParam === 'teacher' || roleParam === 'tutor') {
+      setActiveTab('Tutor');
+      setErrorMsg('');
+    } else if (roleParam === 'admin') {
+      setActiveTab('Admin');
+      setErrorMsg('');
+    }
+  }, [location.search]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,7 +143,14 @@ const Login = () => {
       await login(email, password);
     } catch (err) {
       console.error(err);
-      setErrorMsg(err.message || 'Login failed. Please check your credentials.');
+      const errMsg = err.message || '';
+      if (errMsg.includes('Please create an account')) {
+        setShowUserNotFoundModal(true);
+      } else if (errMsg.includes('Incorrect username or password')) {
+        setShowIncorrectPasswordModal(true);
+      } else {
+        setErrorMsg(errMsg || 'Login failed. Please check your credentials.');
+      }
     } finally {
       setLoadingLocal(false);
     }
@@ -132,6 +161,10 @@ const Login = () => {
       setEmail('admin@tutorconnect.com');
       setPassword('adminpassword123');
       setActiveTab('Admin');
+    } else if (roleType === 'Student') {
+      setEmail('student@tutorconnect.com');
+      setPassword('student123');
+      setActiveTab('Student');
     } else {
       setEmail('tutor@tutorconnect.com');
       setPassword('tutor123');
@@ -142,9 +175,9 @@ const Login = () => {
   return (
     <>
       <SEO
-        title={`${activeTab} Login`}
+        title={`${activeTab === 'Tutor' ? 'Teacher' : activeTab} Login`}
         description="Access the secure Tutor Connect portal to manage classes, tutor profile, and settings."
-        keywords="login, tutor login, admin portal, tutor connect auth"
+        keywords="login, teacher login, admin portal, tutor connect auth"
       />
 
       <div className="min-h-[85vh] flex items-center justify-center bg-slate-50 dark:bg-[#0B0F19] py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -175,34 +208,57 @@ const Login = () => {
           {/* Role Tabs */}
           {forgotPasswordStep === 'login' && (
             <div className="flex bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl">
-              <button
-                onClick={() => {
-                  setActiveTab('Tutor');
-                  setErrorMsg('');
-                }}
-                className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold rounded-xl transition-all duration-200 ${
-                  activeTab === 'Tutor'
-                    ? 'bg-white text-primary shadow-md dark:bg-slate-900 dark:text-blue-400'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                <FaChalkboardTeacher className="h-4 w-4" />
-                Tutor Login
-              </button>
-              <button
-                onClick={() => {
-                  setActiveTab('Admin');
-                  setErrorMsg('');
-                }}
-                className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold rounded-xl transition-all duration-200 ${
-                  activeTab === 'Admin'
-                    ? 'bg-white text-primary shadow-md dark:bg-slate-900 dark:text-blue-400'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-              >
-                <FaUserShield className="h-4 w-4" />
-                Admin Login
-              </button>
+              {(!hasRoleQuery || activeTab === 'Tutor') && (
+                <button
+                  onClick={() => {
+                    setActiveTab('Tutor');
+                    setErrorMsg('');
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold rounded-xl transition-all duration-200 ${
+                    activeTab === 'Tutor'
+                      ? 'bg-white text-primary shadow-md dark:bg-slate-900 dark:text-blue-400'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                  } ${hasRoleQuery ? 'w-full flex-none cursor-default' : ''}`}
+                  disabled={hasRoleQuery}
+                >
+                  <FaChalkboardTeacher className="h-4 w-4" />
+                  Teacher Login
+                </button>
+              )}
+              {(!hasRoleQuery || activeTab === 'Student') && (
+                <button
+                  onClick={() => {
+                    setActiveTab('Student');
+                    setErrorMsg('');
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold rounded-xl transition-all duration-200 ${
+                    activeTab === 'Student'
+                      ? 'bg-white text-primary shadow-md dark:bg-slate-900 dark:text-blue-400'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                  } ${hasRoleQuery ? 'w-full flex-none cursor-default' : ''}`}
+                  disabled={hasRoleQuery}
+                >
+                  <FaGraduationCap className="h-4 w-4" />
+                  Student Login
+                </button>
+              )}
+              {(!hasRoleQuery || activeTab === 'Admin') && (
+                <button
+                  onClick={() => {
+                    setActiveTab('Admin');
+                    setErrorMsg('');
+                  }}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold rounded-xl transition-all duration-200 ${
+                    activeTab === 'Admin'
+                      ? 'bg-white text-primary shadow-md dark:bg-slate-900 dark:text-blue-400'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                  } ${hasRoleQuery ? 'w-full flex-none cursor-default' : ''}`}
+                  disabled={hasRoleQuery}
+                >
+                  <FaUserShield className="h-4 w-4" />
+                  Admin Login
+                </button>
+              )}
             </div>
           )}
 
@@ -234,7 +290,7 @@ const Login = () => {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder={activeTab === 'Admin' ? 'admin@tutorconnect.com' : 'tutor@example.com'}
+                      placeholder={activeTab === 'Admin' ? 'admin@tutorconnect.com' : activeTab === 'Student' ? 'student@example.com' : 'tutor@example.com'}
                       className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl py-3.5 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     />
                   </div>
@@ -263,7 +319,7 @@ const Login = () => {
                       {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
                     </button>
                   </div>
-                  {activeTab === 'Tutor' && (
+                  {(activeTab === 'Tutor' || activeTab === 'Student') && (
                     <div className="flex justify-end mt-2">
                       <button
                         type="button"
@@ -427,23 +483,37 @@ const Login = () => {
               <h4 className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-center">
                 Testing helper credentials
               </h4>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('Tutor')}
-                  className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 p-2.5 rounded-xl text-left focus:outline-none cursor-pointer"
-                >
-                  <p className="text-[10px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-0.5">Tutor Login</p>
-                  <p className="text-[9px] text-slate-450 dark:text-slate-500 font-semibold truncate">tutor@tutorconnect.com</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('Admin')}
-                  className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 p-2.5 rounded-xl text-left focus:outline-none cursor-pointer"
-                >
-                  <p className="text-[10px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-0.5">Admin Login</p>
-                  <p className="text-[9px] text-slate-450 dark:text-slate-500 font-semibold truncate">admin@tutorconnect.com</p>
-                </button>
+              <div className={`grid ${hasRoleQuery ? 'grid-cols-1' : 'grid-cols-3'} gap-2`}>
+                {(!hasRoleQuery || activeTab === 'Tutor') && (
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('Tutor')}
+                    className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 p-2 rounded-xl text-left focus:outline-none cursor-pointer"
+                  >
+                    <p className="text-[9px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-0.5 text-center">Teacher</p>
+                    <p className="text-[8px] text-slate-450 dark:text-slate-500 font-semibold truncate text-center">tutor@tutorconnect.com</p>
+                  </button>
+                )}
+                {(!hasRoleQuery || activeTab === 'Student') && (
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('Student')}
+                    className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 p-2 rounded-xl text-left focus:outline-none cursor-pointer"
+                  >
+                    <p className="text-[9px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-0.5 text-center">Student</p>
+                    <p className="text-[8px] text-slate-450 dark:text-slate-500 font-semibold truncate text-center">student@tutorconnect.com</p>
+                  </button>
+                )}
+                {(!hasRoleQuery || activeTab === 'Admin') && (
+                  <button
+                    type="button"
+                    onClick={() => handleQuickFill('Admin')}
+                    className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 p-2 rounded-xl text-left focus:outline-none cursor-pointer"
+                  >
+                    <p className="text-[9px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-0.5 text-center">Admin</p>
+                    <p className="text-[8px] text-slate-450 dark:text-slate-500 font-semibold truncate text-center">admin@tutorconnect.com</p>
+                  </button>
+                )}
               </div>
               
               {activeTab === 'Tutor' && (
@@ -457,10 +527,91 @@ const Login = () => {
                   </button>
                 </p>
               )}
+              {activeTab === 'Student' && (
+                <p className="text-[11px] text-slate-550 dark:text-slate-400 text-center font-medium">
+                  Don't have a student account?{' '}
+                  <button
+                    onClick={() => navigate('/register-student')}
+                    className="text-primary hover:underline font-bold dark:text-blue-400 focus:outline-none cursor-pointer"
+                  >
+                    Register here
+                  </button>
+                </p>
+              )}
             </div>
           )}
         </motion.div>
       </div>
+
+      {/* Login Failed Modal: User Not Found */}
+      <Modal
+        isOpen={showUserNotFoundModal}
+        onClose={() => setShowUserNotFoundModal(false)}
+        title="Login Failed"
+        size="sm"
+      >
+        <div className="flex flex-col items-center text-center p-2">
+          <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-950/30 flex items-center justify-center text-amber-600 dark:text-amber-450 mb-4 animate-bounce">
+            <FaExclamationTriangle className="h-6 w-6" />
+          </div>
+          <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
+            Wrong username or password
+          </p>
+          <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-6">
+            Create an account
+          </p>
+          <div className="flex gap-3 w-full">
+            <button
+              onClick={() => {
+                setShowUserNotFoundModal(false);
+                if (activeTab === 'Student') {
+                  navigate('/register-student');
+                } else {
+                  navigate('/become-tutor');
+                }
+              }}
+              className="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-3.5 px-4 rounded-xl text-[11px] shadow-md cursor-pointer transition-colors"
+            >
+              Create an account
+            </button>
+            <button
+              onClick={() => {
+                setShowUserNotFoundModal(false);
+                setForgotPasswordStep('request');
+                setErrorMsg('');
+                setSuccessMsg('');
+                setResetEmail(email);
+              }}
+              className="flex-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold py-3.5 px-4 rounded-xl text-[11px] cursor-pointer transition-colors"
+            >
+              Forget password
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Login Failed Modal: Incorrect Password */}
+      <Modal
+        isOpen={showIncorrectPasswordModal}
+        onClose={() => setShowIncorrectPasswordModal(false)}
+        title="Login Failed"
+        size="sm"
+      >
+        <div className="flex flex-col items-center text-center p-2">
+          <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/30 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-4">
+            <FaExclamationTriangle className="h-6 w-6" />
+          </div>
+          <p className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-6">
+            Incorrect username or password.
+          </p>
+          <button
+            onClick={() => setShowIncorrectPasswordModal(false)}
+            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md cursor-pointer transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </Modal>
     </>
   );
 };

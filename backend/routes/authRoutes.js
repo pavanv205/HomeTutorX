@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { upload } = require('../utils/uploadHelper');
-const { registerTutor, login, getMe } = require('../controllers/authController');
+const { registerTutor, registerStudent, login, getMe } = require('../controllers/authController');
 const { forgotPassword, verifyOtp, resetPassword } = require('../controllers/passwordController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -48,6 +48,7 @@ const handleUpload = (req, res, next) => {
 };
 
 router.post('/register', checkCloudinaryConfig, handleUpload, registerTutor);
+router.post('/register-student', registerStudent);
 router.post('/login', login);
 router.get('/me', protect, getMe);
 router.post('/forgot-password', forgotPassword);

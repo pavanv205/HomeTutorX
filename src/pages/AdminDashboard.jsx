@@ -18,7 +18,8 @@ const formatVerifiedDate = (dateString) => {
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Tutors'
   const [stats, setStats] = useState({
-    tutors: { total: 0, verified: 0, pending: 0 }
+    tutors: { total: 0, verified: 0, pending: 0 },
+    students: { total: 0 }
   });
   const [tutors, setTutors] = useState([]);
 
@@ -165,14 +166,14 @@ const AdminDashboard = () => {
               {activeTab === 'Overview' && (
                 <div className="space-y-8">
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6">
                     <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary dark:bg-blue-500/10 dark:text-blue-400 flex items-center justify-center text-xl">
                         <FaGraduationCap />
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Tutors</p>
-                        <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{stats.tutors.total}</h4>
+                        <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{stats.tutors?.total || 0}</h4>
                       </div>
                     </div>
                     
@@ -182,11 +183,21 @@ const AdminDashboard = () => {
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Verified Tutors</p>
-                        <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{stats.tutors.verified}</h4>
+                        <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{stats.tutors?.verified || 0}</h4>
                       </div>
                     </div>
 
-
+                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400 flex items-center justify-center text-xl">
+                        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Students</p>
+                        <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{stats.students?.total || 0}</h4>
+                      </div>
+                    </div>
                   </div>
 
 
