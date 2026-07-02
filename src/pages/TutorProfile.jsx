@@ -8,13 +8,21 @@ import {
   FaArrowLeft,
   FaUserGraduate,
   FaUser,
-  FaCalendarAlt
+  FaCalendarAlt,
+  FaEnvelope,
+  FaPhone,
+  FaBookOpen,
+  FaCheck,
+  FaTimes,
+  FaHistory
 } from 'react-icons/fa';
 import SEO from '../components/common/SEO';
 import { tutorService } from '../services/tutorService';
 import { useBookingModal } from '../context/BookingModalContext';
 import { TutorProfileSkeleton } from '../components/common/Skeleton';
 import Button from '../components/common/Button';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 
 
@@ -25,6 +33,49 @@ const TutorProfile = () => {
   const [tutor, setTutor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const { user, isAuthenticated } = useAuth();
+  const [profileBookings, setProfileBookings] = useState([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+  const [updatingBookingId, setUpdatingBookingId] = useState(null);
+
+  const isProfileOwner = isAuthenticated && user && user.role === 'Tutor' && 
+    (String(user.tutorProfile) === String(tutor?._id) || String(user.tutorProfile) === String(tutor?.id));
+
+  useEffect(() => {
+    const fetchProfileBookings = async () => {
+      if (!isProfileOwner) return;
+      try {
+        setBookingsLoading(true);
+        const res = await api.get('/bookings');
+        if (res.data && res.data.success) {
+          setProfileBookings(res.data.data || []);
+        }
+      } catch (err) {
+        console.error('Failed to load profile bookings:', err);
+      } finally {
+        setBookingsLoading(false);
+      }
+    };
+
+    if (tutor) {
+      fetchProfileBookings();
+    }
+  }, [isProfileOwner, tutor]);
+
+  const handleUpdateStatus = async (bookingId, newStatus) => {
+    setUpdatingBookingId(bookingId);
+    try {
+      const res = await api.put(`/bookings/${bookingId}`, { status: newStatus });
+      if (res.data && res.data.success) {
+        setProfileBookings(prev => prev.map(b => b._id === bookingId ? { ...b, status: newStatus } : b));
+      }
+    } catch (err) {
+      console.error('Failed to update request status:', err);
+    } finally {
+      setUpdatingBookingId(null);
+    }
+  };
 
 
   useEffect(() => {
@@ -172,6 +223,122 @@ const TutorProfile = () => {
           </div>
         </section>
 
+        {/* Received Trial Requests (Visible only to the Profile Owner) */}
+        {isProfileOwner && (
+          <section className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+            <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-850 pb-4">
+              <div className="h-10 w-10 bg-primary/10 text-primary dark:bg-blue-900/20 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
+                <FaHistory className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Received Trial Requests ({profileBookings.length})
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
+                  Manage trials requested directly by students on your profile.
+                </p>
+              </div>
+            </div>
+
+            {bookingsLoading ? (
+              <div className="py-8 flex justify-center">
+                <div className="h-8 w-8 rounded-full border-4 border-slate-200 border-t-primary dark:border-slate-800 dark:border-t-blue-500 animate-spin" />
+              </div>
+            ) : profileBookings.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-sm font-medium text-slate-550 dark:text-slate-400">No requests received yet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {profileBookings.map((booking) => (
+                  <div
+                    key={booking._id}
+                    className="border border-slate-100 dark:border-slate-800 rounded-2xl p-5 space-y-4 bg-slate-50/30 dark:bg-slate-850/10 flex flex-col justify-between"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-800 dark:text-slate-250">
+                            {booking.studentName}
+                          </h4>
+                          <span className="text-[10px] text-slate-405 font-bold uppercase tracking-wider block mt-0.5">
+                            Subject: {booking.subject}
+                          </span>
+                        </div>
+                        <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                          booking.status === 'Pending'
+                            ? 'bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-450'
+                            : booking.status === 'Assigned' || booking.status === 'Contacted'
+                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400'
+                            : booking.status === 'Completed'
+                            ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'
+                            : 'bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-450'
+                        }`}>
+                          {booking.status === 'Pending' ? 'Pending Approval' : booking.status}
+                        </span>
+                      </div>
+
+                      {booking.status === 'Pending' ? (
+                        <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl text-[11px] font-semibold text-slate-505 dark:text-slate-455 italic flex items-center gap-1.5">
+                          <span>⏳</span>
+                          <span>Contact details will be unlocked once you accept this request.</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl text-[11px] font-semibold text-slate-600 dark:text-slate-400">
+                          <FaPhone className="text-slate-400 shrink-0" />
+                          <span>{booking.studentPhone || 'N/A'}</span>
+                        </div>
+                      )}
+
+                      <div className="space-y-1.5 text-xs text-slate-650 dark:text-slate-350 font-semibold">
+                        <p>Grade / Class: <span className="text-slate-850 dark:text-slate-200">{booking.gradeClass}</span></p>
+                        <p>Learning Mode: <span className="text-slate-850 dark:text-slate-200">{booking.preferredMode}</span></p>
+                        {booking.preferredSlot && <p>Slot: <span className="text-slate-850 dark:text-slate-200">{booking.preferredSlot}</span></p>}
+                        {booking.location && (
+                          <div className="text-[10px] bg-slate-50 dark:bg-slate-850/50 p-2 rounded-lg border border-slate-100 dark:border-slate-800 italic mt-1">
+                            Address: {booking.location}
+                          </div>
+                        )}
+                      </div>
+
+                      {booking.message && booking.message !== 'Instant booking from tutor profile' && (
+                        <div className="bg-slate-50 dark:bg-slate-850/40 p-2.5 rounded-xl text-xs text-slate-600 dark:text-slate-400 border border-slate-100/50 dark:border-slate-800/50">
+                          <p className="font-bold text-[9px] uppercase text-slate-400 mb-0.5">Notes:</p>
+                          <p className="italic">"{booking.message}"</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between gap-3">
+                      <span className="text-[9px] text-slate-400 font-bold">
+                        {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                      {booking.status === 'Pending' && (
+                        <div className="flex gap-1.5">
+                          <button
+                            disabled={updatingBookingId !== null}
+                            onClick={() => handleUpdateStatus(booking._id, 'Assigned')}
+                            className="flex items-center gap-1.5 py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/45 dark:text-emerald-400 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                          >
+                            <FaCheck className="h-3 w-3" /> Accept
+                          </button>
+                          <button
+                            disabled={updatingBookingId !== null}
+                            onClick={() => handleUpdateStatus(booking._id, 'Cancelled')}
+                            className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:hover:bg-red-950/45 dark:text-red-450 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                          >
+                            <FaTimes className="h-3 w-3" /> Decline
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Main Details and Booking splits */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -289,16 +456,33 @@ const TutorProfile = () => {
 
               {/* Free demo class action button */}
               <div className="pt-2">
-                <Button
-                  variant="primary"
-                  className="w-full py-4 text-sm font-bold shadow-md shadow-primary/10 animate-pulse hover:animate-none"
-                  onClick={() => openBookingModal(tutor)}
-                >
-                  Book
-                </Button>
-                <p className="text-[10px] text-center text-slate-400 mt-3 font-semibold">
-                  No commitment required for first session.
-                </p>
+                {!isAuthenticated || (user && user.role === 'Student') ? (
+                  <>
+                    <Button
+                      variant="primary"
+                      className="w-full py-4 text-sm font-bold shadow-md shadow-primary/10 animate-pulse hover:animate-none"
+                      onClick={() => openBookingModal(tutor)}
+                    >
+                      Book
+                    </Button>
+                    <p className="text-[10px] text-center text-slate-400 mt-3 font-semibold">
+                      No commitment required for first session.
+                    </p>
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <Button
+                      variant="primary"
+                      className="w-full py-4 text-sm font-bold opacity-50 cursor-not-allowed"
+                      disabled
+                    >
+                      Book
+                    </Button>
+                    <p className="text-[10px] text-center text-rose-500 font-bold">
+                      Only students can book trial sessions. Log in as a student to book.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

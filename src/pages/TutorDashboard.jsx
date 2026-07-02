@@ -443,40 +443,40 @@ const TutorDashboard = () => {
                                 </div>
                               </div>
                               <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                                booking.status === 'Assigned' || booking.status === 'Pending'
+                                booking.status === 'Pending'
+                                  ? 'bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-450'
+                                  : booking.status === 'Assigned'
                                   ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400'
                                   : booking.status === 'Completed'
                                   ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'
                                   : 'bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400'
                               }`}>
-                                {booking.status === 'Assigned' ? 'Assigned' : booking.status}
+                                {booking.status === 'Pending' ? 'Pending Approval' : booking.status === 'Assigned' ? 'Assigned' : booking.status}
                               </span>
                             </div>
 
-                            {/* Contact Grid */}
-                            <div className="grid grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl text-xs font-semibold text-slate-600 dark:text-slate-400">
-                              <div className="flex items-center gap-2 truncate">
-                                <FaEnvelope className="text-slate-400 shrink-0" />
-                                <span className="truncate" title={booking.studentEmail}>{booking.studentEmail || 'N/A'}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <FaPhone className="text-slate-400 shrink-0" />
-                                <span>{booking.studentPhone || 'N/A'}</span>
-                              </div>
-                            </div>
+                             {/* Contact Grid */}
+                             {booking.status === 'Pending' ? (
+                               <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl text-[11px] font-semibold text-slate-500 dark:text-slate-455 italic flex items-center gap-1.5">
+                                 <span>⏳</span>
+                                 <span>Contact details will be unlocked once you accept this request.</span>
+                               </div>
+                             ) : (
+                               <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl text-xs font-semibold text-slate-600 dark:text-slate-400">
+                                 <FaPhone className="text-slate-400 shrink-0" />
+                                 <span>{booking.studentPhone || 'N/A'}</span>
+                               </div>
+                             )}
 
                             {/* Requirement Details */}
                             <div className="space-y-2 text-xs font-semibold text-slate-650 dark:text-slate-350">
-                              <div className="flex items-center gap-2">
-                                <FaBookOpen className="text-slate-400 w-4 h-4 shrink-0" />
+                              <div>
                                 <span>Subject: <strong className="text-slate-800 dark:text-slate-200">{booking.subject}</strong></span>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <FaGraduationCap className="text-slate-400 w-4 h-4 shrink-0" />
+                              <div>
                                 <span>Class: <strong className="text-slate-800 dark:text-slate-200">{booking.gradeClass}</strong></span>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <FaMapMarkerAlt className="text-slate-400 w-4 h-4 shrink-0" />
+                              <div>
                                 <span>Mode: <strong className="text-slate-800 dark:text-slate-200">{booking.preferredMode}</strong></span>
                               </div>
                               {booking.location && (
@@ -484,15 +484,14 @@ const TutorDashboard = () => {
                                   Address: {booking.location}
                                 </div>
                               )}
+                              {/* Message */}
+                              {booking.message && booking.message !== 'Instant booking from tutor profile' && (
+                                <div className="bg-slate-50 dark:bg-slate-800/20 p-3 rounded-2xl border border-slate-100/50 dark:border-slate-800 text-xs font-medium text-slate-600 dark:text-slate-400">
+                                  <p className="font-bold text-[10px] uppercase text-slate-400 dark:text-slate-505 tracking-wider mb-1">Student Notes:</p>
+                                  <p className="leading-relaxed">"{booking.message}"</p>
+                                </div>
+                              )}
                             </div>
-
-                            {/* Message */}
-                            {booking.message && (
-                              <div className="bg-slate-50 dark:bg-slate-800/20 p-3 rounded-2xl border border-slate-100/50 dark:border-slate-800 text-xs font-medium text-slate-600 dark:text-slate-400">
-                                <p className="font-bold text-[10px] uppercase text-slate-400 dark:text-slate-500 tracking-wider mb-1">Student Notes:</p>
-                                <p className="leading-relaxed">"{booking.message}"</p>
-                              </div>
-                            )}
                           </div>
 
                           {/* Quick Actions Footer */}
@@ -500,6 +499,27 @@ const TutorDashboard = () => {
                             <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold">
                               Received: {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                             </span>
+
+                            {booking.status === 'Pending' && (
+                              <div className="flex gap-2">
+                                <button
+                                  disabled={updatingBookingId !== null}
+                                  onClick={() => handleUpdateBookingStatus(booking._id, 'Assigned')}
+                                  className="flex items-center gap-1.5 py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40 dark:text-emerald-400 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                                >
+                                  <FaCheck className="h-3 w-3" />
+                                  Accept
+                                </button>
+                                <button
+                                  disabled={updatingBookingId !== null}
+                                  onClick={() => handleUpdateBookingStatus(booking._id, 'Cancelled')}
+                                  className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-450 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                                >
+                                  <FaTimes className="h-3 w-3" />
+                                  Decline
+                                </button>
+                              </div>
+                            )}
 
                             {booking.status === 'Assigned' && (
                               <div className="flex gap-2">

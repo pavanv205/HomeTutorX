@@ -132,16 +132,17 @@ const StudentDashboard = () => {
                                 {booking.assignedTutor.fullName}
                               </span>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-[11px] font-semibold text-slate-550 dark:text-slate-450">
-                              <div className="flex items-center gap-1.5 truncate">
-                                <FaEnvelope className="shrink-0 text-slate-400" />
-                                <span className="truncate" title={booking.assignedTutor.email}>{booking.assignedTutor.email}</span>
+                            {booking.status === 'Pending' ? (
+                              <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-455 italic flex items-center gap-1.5 pt-1">
+                                <span>⏳</span>
+                                <span>Awaiting response. Contact details will be unlocked once accepted.</span>
                               </div>
-                              <div className="flex items-center gap-1.5">
+                            ) : (
+                              <div className="flex items-center gap-1.5 pt-1 text-[11px] font-semibold text-slate-550 dark:text-slate-450">
                                 <FaPhone className="shrink-0 text-slate-400" />
                                 <span>{booking.assignedTutor.mobile}</span>
                               </div>
-                            </div>
+                            )}
                           </div>
                         ) : (
                           <div className="bg-slate-50/50 dark:bg-slate-800/20 p-3.5 rounded-2xl text-[11px] font-semibold text-slate-500 dark:text-slate-450 italic flex items-center gap-2">
@@ -159,17 +160,16 @@ const StudentDashboard = () => {
                         )}
 
                         {/* Student Notes */}
-                        {booking.message && (
+                        {booking.message && booking.message !== 'Instant booking from tutor profile' && (
                           <div className="bg-slate-50 dark:bg-slate-800/10 p-3 rounded-2xl text-xs font-medium text-slate-600 dark:text-slate-400 border border-slate-100/50 dark:border-slate-800/50">
-                            <p className="font-bold text-[9px] uppercase text-slate-450 dark:text-slate-500 tracking-wider mb-0.5">Your Notes:</p>
+                            <p className="font-bold text-[9px] uppercase text-slate-450 dark:text-slate-505 tracking-wider mb-0.5">Your Notes:</p>
                             <p className="leading-relaxed">"{booking.message}"</p>
                           </div>
                         )}
                       </div>
 
                       {/* Card Footer */}
-                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 text-[10px] text-slate-400 dark:text-slate-500 font-bold flex items-center justify-between mt-3">
-                        <span>Lead ID: {booking._id}</span>
+                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 text-[10px] text-slate-400 dark:text-slate-500 font-bold flex items-center justify-end mt-3">
                         <span>Requested: {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                       </div>
                     </div>

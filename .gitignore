@@ -32,3 +32,6 @@ dist-ssr
 backend/data/
 backend/uploads/
 .vercel
+
+.vercel
+.env*

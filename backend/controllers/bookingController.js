@@ -29,7 +29,7 @@ exports.createBooking = async (req, res, next) => {
         message,
         preferredMode: resolvedMode,
         location,
-        status: tutorId ? 'Assigned' : 'Pending',
+        status: 'Pending',
         assignedTutor: tutorId || undefined,
         createdAt: new Date().toISOString()
       };
@@ -59,7 +59,7 @@ exports.createBooking = async (req, res, next) => {
       const tutor = await Tutor.findById(tutorId);
       if (tutor) {
         bookingData.assignedTutor = tutor._id;
-        bookingData.status = 'Assigned';
+        bookingData.status = 'Pending';
       }
     }
 

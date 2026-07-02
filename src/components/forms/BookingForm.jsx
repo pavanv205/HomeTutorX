@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -41,6 +41,7 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const hasSubmittedRef = useRef(false);
 
   const {
     register,
@@ -67,12 +68,21 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
       return;
     }
 
+    if (user && user.role !== 'Student') {
+      return;
+    }
+
+    if (hasSubmittedRef.current) return;
+    hasSubmittedRef.current = true;
+
     const autoSubmit = async () => {
       if (onSetTitle) onSetTitle('');
       setLoading(true);
       try {
         const payload = {
           studentName: user?.name || 'Student',
+          studentEmail: user?.email || '',
+          email: user?.email || '',
           phone: user?.phone || '1234567890',
           gradeClass: tutor && tutor.classes && tutor.classes.length > 0 ? tutor.classes[0] : '10th',
           subject: tutor && tutor.subjects && tutor.subjects.length > 0 ? tutor.subjects[0] : 'Mathematics',
@@ -102,8 +112,10 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
       setLoading(true);
       const payload = {
         ...data,
-        tutorId: tutor ? tutor.id : 'general',
-        tutorName: tutor ? tutor.name : 'Any Available Tutor'
+        studentEmail: user?.email || '',
+        email: user?.email || '',
+        tutorId: tutor ? (tutor._id || tutor.id) : 'general',
+        tutorName: tutor ? (tutor.name || tutor.fullName) : 'Any Available Tutor'
       };
       const response = await bookingService.bookDemo(payload);
       if (response.success) {
@@ -121,6 +133,24 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
       setLoading(false);
     }
   };
+
+  if (isAuthenticated && user && user.role !== 'Student') {
+    return (
+      <div className="text-center py-8 px-4">
+        <div className="h-16 w-16 bg-rose-100 dark:bg-rose-950/30 text-rose-600 dark:text-rose-450 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h4 className="text-base font-extrabold text-slate-900 dark:text-white mb-2 uppercase tracking-wide">
+          Booking Restricted
+        </h4>
+        <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed max-w-xs mx-auto font-medium">
+          Only student accounts can book classes. Please sign in as a student to request a class.
+        </p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
