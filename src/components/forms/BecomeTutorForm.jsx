@@ -8,6 +8,7 @@ import { tutorService } from '../../services/tutorService';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
 import api from '../../services/api';
+import { compressImage } from '../../utils/imageCompression';
 
 // Global schema for full validation
 const validationSchema = yup.object().shape({
@@ -66,6 +67,9 @@ const BecomeTutorForm = () => {
   const [certificateFile, setCertificateFile] = useState(null);
   const [certificateError, setCertificateError] = useState('');
   const [submitError, setSubmitError] = useState('');
+  const [compressedPreviewUrl, setCompressedPreviewUrl] = useState(null);
+  const [originalSize, setOriginalSize] = useState(null);
+  const [compressionLoading, setCompressionLoading] = useState(false);
 
   const {
     register,
@@ -223,7 +227,7 @@ const BecomeTutorForm = () => {
     setCurrentStep((prev) => prev - 1);
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const filename = file.name.toLowerCase();
@@ -232,6 +236,8 @@ const BecomeTutorForm = () => {
       if (filename.includes('.trashed-') || filename.startsWith('.trashed-')) {
         setResumeError('Invalid file type: temporary trashed files are not allowed');
         setResumeFile(null);
+        setCompressedPreviewUrl(null);
+        setOriginalSize(null);
         return;
       }
       
@@ -243,12 +249,29 @@ const BecomeTutorForm = () => {
       if (file.size > 2 * 1024 * 1024) {
         setResumeError('File size should be less than 2MB');
         setResumeFile(null);
+        setCompressedPreviewUrl(null);
+        setOriginalSize(null);
       } else if (!isAllowedType && !hasAllowedExt) {
         setResumeError('Only image files (JPEG, PNG, WEBP) are allowed');
         setResumeFile(null);
+        setCompressedPreviewUrl(null);
+        setOriginalSize(null);
       } else {
         setResumeError('');
-        setResumeFile(file);
+        try {
+          setCompressionLoading(true);
+          const result = await compressImage(file, 500 * 1024);
+          setResumeFile(result.file);
+          setCompressedPreviewUrl(result.previewUrl);
+          setOriginalSize(result.originalSize);
+        } catch (err) {
+          console.error('Image compression failed:', err);
+          setResumeFile(file);
+          setCompressedPreviewUrl(URL.createObjectURL(file));
+          setOriginalSize(file.size);
+        } finally {
+          setCompressionLoading(false);
+        }
       }
     }
   };
@@ -1018,23 +1041,50 @@ const BecomeTutorForm = () => {
                   <p className="text-xs text-slate-400">Image file (JPEG, PNG, WEBP) up to 2MB</p>
                 </div>
               </div>
-              {resumeFile && (
-                <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-250/20 rounded-xl flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 bg-primary/10 dark:bg-blue-500/10 text-primary dark:text-blue-450 rounded-lg flex items-center justify-center font-bold text-xs">
-                      {resumeFile.name.split('.').pop().toUpperCase()}
-                    </div>
+              {compressionLoading && (
+                <div className="mt-4 flex items-center gap-2 text-xs font-bold text-primary dark:text-blue-450 bg-slate-50/50 dark:bg-slate-900/50 p-3.5 border border-slate-200/50 dark:border-slate-800 rounded-xl">
+                  <span className="loader scale-75 shrink-0"></span>
+                  <span>Compressing and optimizing image...</span>
+                </div>
+              )}
+              {resumeFile && !compressionLoading && (
+                <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-250/20 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3.5">
+                    {/* Visual Image Preview */}
+                    {compressedPreviewUrl && (
+                      <div className="relative h-14 w-14 rounded-xl overflow-hidden border border-slate-250/30 shadow-sm shrink-0 bg-slate-105 dark:bg-slate-850 flex items-center justify-center z-0">
+                        <img src={compressedPreviewUrl} alt="Profile preview" className="h-full w-full object-cover" />
+                      </div>
+                    )}
                     <div>
-                      <p className="text-xs font-semibold text-slate-850 dark:text-slate-200 max-w-[200px] truncate">{resumeFile.name}</p>
-                      <p className="text-[10px] text-slate-400">{(resumeFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                      <p className="text-xs font-bold text-slate-800 dark:text-slate-205 max-w-[180px] sm:max-w-[240px] truncate">{resumeFile.name}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
+                          {(resumeFile.size / 1024).toFixed(0)} KB
+                        </span>
+                        {originalSize && originalSize !== resumeFile.size && (
+                          <>
+                            <span className="text-[9px] font-bold text-emerald-650 dark:text-emerald-450 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded">
+                              Saved {(((originalSize - resumeFile.size) / originalSize) * 100).toFixed(0)}%
+                            </span>
+                            <span className="text-[9px] text-slate-400 font-semibold line-through">
+                              {(originalSize / 1024).toFixed(0)} KB
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <button
                     type="button"
-                    onClick={() => setResumeFile(null)}
-                    className="text-xs font-bold text-rose-500 hover:underline"
+                    onClick={() => {
+                      setResumeFile(null);
+                      setCompressedPreviewUrl(null);
+                      setOriginalSize(null);
+                    }}
+                    className="text-xs font-bold text-rose-500 hover:underline shrink-0"
                   >
-                    Remove
+                    Remove Photo
                   </button>
                 </div>
               )}
