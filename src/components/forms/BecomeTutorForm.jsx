@@ -66,6 +66,9 @@ const BecomeTutorForm = () => {
   const [resumeError, setResumeError] = useState('');
   const [certificateFile, setCertificateFile] = useState(null);
   const [certificateError, setCertificateError] = useState('');
+  // New state for certificate preview & size (for images)
+  const [certificatePreviewUrl, setCertificatePreviewUrl] = useState(null);
+  const [certificateOriginalSize, setCertificateOriginalSize] = useState(null);
   const [submitError, setSubmitError] = useState('');
   const [compressedPreviewUrl, setCompressedPreviewUrl] = useState(null);
   const [originalSize, setOriginalSize] = useState(null);
@@ -124,6 +127,14 @@ const BecomeTutorForm = () => {
       setValue('city', '');
     }
   }, [watchedState, setValue]);
+
+  // Cleanup object URLs for both profile and certificate previews when component unmounts or files change
+  useEffect(() => {
+    return () => {
+      if (compressedPreviewUrl) URL.revokeObjectURL(compressedPreviewUrl);
+      if (certificatePreviewUrl) URL.revokeObjectURL(certificatePreviewUrl);
+    };
+  }, []);
 
   const citiesForSelectedState = watchedState ? (STATE_CITIES[watchedState] || []) : [];
 
@@ -275,30 +286,60 @@ const BecomeTutorForm = () => {
     }
   };
 
-  const handleCertificateChange = (e) => {
+  const handleCertificateChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const filename = file.name.toLowerCase();
-      
-      // 1. Reject invalid temporary files
-      if (filename.includes('.trashed-') || filename.startsWith('.trashed-')) {
-        setCertificateError('Invalid file type: temporary trashed files are not allowed');
-        setCertificateFile(null);
-        return;
-      }
-      
-      // 2. Validate types
-      const allowedExts = ['.jpg', '.jpeg', '.png', '.pdf'];
-      const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
-      const isAllowedType = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'].includes(file.type);
-      
-      if (!isAllowedType && !hasAllowedExt) {
-        setCertificateError('Only image files (JPEG, PNG, WEBP) or PDFs are allowed');
-        setCertificateFile(null);
-      } else {
-        setCertificateError('');
+    if (!file) return;
+
+    const filename = file.name.toLowerCase();
+
+    // 1. Reject invalid temporary files
+    if (filename.includes('.trashed-') || filename.startsWith('.trashed-')) {
+      setCertificateError('Invalid file type: temporary trashed files are not allowed');
+      setCertificateFile(null);
+      setCertificatePreviewUrl(null);
+      setCertificateOriginalSize(null);
+      return;
+    }
+
+    // 2. Validate allowed extensions & MIME types
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.pdf'];
+    const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
+    const isAllowedType = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'].includes(file.type);
+
+    if (!isAllowedType && !hasAllowedExt) {
+      setCertificateError('Only image files (JPEG, PNG, WEBP) or PDFs are allowed');
+      setCertificateFile(null);
+      setCertificatePreviewUrl(null);
+      setCertificateOriginalSize(null);
+      return;
+    }
+
+    // Reset any previous error
+    setCertificateError('');
+
+    // 3. If the file is an image, compress it like the profile photo
+    const imageMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (imageMimeTypes.includes(file.type)) {
+      try {
+        setCompressionLoading(true);
+        const result = await compressImage(file, 500 * 1024); // target 500KB
+        setCertificateFile(result.file);
+        setCertificatePreviewUrl(result.previewUrl);
+        setCertificateOriginalSize(result.originalSize);
+      } catch (err) {
+        console.error('Certificate image compression failed:', err);
+        // Fallback to original image
         setCertificateFile(file);
+        setCertificatePreviewUrl(URL.createObjectURL(file));
+        setCertificateOriginalSize(file.size);
+      } finally {
+        setCompressionLoading(false);
       }
+    } else {
+      // It's a PDF – no compression needed
+      setCertificateFile(file);
+      setCertificatePreviewUrl(null);
+      setCertificateOriginalSize(null);
     }
   };
 
