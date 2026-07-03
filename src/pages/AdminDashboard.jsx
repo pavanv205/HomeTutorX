@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaGraduationCap, FaCheck, FaTimes, FaUserSlash, FaUserCheck, FaInfoCircle } from 'react-icons/fa';
+import { FaGraduationCap, FaCheck, FaTimes, FaUserSlash, FaUserCheck, FaInfoCircle, FaDatabase, FaServer } from 'react-icons/fa';
 import api from '../services/api';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
@@ -22,7 +22,7 @@ const AdminDashboard = () => {
     students: { total: 0 }
   });
   const [tutors, setTutors] = useState([]);
-
+  const [showCapacityDetails, setShowCapacityDetails] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
@@ -166,9 +166,12 @@ const AdminDashboard = () => {
               {activeTab === 'Overview' && (
                 <div className="space-y-8">
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6">
-                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary dark:bg-blue-500/10 dark:text-blue-400 flex items-center justify-center text-xl">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div 
+                      onClick={() => setActiveTab('Tutors')}
+                      className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all"
+                    >
+                      <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary dark:bg-blue-500/10 dark:text-blue-400 flex items-center justify-center text-xl shrink-0">
                         <FaGraduationCap />
                       </div>
                       <div>
@@ -177,8 +180,11 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                     
-                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 flex items-center justify-center text-xl">
+                    <div 
+                      onClick={() => setActiveTab('Tutors')}
+                      className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all"
+                    >
+                      <div className="h-12 w-12 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0">
                         <FaUserCheck />
                       </div>
                       <div>
@@ -187,8 +193,8 @@ const AdminDashboard = () => {
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400 flex items-center justify-center text-xl">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-default">
+                      <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400 flex items-center justify-center text-xl shrink-0">
                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
@@ -198,10 +204,42 @@ const AdminDashboard = () => {
                         <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{stats.students?.total || 0}</h4>
                       </div>
                     </div>
+
+                    {/* New Storage Capacity Stat Card */}
+                    <div 
+                      onClick={() => setShowCapacityDetails(prev => !prev)}
+                      className={`bg-white dark:bg-slate-900 border rounded-3xl p-6 shadow-sm flex items-center justify-between gap-4 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all ${
+                        showCapacityDetails ? 'border-primary dark:border-blue-500' : 'border-slate-100 dark:border-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-2xl bg-purple-50 text-purple-600 dark:bg-purple-950/20 dark:text-purple-400 flex items-center justify-center text-xl shrink-0">
+                          <FaDatabase />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Storage Capacity</p>
+                          <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">
+                            {(100 - Math.max(
+                              Math.min((((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0) / 1024 / 512) * 100, 100),
+                              Math.min(((stats.tutors?.total || 0) * 1.2 / 25000) * 100, 100)
+                            )).toFixed(2)}% Free
+                          </h4>
+                        </div>
+                      </div>
+                      <svg 
+                        className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${showCapacityDetails ? 'rotate-180' : ''}`} 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
                   </div>
 
                   {/* Storage Capacity Section */}
-                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+                  {showCapacityDetails && (
+                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
                     <div className="border-b border-slate-100 dark:border-slate-850 pb-4">
                       <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100">Storage & System Capacity Dashboard</h3>
                       <p className="text-[11px] text-slate-400 font-semibold mt-0.5">Estimated system limits based on MongoDB (512 MB Free tier) and Cloudinary (25 GB Free tier).</p>
@@ -289,6 +327,7 @@ const AdminDashboard = () => {
                       </ul>
                     </div>
                   </div>
+                  )}
                 </div>
               )}
 
