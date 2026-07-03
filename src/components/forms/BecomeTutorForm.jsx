@@ -948,27 +948,43 @@ const BecomeTutorForm = () => {
 
             {/* Live Location Option */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1">
-              <button
-                type="button"
-                onClick={handleFetchLiveLocation}
-                disabled={locLoading}
-                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold border cursor-pointer transition-all duration-200 ${
-                  hasFetchedLoc
-                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-450 dark:border-emerald-900/50'
-                    : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
-                }`}
-              >
-                {locLoading ? (
-                  <span>Fetching Location...</span>
-                ) : hasFetchedLoc ? (
-                  <span>Live Location Linked ✓</span>
-                ) : (
-                  <>
-                    <span>Use Live Location</span>
-                    <span className="loader scale-pin"></span>
-                  </>
-                )}
-              </button>
+              <div className="relative group flex items-center">
+                <button
+                  type="button"
+                  onClick={handleFetchLiveLocation}
+                  disabled={locLoading}
+                  className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold border cursor-pointer transition-all duration-200 ${
+                    hasFetchedLoc
+                      ? 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-450 dark:border-emerald-900/50'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
+                  }`}
+                >
+                  {locLoading ? (
+                    <span>Fetching Location...</span>
+                  ) : hasFetchedLoc ? (
+                    <span>Live Location Linked ✓</span>
+                  ) : (
+                    <>
+                      <span>Use Live Location</span>
+                      <span className="loader scale-pin"></span>
+                    </>
+                  )}
+                </button>
+
+                {/* Styled Tooltip Popup on Hover */}
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 hidden group-hover:flex flex-col items-center pointer-events-none z-10">
+                  <div className="bg-slate-900 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg shadow-lg text-center leading-normal dark:bg-slate-800 border border-slate-700">
+                    Use only at your home location
+                  </div>
+                  <div className="w-2 h-2 bg-slate-900 dark:bg-slate-800 transform rotate-45 -mt-1 shadow-md"></div>
+                </div>
+              </div>
+
+              {/* Persistent Amber Warning Text */}
+              <span className="text-[11px] text-amber-600 dark:text-amber-450 font-bold bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-900/30 px-3 py-2 rounded-xl flex items-center gap-1.5">
+                ⚠️ Use only at your home location.
+              </span>
+
               {locError && <span className="text-xs text-rose-500 font-semibold">{locError}</span>}
               {hasFetchedLoc && (
                 <span className="text-[10px] text-slate-400 font-bold dark:text-slate-505">
