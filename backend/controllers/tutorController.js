@@ -91,6 +91,38 @@ exports.createTutor = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Phone number must be at least 10 characters long' });
     }
 
+    // Check if user already exists with this email (case-insensitive checks)
+    const normalizedEmail = emailVal.trim().toLowerCase();
+    
+    // Check User model
+    let emailUserExists;
+    const isOffline = mongoose.connection.readyState !== 1;
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      emailUserExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
+    } else {
+      emailUserExists = await User.findOne({ email: normalizedEmail });
+    }
+
+    if (emailUserExists && emailUserExists._id.toString() !== req.user._id.toString()) {
+      return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+
+    // Check Tutor model
+    let emailTutorExists;
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      const tutorsList = await dbFallback.getTutors();
+      emailTutorExists = tutorsList.find(t => t.email.toLowerCase() === normalizedEmail);
+    } else {
+      emailTutorExists = await Tutor.findOne({ email: normalizedEmail });
+    }
+
+    if (emailTutorExists && emailTutorExists.userId?.toString() !== req.user._id.toString()) {
+      return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+
     // Parse array fields if sent as JSON strings (multipart/form-data)
     const parseIfJson = (val) => {
       if (!val) return [];
@@ -376,6 +408,38 @@ exports.updateTutor = async (req, res, next) => {
     }
 
     const data = req.body || {};
+
+    if (data.email) {
+      const normalizedEmail = data.email.trim().toLowerCase();
+      
+      // Check User model
+      let emailUserExists;
+      if (isOffline) {
+        const dbFallback = require('../utils/dbFallback');
+        const usersList = await dbFallback.getUsers();
+        emailUserExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
+      } else {
+        emailUserExists = await User.findOne({ email: normalizedEmail });
+      }
+
+      if (emailUserExists && emailUserExists._id.toString() !== tutor.userId?.toString()) {
+        return res.status(400).json({ success: false, message: 'Email already registered' });
+      }
+
+      // Check Tutor model
+      let emailTutorExists;
+      if (isOffline) {
+        const dbFallback = require('../utils/dbFallback');
+        const tutorsList = await dbFallback.getTutors();
+        emailTutorExists = tutorsList.find(t => t.email.toLowerCase() === normalizedEmail);
+      } else {
+        emailTutorExists = await Tutor.findOne({ email: normalizedEmail });
+      }
+
+      if (emailTutorExists && emailTutorExists._id.toString() !== tutor._id.toString()) {
+        return res.status(400).json({ success: false, message: 'Email already registered' });
+      }
+    }
     if (req.files && req.files['resume'] && req.files['resume'][0]) {
       const fileUrl = getFileUrl(req.files['resume'][0]);
       data.resumeUrl = fileUrl;

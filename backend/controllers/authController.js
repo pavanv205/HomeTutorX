@@ -121,17 +121,18 @@ exports.registerTutor = async (req, res, next) => {
       });
     }
 
-    // 4. Check if user already exists
+    // 4. Check if user already exists (case-insensitive check on User and Tutor models)
+    const normalizedEmail = email.trim().toLowerCase();
     let userExists;
     const isOffline = mongoose.connection.readyState !== 1;
     if (isOffline) {
       console.log('🔌 MongoDB is offline. Running registerTutor in Fallback mode.');
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      userExists = usersList.find(u => u.email === email);
+      userExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
     } else {
       try {
-        userExists = await User.findOne({ email });
+        userExists = await User.findOne({ email: normalizedEmail });
       } catch (dbErr) {
         console.error(`[REGISTRATION DATABASE ERROR] Failed to query existing user | Method: ${req.method} | Path: ${req.originalUrl} | Email: ${email} | Error: ${dbErr.message}`);
         return res.status(500).json({
@@ -143,6 +144,24 @@ exports.registerTutor = async (req, res, next) => {
 
     if (userExists) {
       devLog(`[REGISTRATION FAILED] Email already registered: ${email}`);
+      return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+
+    let tutorExists;
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      const tutorsList = await dbFallback.getTutors();
+      tutorExists = tutorsList.find(t => t.email.toLowerCase() === normalizedEmail);
+    } else {
+      try {
+        tutorExists = await Tutor.findOne({ email: normalizedEmail });
+      } catch (dbErr) {
+        console.error(`[REGISTRATION DATABASE ERROR] Failed to query existing tutor | Error: ${dbErr.message}`);
+      }
+    }
+
+    if (tutorExists) {
+      devLog(`[REGISTRATION FAILED] Tutor profile email already registered: ${email}`);
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
 
@@ -380,20 +399,35 @@ exports.registerStudent = async (req, res, next) => {
       });
     }
 
-    // Check if user already exists
+    // Check if user already exists (case-insensitive check on User and Tutor models)
+    const normalizedEmail = email.trim().toLowerCase();
     let userExists;
     const isOffline = mongoose.connection.readyState !== 1;
     if (isOffline) {
       console.log('🔌 MongoDB is offline. Running registerStudent in Fallback mode.');
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      userExists = usersList.find(u => u.email === email);
+      userExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
     } else {
-      userExists = await User.findOne({ email });
+      userExists = await User.findOne({ email: normalizedEmail });
     }
 
     if (userExists) {
       devLog(`[REGISTRATION FAILED] Email already registered: ${email}`);
+      return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+
+    let tutorExists;
+    if (isOffline) {
+      const dbFallback = require('../utils/dbFallback');
+      const tutorsList = await dbFallback.getTutors();
+      tutorExists = tutorsList.find(t => t.email.toLowerCase() === normalizedEmail);
+    } else {
+      tutorExists = await Tutor.findOne({ email: normalizedEmail });
+    }
+
+    if (tutorExists) {
+      devLog(`[REGISTRATION FAILED] Student registration blocked. Tutor profile email already registered: ${email}`);
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
 
