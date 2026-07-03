@@ -158,6 +158,11 @@ const BecomeTutorForm = () => {
   }, [watchedState, citySearchQuery]);
 
   const handleFetchLiveLocation = () => {
+    const confirmLocation = window.confirm("Use only at your home location. Do you want to continue?");
+    if (!confirmLocation) {
+      return;
+    }
+
     if (!navigator.geolocation) {
       setLocError('Geolocation is not supported by your browser.');
       return;
