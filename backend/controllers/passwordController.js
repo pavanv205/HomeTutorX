@@ -23,6 +23,8 @@ exports.forgotPassword = async (req, res, next) => {
     return res.status(400).json({ success: false, message: 'Email is required' });
   }
 
+  const normalizedEmail = email.trim().toLowerCase();
+
   try {
     let user;
     const isOffline = mongoose.connection.readyState !== 1;
@@ -31,13 +33,30 @@ exports.forgotPassword = async (req, res, next) => {
       console.log('🔌 MongoDB is offline. Running forgotPassword in Fallback mode.');
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      user = usersList.find(u => u.email === email);
+      user = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
     } else {
-      user = await User.findOne({ email });
+      user = await User.findOne({ email: normalizedEmail });
     }
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Additional check: if user is a Tutor, they must have a valid Tutor profile document
+    if (user.role === 'Tutor') {
+      let tutorProfileExists;
+      if (isOffline) {
+        const dbFallback = require('../utils/dbFallback');
+        const tutorsList = await dbFallback.getTutors();
+        tutorProfileExists = tutorsList.find(t => String(t.userId) === String(user._id));
+      } else {
+        const Tutor = require('../models/Tutor');
+        tutorProfileExists = await Tutor.findOne({ userId: user._id });
+      }
+
+      if (!tutorProfileExists) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
     }
 
     const otp = generateOtp(6);
@@ -46,21 +65,21 @@ exports.forgotPassword = async (req, res, next) => {
 
     if (isOffline) {
       // Upsert record in-memory
-      const existingIdx = memoryPasswordResets.findIndex(r => r.email === email);
+      const existingIdx = memoryPasswordResets.findIndex(r => r.email.toLowerCase() === normalizedEmail);
       if (existingIdx !== -1) {
         memoryPasswordResets.splice(existingIdx, 1);
       }
-      memoryPasswordResets.push({ email, otp, expiresAt, createdAt: new Date() });
+      memoryPasswordResets.push({ email: normalizedEmail, otp, expiresAt, createdAt: new Date() });
     } else {
       // Upsert OTP record in DB
       await PasswordReset.findOneAndUpdate(
-        { email },
+        { email: normalizedEmail },
         { otp, expiresAt, createdAt: new Date() },
         { upsert: true, new: true }
       );
     }
 
-    await sendOtp(email, otp);
+    await sendOtp(normalizedEmail, otp);
 
     const responsePayload = { success: true, message: 'OTP sent to email' };
     const isSmtpConfigured = process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS;
@@ -83,14 +102,15 @@ exports.verifyOtp = async (req, res, next) => {
   if (!email || !otp) {
     return res.status(400).json({ success: false, message: 'Email and OTP are required' });
   }
+  const normalizedEmail = email.trim().toLowerCase();
   try {
     let record;
     const isOffline = mongoose.connection.readyState !== 1;
 
     if (isOffline) {
-      record = memoryPasswordResets.find(r => r.email === email && r.otp === otp);
+      record = memoryPasswordResets.find(r => r.email.toLowerCase() === normalizedEmail && r.otp === otp);
     } else {
-      record = await PasswordReset.findOne({ email, otp });
+      record = await PasswordReset.findOne({ email: normalizedEmail, otp });
     }
 
     if (!record) {
@@ -114,14 +134,15 @@ exports.resetPassword = async (req, res, next) => {
   if (!email || !otp || !newPassword) {
     return res.status(400).json({ success: false, message: 'Email, OTP and new password are required' });
   }
+  const normalizedEmail = email.trim().toLowerCase();
   try {
     let record;
     const isOffline = mongoose.connection.readyState !== 1;
 
     if (isOffline) {
-      record = memoryPasswordResets.find(r => r.email === email && r.otp === otp);
+      record = memoryPasswordResets.find(r => r.email.toLowerCase() === normalizedEmail && r.otp === otp);
     } else {
-      record = await PasswordReset.findOne({ email, otp });
+      record = await PasswordReset.findOne({ email: normalizedEmail, otp });
     }
 
     if (!record) {
@@ -136,20 +157,20 @@ exports.resetPassword = async (req, res, next) => {
     if (isOffline) {
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      const user = usersList.find(u => u.email === email);
+      const user = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
       if (user) {
         user.password = hashed;
       }
       
       // Clean up used OTP in-memory
-      const existingIdx = memoryPasswordResets.findIndex(r => r.email === email && r.otp === otp);
+      const existingIdx = memoryPasswordResets.findIndex(r => r.email.toLowerCase() === normalizedEmail && r.otp === otp);
       if (existingIdx !== -1) {
         memoryPasswordResets.splice(existingIdx, 1);
       }
     } else {
-      await User.findOneAndUpdate({ email }, { password: hashed });
+      await User.findOneAndUpdate({ email: normalizedEmail }, { password: hashed });
       // Clean up used OTP in DB
-      await PasswordReset.deleteOne({ email, otp });
+      await PasswordReset.deleteOne({ email: normalizedEmail, otp });
     }
 
     return res.status(200).json({ success: true, message: 'Password has been reset' });
