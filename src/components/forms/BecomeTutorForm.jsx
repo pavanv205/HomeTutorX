@@ -1154,27 +1154,56 @@ const BecomeTutorForm = () => {
                   </div>
                   <p className="text-xs text-slate-400">PDF or Image file (JPEG, PNG, WEBP) up to 2MB</p>
                 </div>
-              </div>
-              {certificateFile && (
-                <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-250/20 rounded-xl flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 bg-primary/10 dark:bg-blue-500/10 text-primary dark:text-blue-450 rounded-lg flex items-center justify-center font-bold text-xs">
-                      {certificateFile.name.split('.').pop().toUpperCase()}
+                {certificateFile && (
+                  <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-250/20 rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 bg-primary/10 dark:bg-blue-500/10 text-primary dark:text-blue-450 rounded-lg flex items-center justify-center font-bold text-xs">
+                        {certificateFile.name.split('.').pop().toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-850 dark:text-slate-200 max-w-[200px] truncate">
+                          {certificateFile.name}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          {(certificateFile.size / (1024 * 1024)).toFixed(2)} MB
+                        </p>
+                        {certificateOriginalSize && certificateOriginalSize !== certificateFile.size && (
+                          <>
+                            <span className="text-[9px] font-bold text-emerald-650 dark:text-emerald-450 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded ml-1">
+                              Saved {(((certificateOriginalSize - certificateFile.size) / certificateOriginalSize) * 100).toFixed(0)}%
+                            </span>
+                            <span className="text-[9px] text-slate-400 font-semibold line-through ml-1">
+                              {(certificateOriginalSize / 1024).toFixed(0)} KB
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs font-semibold text-slate-850 dark:text-slate-200 max-w-[200px] truncate">{certificateFile.name}</p>
-                      <p className="text-[10px] text-slate-400">{(certificateFile.size / (1024 * 1024)).toFixed(2)} MB</p>
-                    </div>
+                    {certificatePreviewUrl && (
+                      <img
+                        src={certificatePreviewUrl}
+                        alt="Certificate preview"
+                        className="h-16 w-16 object-cover rounded border border-slate-200 dark:border-slate-700 ml-2"
+                      />
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (certificatePreviewUrl) URL.revokeObjectURL(certificatePreviewUrl);
+                        setCertificateFile(null);
+                        setCertificatePreviewUrl(null);
+                        setCertificateOriginalSize(null);
+                      }}
+                      className="text-xs font-bold text-rose-500 hover:underline shrink-0"
+                    >
+                      Remove
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setCertificateFile(null)}
-                    className="text-xs font-bold text-rose-500 hover:underline"
-                  >
-                    Remove
-                  </button>
-                </div>
-              )}
+                )}
+                {compressionLoading && !certificateFile && (
+                  <p className="text-sm text-slate-500 mt-2">Compressing image...</p>
+                )}
+              </div>
               {certificateError && (
                 <p className="text-red-500 text-xs mt-1.5 font-medium">
                   {certificateError}
