@@ -136,3 +136,13 @@ exports.deleteTutor = async (tutorId) => {
     memoryTutors.splice(idx, 1);
   }
 };
+
+exports.deleteBooking = async (id) => {
+  const idx = memoryBookings.findIndex(b => String(b._id) === String(id));
+  if (idx !== -1) {
+    memoryBookings.splice(idx, 1);
+    return true;
+  }
+  return false;
+};
+

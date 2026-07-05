@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import SEO from '../components/common/SEO';
 import Button from '../components/common/Button';
-import { FaGraduationCap, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBookOpen, FaUser, FaHistory, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaGraduationCap, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBookOpen, FaUser, FaHistory, FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -25,6 +25,25 @@ const StudentDashboard = () => {
     } catch (err) {
       console.error(err);
       setError('Failed to update request status. Please try again.');
+    } finally {
+      setUpdatingBookingId(null);
+    }
+  };
+
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this booking request?')) {
+      return;
+    }
+    setUpdatingBookingId(bookingId);
+    setError('');
+    try {
+      const res = await api.delete(`/bookings/${bookingId}`);
+      if (res.data && res.data.success) {
+        setBookings(prev => prev.filter(b => b._id !== bookingId));
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Failed to delete booking request.');
     } finally {
       setUpdatingBookingId(null);
     }
@@ -126,17 +145,24 @@ const StudentDashboard = () => {
                               Grade {booking.gradeClass} • {booking.preferredMode}
                             </p>
                           </div>
-                          <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                            booking.status === 'Pending'
-                              ? 'bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-450'
-                              : booking.status === 'Assigned' || booking.status === 'Contacted'
-                              ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400'
-                              : booking.status === 'Completed'
-                              ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'
-                              : 'bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400'
-                          }`}>
-                            {booking.status === 'Pending' ? 'Pending Approval' : booking.status}
-                          </span>
+                           {booking.status === 'Cancelled' || booking.status === 'Completed' ? (
+                            <button
+                              disabled={updatingBookingId !== null}
+                              onClick={() => handleDeleteBooking(booking._id)}
+                              className="text-[10px] font-extrabold px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl flex items-center gap-1.5 cursor-pointer transition-colors uppercase tracking-wider shadow-sm"
+                            >
+                              <FaTrash className="h-2.5 w-2.5" />
+                              Delete
+                            </button>
+                          ) : (
+                            <span className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                              booking.status === 'Pending'
+                                ? 'bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-450'
+                                : 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400'
+                            }`}>
+                              {booking.status === 'Pending' ? 'Pending Approval' : booking.status}
+                            </span>
+                          )}
                         </div>
 
                         {/* Assigned Tutor Block */}
