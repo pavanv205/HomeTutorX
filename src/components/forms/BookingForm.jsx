@@ -72,39 +72,18 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
       return;
     }
 
-    if (hasSubmittedRef.current) return;
-    hasSubmittedRef.current = true;
-
-    const autoSubmit = async () => {
-      if (onSetTitle) onSetTitle('');
-      setLoading(true);
-      try {
-        const payload = {
-          studentName: user?.name || 'Student',
-          studentEmail: user?.email || '',
-          email: user?.email || '',
-          phone: user?.phone || '1234567890',
-          gradeClass: tutor && tutor.classes && tutor.classes.length > 0 ? tutor.classes[0] : '10th',
-          subject: tutor && tutor.subjects && tutor.subjects.length > 0 ? tutor.subjects[0] : 'Mathematics',
-          preferredSlot: 'Anytime',
-          mode: tutor && tutor.modes && tutor.modes.length > 0 ? tutor.modes[0] : 'Online',
-          message: 'Instant booking from tutor profile',
-          tutorId: tutor ? (tutor._id || tutor.id) : 'general',
-          tutorName: tutor ? (tutor.name || tutor.fullName) : 'Any Available Tutor'
-        };
-        const response = await bookingService.bookDemo(payload);
-        if (response.success) {
-          setSuccessMsg('Request Sent Successfully! 🎉 The tutor will review your request and contact you shortly.');
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    autoSubmit();
-  }, [isAuthenticated, user, tutor, navigate, onSuccess, onSetTitle]);
+    if (user) {
+      reset({
+        studentName: user.name || '',
+        phone: user.phone || '',
+        gradeClass: '',
+        subject: tutor && tutor.subjects && tutor.subjects.length > 0 ? tutor.subjects[0] : '',
+        preferredSlot: 'Anytime',
+        mode: tutor && tutor.modes && tutor.modes.length > 0 ? tutor.modes[0] : 'Online',
+        message: ''
+      });
+    }
+  }, [isAuthenticated, user, tutor, navigate, onSuccess, reset]);
 
   const onSubmit = async (data) => {
     try {
