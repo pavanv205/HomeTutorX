@@ -66,7 +66,7 @@ const PrivacyPolicy = () => {
                 <strong>Geolocation Data:</strong> If you use the "Live Location" features to assist with offline tuition matches, we capture latitude and longitude coordinates.
               </li>
               <li>
-                <strong>Booking Inquiries:</strong> Trial class details, requested slots, selected subjects, and personalized note messages sent during demo request submissions.
+                <strong>Booking Inquiries:</strong> Trial class details, requested slots, selected subjects, and personalized note messages sent during trial request submissions.
               </li>
             </ul>
           </div>
@@ -110,7 +110,7 @@ const PrivacyPolicy = () => {
               We respect your privacy. We do not sell or rent your personal information to third-party advertisers. Information sharing is restricted to:
             </p>
             <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
-              <li><strong>Tutors & Students:</strong> Exchanging contact info only after a booking demo is approved and accepted.</li>
+              <li><strong>Tutors & Students:</strong> Exchanging contact info only after a trial booking is approved and accepted.</li>
               <li><strong>Cloud Storage:</strong> Securing uploaded photos/resumes via integrated cloud platforms (e.g. Cloudinary).</li>
               <li><strong>Legal Compliance:</strong> Releasing records if required by local regulations, judicial mandates, or law enforcement requests.</li>
             </ul>

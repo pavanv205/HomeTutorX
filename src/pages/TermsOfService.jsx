@@ -54,7 +54,7 @@ const TermsOfService = () => {
             </p>
             <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
               <li>Profile listings of verified and pre-screened private tutors.</li>
-              <li>Booking engines for free or paid trial/demo lessons.</li>
+              <li>Booking engines for free or paid trial lessons.</li>
               <li>Dashboard tracking systems allowing both tutors and students to manage booking states (Pending, Assigned, Completed, Cancelled).</li>
               <li>Proximity geolocation calculations to aid matching offline/home lessons.</li>
             </ul>
@@ -83,7 +83,7 @@ const TermsOfService = () => {
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium flex items-start gap-2.5">
               <FaExclamationTriangle className="text-amber-500 text-lg shrink-0 mt-0.5" />
               <span>
-                <strong>Verification Limits:</strong> Although TutorConnect screens qualification certificates and profile photos, we do not perform comprehensive background checks or criminal vetting. Parents and students are strongly encouraged to inspect physical identification, verify credentials in person, and supervise the first demo sessions.
+                <strong>Verification Limits:</strong> Although TutorConnect screens qualification certificates and profile photos, we do not perform comprehensive background checks or criminal vetting. Parents and students are strongly encouraged to inspect physical identification, verify credentials in person, and supervise the first trial sessions.
               </span>
             </p>
             <p className="text-sm text-slate-600 dark:text-slate-405 leading-relaxed font-medium">
@@ -97,7 +97,7 @@ const TermsOfService = () => {
               4. Booking, Completion & Cancellation Rules
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-              The booking system coordinates demo statuses to maintain high matching metrics:
+              The booking system coordinates booking statuses to maintain high matching metrics:
             </p>
             <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
               <li>A booking request begins in <strong>Pending</strong> status, visible to both student and tutor.</li>
