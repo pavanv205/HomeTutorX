@@ -31,10 +31,10 @@ const handleUpload = (req, res, next) => {
       
       // Handle file size limit exceeded
       if (err.code === 'LIMIT_FILE_SIZE') {
-          return res.status(400).json({
-            success: false,
-            message: 'File size limit exceeded. Maximum allowed size is 10MB per file.'
-          });
+        return res.status(400).json({
+          success: false,
+          message: 'File size limit exceeded. Maximum allowed size is 2MB per file.'
+        });
       }
       
       // Handle custom file type exclusions or other multer errors
