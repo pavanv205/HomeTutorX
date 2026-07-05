@@ -182,12 +182,19 @@ exports.updateBooking = async (req, res, next) => {
       // Authorization check
       if (req.user.role === 'Tutor') {
         const tutor = tutorsList.find(t => String(t.userId) === String(req.user._id));
-        if (!tutor || String(booking.assignedTutor) !== String(tutor._id)) {
+        if (!tutor || (booking.assignedTutor && String(booking.assignedTutor) !== String(tutor._id))) {
           return res.status(403).json({ success: false, message: 'Not authorized to update this booking' });
         }
         
         // Tutor can only update the status
         if (req.body.status) {
+          // If tutor is accepting a pending booking and it's unassigned, assign themselves
+          if (req.body.status === 'Assigned' && booking.status === 'Pending' && !booking.assignedTutor) {
+            const tutor = tutorsList.find(t => String(t.userId) === String(req.user._id));
+            if (tutor) {
+              booking.assignedTutor = tutor._id;
+            }
+          }
           booking.status = req.body.status;
         }
       } else {
@@ -218,12 +225,16 @@ exports.updateBooking = async (req, res, next) => {
     // Authorization check
     if (req.user.role === 'Tutor') {
       const tutor = await Tutor.findOne({ userId: req.user._id });
-      if (!tutor || String(booking.assignedTutor) !== String(tutor._id)) {
+      if (!tutor || (booking.assignedTutor && String(booking.assignedTutor) !== String(tutor._id))) {
         return res.status(403).json({ success: false, message: 'Not authorized to update this booking' });
       }
       
       // Tutor can only update the status
       if (req.body.status) {
+        // If tutor is accepting a pending booking, assign themselves
+        if (req.body.status === 'Assigned' && booking.status === 'Pending') {
+          booking.assignedTutor = tutor._id;
+        }
         booking.status = req.body.status;
       }
     } else {

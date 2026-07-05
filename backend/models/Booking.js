@@ -40,7 +40,7 @@ const BookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Contacted', 'Assigned', 'Rejected'],
+    enum: ['Pending', 'Contacted', 'Assigned', 'Rejected', 'Completed', 'Cancelled'],
     default: 'Pending'
   },
   assignedTutor: {
