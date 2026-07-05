@@ -69,11 +69,11 @@ const BecomeTutorForm = () => {
   // New state for certificate preview & size (for images)
   const [certificatePreviewUrl, setCertificatePreviewUrl] = useState(null);
   const [certificateOriginalSize, setCertificateOriginalSize] = useState(null);
+  const [certificateCompressionLoading, setCertificateCompressionLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [compressedPreviewUrl, setCompressedPreviewUrl] = useState(null);
   const [originalSize, setOriginalSize] = useState(null);
-  const [photoCompressionLoading, setPhotoCompressionLoading] = useState(false);
-  const [certCompressionLoading, setCertCompressionLoading] = useState(false);
+  const [compressionLoading, setCompressionLoading] = useState(false);
 
   const {
     register,
@@ -269,7 +269,7 @@ const BecomeTutorForm = () => {
         // Proceed with compression for any size (no 2MB restriction)
         setResumeError('');
         try {
-          setPhotoCompressionLoading(true);
+          setCompressionLoading(true);
           const result = await compressImage(file, 500 * 1024);
           setResumeFile(result.file);
           setCompressedPreviewUrl(result.previewUrl);
@@ -281,7 +281,7 @@ const BecomeTutorForm = () => {
           setCompressedPreviewUrl(URL.createObjectURL(file));
           setOriginalSize(file.size);
         } finally {
-          setPhotoCompressionLoading(false);
+          setCompressionLoading(false);
         }
         return;
     }
@@ -320,9 +320,12 @@ const BecomeTutorForm = () => {
 
     // 3. If the file is an image, compress it like the profile photo
     const imageMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (imageMimeTypes.includes(file.type)) {
+    const isImage = imageMimeTypes.includes(file.type) || 
+                    ['.jpg', '.jpeg', '.png', '.webp'].some(ext => filename.endsWith(ext));
+
+    if (isImage) {
       try {
-        setCertCompressionLoading(true);
+        setCertificateCompressionLoading(true);
         const result = await compressImage(file, 500 * 1024); // target 500KB
         setCertificateFile(result.file);
         setCertificatePreviewUrl(result.previewUrl);
@@ -334,7 +337,7 @@ const BecomeTutorForm = () => {
         setCertificatePreviewUrl(URL.createObjectURL(file));
         setCertificateOriginalSize(file.size);
       } finally {
-        setCertCompressionLoading(false);
+        setCertificateCompressionLoading(false);
       }
     } else {
       // It's a PDF – no compression needed
@@ -1079,13 +1082,13 @@ const BecomeTutorForm = () => {
                   <p className="text-xs text-slate-400">Image file (JPEG, PNG, WEBP) up to 2MB</p>
                 </div>
               </div>
-              {photoCompressionLoading && (
+              {compressionLoading && (
                 <div className="mt-4 flex items-center gap-2 text-xs font-bold text-primary dark:text-blue-450 bg-slate-50/50 dark:bg-slate-900/50 p-3.5 border border-slate-200/50 dark:border-slate-800 rounded-xl">
                   <span className="loader scale-75 shrink-0"></span>
                   <span>Compressing and optimizing image...</span>
                 </div>
               )}
-              {resumeFile && !photoCompressionLoading && (
+              {resumeFile && !compressionLoading && (
                 <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-250/20 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5">
                     {/* Visual Image Preview */}
@@ -1156,29 +1159,27 @@ const BecomeTutorForm = () => {
                   <p className="text-xs text-slate-400">PDF or Image file (JPEG, PNG, WEBP) up to 2MB</p>
                 </div>
               </div>
-              {certCompressionLoading && (
+              {certificateCompressionLoading && (
                 <div className="mt-4 flex items-center gap-2 text-xs font-bold text-primary dark:text-blue-450 bg-slate-50/50 dark:bg-slate-900/50 p-3.5 border border-slate-200/50 dark:border-slate-800 rounded-xl">
                   <span className="loader scale-75 shrink-0"></span>
-                  <span>Compressing and optimizing certificate...</span>
+                  <span>Compressing and optimizing certificate image...</span>
                 </div>
               )}
-              {certificateFile && !certCompressionLoading && (
+              {certificateFile && !certificateCompressionLoading && (
                 <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-250/20 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5">
-                    {certificatePreviewUrl ? (
-                      <div className="relative h-14 w-14 rounded-xl overflow-hidden border border-slate-250/30 shadow-sm shrink-0 bg-slate-105 dark:bg-slate-850 flex items-center justify-center z-0">
-                        <img src={certificatePreviewUrl} alt="Certificate preview" className="h-full w-full object-cover" />
-                      </div>
-                    ) : (
-                      <div className="h-14 w-14 bg-primary/10 dark:bg-blue-500/10 text-primary dark:text-blue-450 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 border border-slate-250/30">
-                        {certificateFile.name.split('.').pop().toUpperCase()}
-                      </div>
-                    )}
+                    <div className="h-11 w-11 bg-primary/10 dark:bg-blue-500/10 text-primary dark:text-blue-455 rounded-xl flex items-center justify-center font-bold text-xs shrink-0">
+                      {certificateFile.name.split('.').pop().toUpperCase()}
+                    </div>
                     <div>
-                      <p className="text-xs font-bold text-slate-800 dark:text-slate-205 max-w-[180px] sm:max-w-[240px] truncate">{certificateFile.name}</p>
+                      <p className="text-xs font-bold text-slate-800 dark:text-slate-205 max-w-[180px] sm:max-w-[240px] truncate">
+                        {certificateFile.name}
+                      </p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
-                          {(certificateFile.size / 1024).toFixed(0)} KB
+                          {certificateFile.size > 1048576 
+                            ? `${(certificateFile.size / (1024 * 1024)).toFixed(2)} MB` 
+                            : `${(certificateFile.size / 1024).toFixed(0)} KB`}
                         </span>
                         {certificateOriginalSize && certificateOriginalSize !== certificateFile.size && (
                           <>
@@ -1193,18 +1194,29 @@ const BecomeTutorForm = () => {
                       </div>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (certificatePreviewUrl) URL.revokeObjectURL(certificatePreviewUrl);
-                      setCertificateFile(null);
-                      setCertificatePreviewUrl(null);
-                      setCertificateOriginalSize(null);
-                    }}
-                    className="text-xs font-bold text-rose-500 hover:underline shrink-0"
-                  >
-                    Remove Certificate
-                  </button>
+                  <div className="flex items-center gap-4 shrink-0">
+                    {certificatePreviewUrl && (
+                      <div className="relative h-14 w-14 rounded-xl overflow-hidden border border-slate-250/30 shadow-sm bg-slate-105 dark:bg-slate-850 flex items-center justify-center z-0">
+                        <img
+                          src={certificatePreviewUrl}
+                          alt="Certificate preview"
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (certificatePreviewUrl) URL.revokeObjectURL(certificatePreviewUrl);
+                        setCertificateFile(null);
+                        setCertificatePreviewUrl(null);
+                        setCertificateOriginalSize(null);
+                      }}
+                      className="text-xs font-bold text-rose-500 hover:underline cursor-pointer"
+                    >
+                      Remove Certificate
+                    </button>
+                  </div>
                 </div>
               )}
               {certificateError && (
