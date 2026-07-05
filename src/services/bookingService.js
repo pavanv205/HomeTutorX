@@ -1,7 +1,7 @@
 import api from './api';
 
-// Toggle via Vite env var `VITE_USE_MOCK` (set to "false" to call the local API)
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'false' ? false : true;
+// Toggle via Vite env var `VITE_USE_MOCK` (set to "true" to run with mock database)
+const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const bookingService = {
