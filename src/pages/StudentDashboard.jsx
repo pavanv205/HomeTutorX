@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import SEO from '../components/common/SEO';
 import Button from '../components/common/Button';
-import { FaGraduationCap, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBookOpen, FaUser, FaHistory } from 'react-icons/fa';
+import { FaGraduationCap, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBookOpen, FaUser, FaHistory, FaCheck, FaTimes } from 'react-icons/fa';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -12,6 +12,23 @@ const StudentDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [updatingBookingId, setUpdatingBookingId] = useState(null);
+
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
+    setUpdatingBookingId(bookingId);
+    setError('');
+    try {
+      const res = await api.put(`/bookings/${bookingId}`, { status: newStatus });
+      if (res.data && res.data.success) {
+        setBookings(prev => prev.map(b => b._id === bookingId ? { ...b, status: newStatus } : b));
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Failed to update request status. Please try again.');
+    } finally {
+      setUpdatingBookingId(null);
+    }
+  };
 
   const loadStudentBookings = useCallback(async () => {
     if (!user) {
@@ -169,8 +186,40 @@ const StudentDashboard = () => {
                       </div>
 
                       {/* Card Footer */}
-                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 text-[10px] text-slate-400 dark:text-slate-500 font-bold flex items-center justify-end mt-3">
+                      <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 text-[10px] text-slate-400 dark:text-slate-500 font-bold flex items-center justify-between mt-3">
                         <span>Requested: {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+
+                        {booking.status === 'Pending' && (
+                          <button
+                            disabled={updatingBookingId !== null}
+                            onClick={() => handleUpdateBookingStatus(booking._id, 'Cancelled')}
+                            className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
+                          >
+                            <FaTimes className="h-3 w-3" />
+                            Cancel Request
+                          </button>
+                        )}
+
+                        {booking.status === 'Assigned' && (
+                          <div className="flex gap-2">
+                            <button
+                              disabled={updatingBookingId !== null}
+                              onClick={() => handleUpdateBookingStatus(booking._id, 'Completed')}
+                              className="flex items-center gap-1.5 py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40 dark:text-emerald-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
+                            >
+                              <FaCheck className="h-3 w-3" />
+                              Complete
+                            </button>
+                            <button
+                              disabled={updatingBookingId !== null}
+                              onClick={() => handleUpdateBookingStatus(booking._id, 'Cancelled')}
+                              className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
+                            >
+                              <FaTimes className="h-3 w-3" />
+                              Cancel
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}

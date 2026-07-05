@@ -197,6 +197,18 @@ exports.updateBooking = async (req, res, next) => {
           }
           booking.status = req.body.status;
         }
+      } else if (req.user.role === 'Student') {
+        // Student can only update their own bookings
+        if (String(booking.studentEmail).toLowerCase() !== String(req.user.email).toLowerCase()) {
+          return res.status(403).json({ success: false, message: 'Not authorized to update this booking' });
+        }
+        // Student can only update status to Completed or Cancelled
+        if (req.body.status) {
+          if (req.body.status !== 'Completed' && req.body.status !== 'Cancelled') {
+            return res.status(400).json({ success: false, message: 'Invalid status update for student' });
+          }
+          booking.status = req.body.status;
+        }
       } else {
         // Admin can update anything
         const { status, assignedTutor } = req.body;
@@ -234,6 +246,18 @@ exports.updateBooking = async (req, res, next) => {
         // If tutor is accepting a pending booking, assign themselves
         if (req.body.status === 'Assigned' && booking.status === 'Pending') {
           booking.assignedTutor = tutor._id;
+        }
+        booking.status = req.body.status;
+      }
+    } else if (req.user.role === 'Student') {
+      // Student can only update their own bookings
+      if (String(booking.studentEmail).toLowerCase() !== String(req.user.email).toLowerCase()) {
+        return res.status(403).json({ success: false, message: 'Not authorized to update this booking' });
+      }
+      // Student can only update status to Completed or Cancelled
+      if (req.body.status) {
+        if (req.body.status !== 'Completed' && req.body.status !== 'Cancelled') {
+          return res.status(400).json({ success: false, message: 'Invalid status update for student' });
         }
         booking.status = req.body.status;
       }
