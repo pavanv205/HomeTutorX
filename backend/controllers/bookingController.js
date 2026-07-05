@@ -287,3 +287,68 @@ exports.updateBooking = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Delete a booking / lead
+// @route   DELETE /api/bookings/:id
+// @access  Private (Admin, Tutor, or Student)
+exports.deleteBooking = async (req, res, next) => {
+  try {
+    // Fallback if MongoDB is offline
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running deleteBooking in Fallback mode.');
+      const bookingsList = await dbFallback.getBookings();
+      const tutorsList = await dbFallback.getTutors();
+
+      const booking = bookingsList.find(b => String(b._id) === String(req.params.id));
+      if (!booking) {
+        return res.status(404).json({ success: false, message: 'Booking not found' });
+      }
+
+      // Authorization check
+      if (req.user.role === 'Tutor') {
+        const tutor = tutorsList.find(t => String(t.userId) === String(req.user._id));
+        if (!tutor || (booking.assignedTutor && String(booking.assignedTutor) !== String(tutor._id))) {
+          return res.status(403).json({ success: false, message: 'Not authorized to delete this booking' });
+        }
+      } else if (req.user.role === 'Student') {
+        if (String(booking.studentEmail).toLowerCase() !== String(req.user.email).toLowerCase()) {
+          return res.status(403).json({ success: false, message: 'Not authorized to delete this booking' });
+        }
+      }
+
+      await dbFallback.deleteBooking(req.params.id);
+      return res.status(200).json({
+        success: true,
+        message: 'Booking deleted successfully'
+      });
+    }
+
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    // Authorization check
+    if (req.user.role === 'Tutor') {
+      const tutor = await Tutor.findOne({ userId: req.user._id });
+      if (!tutor || (booking.assignedTutor && String(booking.assignedTutor) !== String(tutor._id))) {
+        return res.status(403).json({ success: false, message: 'Not authorized to delete this booking' });
+      }
+    } else if (req.user.role === 'Student') {
+      if (String(booking.studentEmail).toLowerCase() !== String(req.user.email).toLowerCase()) {
+        return res.status(403).json({ success: false, message: 'Not authorized to delete this booking' });
+      }
+    }
+
+    await Booking.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Booking deleted successfully'
+    });
+  } catch (err) {
+    console.error(`[BOOKING SYSTEM ERROR] Uncaught error in deleteBooking | Method: ${req.method} | Path: ${req.originalUrl} | Error: ${err.message}`);
+    next(err);
+  }
+};

@@ -4,7 +4,7 @@ import api from '../services/api';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
 import { SUBJECTS, CLASSES } from '../constants';
-import { FaLock, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBookOpen, FaUser, FaCheck, FaTimes, FaGraduationCap } from 'react-icons/fa';
+import { FaLock, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBookOpen, FaUser, FaCheck, FaTimes, FaGraduationCap, FaTrash } from 'react-icons/fa';
 
 const TutorDashboard = () => {
   const { user } = useAuth();
@@ -57,6 +57,27 @@ const TutorDashboard = () => {
     } catch (err) {
       console.error(err);
       setMessage({ text: 'Failed to update request status.', type: 'error' });
+    } finally {
+      setUpdatingBookingId(null);
+    }
+  };
+
+  // Delete Booking
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this booking request?')) {
+      return;
+    }
+    setUpdatingBookingId(bookingId);
+    setMessage({ text: '', type: '' });
+    try {
+      const res = await api.delete(`/bookings/${bookingId}`);
+      if (res.data && res.data.success) {
+        setBookings(prev => prev.filter(b => b._id !== bookingId));
+        setMessage({ text: 'Booking request deleted successfully!', type: 'success' });
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage({ text: 'Failed to delete booking request.', type: 'error' });
     } finally {
       setUpdatingBookingId(null);
     }
@@ -540,6 +561,17 @@ const TutorDashboard = () => {
                                   Cancel
                                 </button>
                               </div>
+                            )}
+
+                            {(booking.status === 'Completed' || booking.status === 'Cancelled') && (
+                              <button
+                                disabled={updatingBookingId !== null}
+                                onClick={() => handleDeleteBooking(booking._id)}
+                                className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-450 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                              >
+                                <FaTrash className="h-3 w-3" />
+                                Delete
+                              </button>
                             )}
                           </div>
                         </div>

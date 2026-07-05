@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import SEO from '../components/common/SEO';
 import Button from '../components/common/Button';
-import { FaGraduationCap, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBookOpen, FaUser, FaHistory, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaGraduationCap, FaEnvelope, FaPhone, FaMapMarkerAlt, FaBookOpen, FaUser, FaHistory, FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
@@ -25,6 +25,25 @@ const StudentDashboard = () => {
     } catch (err) {
       console.error(err);
       setError('Failed to update request status. Please try again.');
+    } finally {
+      setUpdatingBookingId(null);
+    }
+  };
+
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this booking request?')) {
+      return;
+    }
+    setUpdatingBookingId(bookingId);
+    setError('');
+    try {
+      const res = await api.delete(`/bookings/${bookingId}`);
+      if (res.data && res.data.success) {
+        setBookings(prev => prev.filter(b => b._id !== bookingId));
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Failed to delete booking request.');
     } finally {
       setUpdatingBookingId(null);
     }
@@ -219,6 +238,17 @@ const StudentDashboard = () => {
                               Cancel
                             </button>
                           </div>
+                        )}
+
+                        {(booking.status === 'Completed' || booking.status === 'Cancelled') && (
+                          <button
+                            disabled={updatingBookingId !== null}
+                            onClick={() => handleDeleteBooking(booking._id)}
+                            className="flex items-center gap-1.5 py-1.5 px-3 bg-red-55 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-450 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
+                          >
+                            <FaTrash className="h-3 w-3" />
+                            Delete
+                          </button>
                         )}
                       </div>
                     </div>
