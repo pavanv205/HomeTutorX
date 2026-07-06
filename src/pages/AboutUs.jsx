@@ -90,8 +90,16 @@ const AboutUs = () => {
 
           {/* Vision */}
           <div className="bg-gradient-to-br from-amber-500/5 to-orange-500/5 dark:from-slate-900 dark:to-slate-850 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 space-y-4">
-            <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 flex items-center justify-center">
-              <FaEye className="h-5 w-5" />
+            <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 flex items-center justify-center relative overflow-hidden">
+              <div className="scale-[0.24] transform-gpu origin-center absolute select-none pointer-events-none">
+                <div className="eye-lid">
+                  <div className="eye">
+                    <div className="cornea">
+                      <div className="white-pupil"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <h3 className="text-xl font-bold text-slate-850 dark:text-white">Our Vision</h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
