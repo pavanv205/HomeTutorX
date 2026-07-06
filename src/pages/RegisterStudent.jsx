@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaPhone, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowRight, FaArrowLeft, FaCheck } from 'react-icons/fa';
+import { FaUser, FaPhone, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowRight, FaArrowLeft, FaCheck, FaExclamationTriangle, FaCreditCard } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
@@ -46,6 +46,16 @@ const RegisterStudent = () => {
     setStep(2);
   };
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,21 +79,71 @@ const RegisterStudent = () => {
 
     setErrorMsg('');
     setLoading(true);
+
     try {
-      await registerStudent({
-        name: firstName,
-        phone,
-        email,
-        password
-      });
-      setSuccessMsg('Registration successful! Welcome to TutorConnect.');
-      setTimeout(() => {
-        navigate('/student/dashboard');
-      }, 1500);
-    } catch (err) {
-      console.error(err);
-      setErrorMsg(err.message || 'Registration failed. Please try again.');
-    } finally {
+      // 1. Load Razorpay Script
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        setErrorMsg('Failed to load payment gateway. Please check your internet connection.');
+        setLoading(false);
+        return;
+      }
+
+      // 2. Initialize Razorpay Options
+      const options = {
+        key: 'rzp_test_tutorconnectkey', // Sandbox test key
+        amount: 2900, // ₹29.00 in paise
+        currency: 'INR',
+        name: 'TutorConnect',
+        description: 'Student Registration Fee',
+        image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80',
+        handler: async function (response) {
+          try {
+            setLoading(true);
+            const razorpayPaymentId = response.razorpay_payment_id;
+            console.log('Student Payment Successful. Payment ID:', razorpayPaymentId);
+
+            await registerStudent({
+              name: firstName,
+              phone,
+              email,
+              password,
+              paymentStatus: 'Paid',
+              paymentId: razorpayPaymentId
+            });
+
+            setSuccessMsg('Registration successful! Welcome to TutorConnect.');
+            setTimeout(() => {
+              navigate('/student/dashboard');
+            }, 1500);
+          } catch (error) {
+            console.error(error);
+            setErrorMsg(error.message || 'Registration failed. Please try again.');
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: firstName,
+          email: email,
+          contact: phone
+        },
+        theme: {
+          color: '#3B82F6' // Primary theme blue
+        },
+        modal: {
+          ondismiss: function() {
+            setErrorMsg('Payment was cancelled. You must complete the ₹29 payment to create your account.');
+            setLoading(false);
+          }
+        }
+      };
+
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    } catch (error) {
+      console.error(error);
+      setErrorMsg(error.message || 'Registration failed. Please try again.');
       setLoading(false);
     }
   };
@@ -276,8 +336,42 @@ const RegisterStudent = () => {
                       </button>
                     </div>
                   </div>
+                  {/* Payment Method Option */}
+                  <div className="space-y-3 pt-2">
+                    <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
+                      Select Payment Method
+                    </label>
+                    <div className="border border-primary bg-primary/5 dark:border-blue-500 dark:bg-blue-950/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
+                      <div className="flex items-center gap-3.5">
+                        <div className="h-5 w-5 rounded-full border-2 border-primary dark:border-blue-500 flex items-center justify-center">
+                          <div className="h-2.5 w-2.5 rounded-full bg-primary dark:bg-blue-500" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Razorpay</h4>
+                          <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
+                        <span className="text-base font-extrabold text-primary dark:text-blue-400">₹29</span>
+                      </div>
+                    </div>
+                  </div>
 
-                  <div className="flex gap-4 pt-2">
+                  {/* Payment Verification Notice */}
+                  <div className="bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/50 rounded-2xl p-4 flex items-start gap-3 mt-4">
+                    <div className="text-lg text-indigo-600 dark:text-indigo-400 mt-0.5">
+                      <FaCreditCard />
+                    </div>
+                    <div>
+                      <h4 className="text-[11px] font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Verification Application Fee</h4>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
+                        TutorConnect charges a one-time profile verification fee of <strong className="text-indigo-600 dark:text-indigo-400 font-extrabold">₹29</strong>.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 pt-4">
                     <button
                       type="button"
                       onClick={() => setStep(1)}

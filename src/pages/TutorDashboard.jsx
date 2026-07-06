@@ -132,6 +132,27 @@ const TutorDashboard = () => {
     }
   };
 
+  // Delete Booking Completely
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this booking request?')) {
+      return;
+    }
+    setUpdatingBookingId(bookingId);
+    setMessage({ text: '', type: '' });
+    try {
+      const res = await api.delete(`/bookings/${bookingId}`);
+      if (res.data && res.data.success) {
+        setBookings(prev => prev.filter(b => b._id !== bookingId));
+        setMessage({ text: 'Booking request removed completely.', type: 'success' });
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage({ text: 'Failed to delete booking request.', type: 'error' });
+    } finally {
+      setUpdatingBookingId(null);
+    }
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       loadDashboardData();
@@ -290,7 +311,7 @@ const TutorDashboard = () => {
                   <div>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">Total Student Leads</p>
                     <p className="text-xl font-extrabold text-slate-850 dark:text-slate-100">
-                      {tutorProfile?.leadsCount ?? 12}
+                      {tutorProfile?.leadsCount ?? 0}
                     </p>
                   </div>
                 </div>
@@ -310,7 +331,7 @@ const TutorDashboard = () => {
                   <div>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">Total Views</p>
                     <p className="text-xl font-extrabold text-slate-850 dark:text-slate-100">
-                      {tutorProfile?.viewsCount ?? 142}
+                      {tutorProfile?.viewsCount ?? 0}
                     </p>
                   </div>
                 </div>
@@ -577,7 +598,7 @@ const TutorDashboard = () => {
                             </div>
                           </div>
 
-                          {/* Quick Actions Footer */}
+                          {/* Quick Actions */}
                           <div className="pt-4 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between gap-3 mt-4">
                             <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold">
                               Received: {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -595,8 +616,8 @@ const TutorDashboard = () => {
                                 </button>
                                 <button
                                   disabled={updatingBookingId !== null}
-                                  onClick={() => handleUpdateBookingStatus(booking._id, 'Cancelled')}
-                                  className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-450 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                                  onClick={() => handleDeleteBooking(booking._id)}
+                                  className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-655 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-xs font-bold cursor-pointer transition-colors"
                                 >
                                   <FaTimes className="h-3 w-3" />
                                   Decline
@@ -616,11 +637,11 @@ const TutorDashboard = () => {
                                 </button>
                                 <button
                                   disabled={updatingBookingId !== null}
-                                  onClick={() => handleUpdateBookingStatus(booking._id, 'Cancelled')}
-                                  className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-450 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                                  onClick={() => handleDeleteBooking(booking._id)}
+                                  className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-655 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-xs font-bold cursor-pointer transition-colors"
                                 >
                                   <FaTimes className="h-3 w-3" />
-                                  Cancel
+                                  Delete
                                 </button>
                               </div>
                             )}

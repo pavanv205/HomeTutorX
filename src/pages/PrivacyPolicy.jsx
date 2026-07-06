@@ -82,7 +82,7 @@ const PrivacyPolicy = () => {
             <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
               <li>To match student learning demands with relevant nearby tutors.</li>
               <li>To verify the authenticity of educator qualifications through backend administrative reviews.</li>
-              <li>To handle bookings and display scheduling statuses (Pending, Assigned, Completed, Cancelled) on user dashboards.</li>
+              <li>To handle bookings and display scheduling statuses (Pending, Assigned, Completed, Deleted) on user dashboards.</li>
               <li>To share contact details (mobile numbers) between students and teachers once a tutor accepts a requested booking.</li>
               <li>To improve web performance, coordinate geolocation proximity searches, and troubleshoot app errors.</li>
             </ul>
@@ -112,6 +112,7 @@ const PrivacyPolicy = () => {
             <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
               <li><strong>Tutors & Students:</strong> Exchanging contact info only after a booking is approved and accepted.</li>
               <li><strong>Cloud Storage:</strong> Securing uploaded photos/resumes via integrated cloud platforms (e.g. Cloudinary).</li>
+              <li><strong>Payment Processors:</strong> Secure handling of payments via Razorpay for student registration and tutor subscriptions. Transaction information is processed safely; credit card or bank details are not collected or stored on our servers.</li>
               <li><strong>Legal Compliance:</strong> Releasing records if required by local regulations, judicial mandates, or law enforcement requests.</li>
             </ul>
           </div>

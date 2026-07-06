@@ -145,7 +145,7 @@ const StudentDashboard = () => {
                               Grade {booking.gradeClass} • {booking.preferredMode}
                             </p>
                           </div>
-                           {booking.status === 'Cancelled' || booking.status === 'Completed' ? (
+                           {booking.status === 'Deleted' || booking.status === 'Completed' ? (
                             <button
                               disabled={updatingBookingId !== null}
                               onClick={() => handleDeleteBooking(booking._id)}
@@ -218,11 +218,11 @@ const StudentDashboard = () => {
                         {booking.status === 'Pending' && (
                           <button
                             disabled={updatingBookingId !== null}
-                            onClick={() => handleUpdateBookingStatus(booking._id, 'Cancelled')}
+                            onClick={() => handleUpdateBookingStatus(booking._id, 'Deleted')}
                             className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
                           >
                             <FaTimes className="h-3 w-3" />
-                            Cancel Request
+                            Delete Request
                           </button>
                         )}
 
@@ -238,11 +238,11 @@ const StudentDashboard = () => {
                             </button>
                             <button
                               disabled={updatingBookingId !== null}
-                              onClick={() => handleUpdateBookingStatus(booking._id, 'Cancelled')}
+                              onClick={() => handleUpdateBookingStatus(booking._id, 'Deleted')}
                               className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
                             >
                               <FaTimes className="h-3 w-3" />
-                              Cancel
+                              Delete
                             </button>
                           </div>
                         )}

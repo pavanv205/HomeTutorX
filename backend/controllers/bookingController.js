@@ -35,6 +35,14 @@ exports.createBooking = async (req, res, next) => {
       };
 
       await dbFallback.saveBooking(newBooking);
+      if (tutorId) {
+        const tutorsList = await dbFallback.getTutors();
+        const tutorObj = tutorsList.find(t => String(t._id) === String(tutorId));
+        if (tutorObj) {
+          tutorObj.leadsCount = (tutorObj.leadsCount || 0) + 1;
+          await dbFallback.updateTutor(tutorObj._id, { leadsCount: tutorObj.leadsCount });
+        }
+      }
       return res.status(201).json({
         success: true,
         message: 'Trial class request received successfully! We will reach out shortly.',
@@ -64,6 +72,9 @@ exports.createBooking = async (req, res, next) => {
     }
 
     const booking = await Booking.create(bookingData);
+    if (bookingData.assignedTutor) {
+      await Tutor.findByIdAndUpdate(bookingData.assignedTutor, { $inc: { leadsCount: 1 } });
+    }
 
     res.status(201).json({
       success: true,
@@ -202,9 +213,9 @@ exports.updateBooking = async (req, res, next) => {
         if (String(booking.studentEmail).toLowerCase() !== String(req.user.email).toLowerCase()) {
           return res.status(403).json({ success: false, message: 'Not authorized to update this booking' });
         }
-        // Student can only update status to Completed or Cancelled
+        // Student can only update status to Completed or Deleted
         if (req.body.status) {
-          if (req.body.status !== 'Completed' && req.body.status !== 'Cancelled') {
+          if (req.body.status !== 'Completed' && req.body.status !== 'Deleted') {
             return res.status(400).json({ success: false, message: 'Invalid status update for student' });
           }
           booking.status = req.body.status;
@@ -254,9 +265,9 @@ exports.updateBooking = async (req, res, next) => {
       if (String(booking.studentEmail).toLowerCase() !== String(req.user.email).toLowerCase()) {
         return res.status(403).json({ success: false, message: 'Not authorized to update this booking' });
       }
-      // Student can only update status to Completed or Cancelled
+      // Student can only update status to Completed or Deleted
       if (req.body.status) {
-        if (req.body.status !== 'Completed' && req.body.status !== 'Cancelled') {
+        if (req.body.status !== 'Completed' && req.body.status !== 'Deleted') {
           return res.status(400).json({ success: false, message: 'Invalid status update for student' });
         }
         booking.status = req.body.status;

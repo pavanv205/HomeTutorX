@@ -114,6 +114,25 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Renew subscription action
+  const renewSubscription = async (paymentData) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await api.post('/auth/renew-subscription', paymentData);
+      if (res.data && res.data.success) {
+        setUser(res.data.data);
+        return res.data.data;
+      }
+    } catch (err) {
+      const errMsg = err.message || 'Renewal failed. Please try again.';
+      setError(errMsg);
+      throw new Error(errMsg, { cause: err });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     user,
     token,
@@ -125,6 +144,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     registerTutor,
     registerStudent,
+    renewSubscription,
     setError
   };
 

@@ -47,8 +47,7 @@ exports.registerTutor = async (req, res, next) => {
     const requiredFields = [
       'name', 'email', 'password', 'gender', 'age', 'phone', 
       'state', 'city', 'streetAddress', 'pincode', 'degree', 
-      'institution', 'passingYear', 'experienceYears', 'subjects', 
-      'classes', 'teachingMode', 'hourlyRate', 'monthlyRate'
+      'subjects', 'classes', 'teachingMode', 'hourlyRate', 'monthlyRate'
     ];
     
     const missing = [];
@@ -64,6 +63,14 @@ exports.registerTutor = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: `Missing required fields: ${missing.join(', ')}`
+      });
+    }
+
+    // Verify payment status
+    if (!data.paymentId || data.paymentStatus !== 'Paid') {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment verification failed. Tutor profile registration requires a successful ₹29 tutor subscription plan payment.'
       });
     }
 
@@ -90,13 +97,17 @@ exports.registerTutor = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Age must be a valid positive number' });
     }
 
-    const numPassingYear = Number(data.passingYear);
-    if (isNaN(numPassingYear) || numPassingYear <= 1900 || numPassingYear > new Date().getFullYear() + 10) {
+    const numPassingYear = (data.passingYear !== undefined && data.passingYear !== null && data.passingYear !== '') 
+      ? Number(data.passingYear) 
+      : undefined;
+    if (numPassingYear !== undefined && (isNaN(numPassingYear) || numPassingYear <= 1900 || numPassingYear > new Date().getFullYear() + 10)) {
       return res.status(400).json({ success: false, message: 'Please provide a valid passing year' });
     }
 
-    const numExp = Number(data.experienceYears);
-    if (isNaN(numExp) || numExp < 0) {
+    const numExp = (data.experienceYears !== undefined && data.experienceYears !== null && data.experienceYears !== '') 
+      ? Number(data.experienceYears) 
+      : 0;
+    if (data.experienceYears !== undefined && data.experienceYears !== null && data.experienceYears !== '' && (isNaN(numExp) || numExp < 0)) {
       return res.status(400).json({ success: false, message: 'Experience years must be a non-negative number' });
     }
 
@@ -202,6 +213,9 @@ exports.registerTutor = async (req, res, next) => {
         password: hashedPassword,
         role: 'Tutor',
         tutorProfile: tutorId,
+        paymentStatus: 'Paid',
+        paymentId: data.paymentId,
+        subscriptionExpiresAt: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString(),
         createdAt: new Date().toISOString()
       };
       
@@ -235,6 +249,8 @@ exports.registerTutor = async (req, res, next) => {
         resumeUrl: photoUrl,
         certificateUrl: certificateUrl,
         isVerified: false,
+        paymentStatus: data.paymentStatus || 'Pending',
+        paymentId: data.paymentId || undefined,
         createdAt: new Date().toISOString()
       };
       
@@ -263,7 +279,10 @@ exports.registerTutor = async (req, res, next) => {
         name: name || data.fullName,
         email,
         password,
-        role: 'Tutor'
+        role: 'Tutor',
+        paymentStatus: 'Paid',
+        paymentId: data.paymentId,
+        subscriptionExpiresAt: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000)
       });
       devLog(`[DATABASE SAVE] Created User document, ID: ${user._id}`);
     } catch (userErr) {
@@ -303,7 +322,9 @@ exports.registerTutor = async (req, res, next) => {
         bio: data.bio,
         photo: photoUrl,
         resumeUrl: photoUrl,
-        certificateUrl: certificateUrl
+        certificateUrl: certificateUrl,
+        paymentStatus: data.paymentStatus || 'Pending',
+        paymentId: data.paymentId || undefined
       });
       devLog(`[DATABASE SAVE] Created Tutor profile, ID: ${tutor._id}`);
     } catch (tutorErr) {
@@ -378,14 +399,21 @@ exports.registerStudent = async (req, res, next) => {
   devLog('--- [STUDENT REGISTRATION REQUEST RECEIVED] ---');
   let user = null;
   try {
-    const data = req.body || {};
-    const { name, email, password, phone } = data;
+    const { name, email, password, phone, paymentStatus, paymentId } = req.body || {};
 
     // Validate inputs
     if (!name || !email || !password || !phone) {
       return res.status(400).json({
         success: false,
         message: 'Please provide name, email, password, and phone number.'
+      });
+    }
+
+    // Verify payment status
+    if (!paymentId || paymentStatus !== 'Paid') {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment verification failed. Student account registration requires a successful ₹29 registration fee payment.'
       });
     }
 
@@ -450,6 +478,8 @@ exports.registerStudent = async (req, res, next) => {
         password: hashedPassword,
         phone,
         role: 'Student',
+        paymentStatus: 'Paid',
+        paymentId,
         createdAt: new Date().toISOString()
       };
       
@@ -477,7 +507,9 @@ exports.registerStudent = async (req, res, next) => {
       email,
       password,
       phone,
-      role: 'Student'
+      role: 'Student',
+      paymentStatus: 'Paid',
+      paymentId
     });
 
     devLog(`[DATABASE SAVE] Created Student User document, ID: ${user._id}`);
@@ -687,6 +719,60 @@ exports.checkEmail = async (req, res, next) => {
 
     return res.json({ success: true, exists: false });
   } catch (err) {
+    next(err);
+  }
+};
+
+// @desc    Renew subscription
+// @route   POST /api/auth/renew-subscription
+// @access  Private
+exports.renewSubscription = async (req, res, next) => {
+  devLog('--- [RENEW SUBSCRIPTION REQUEST RECEIVED] ---');
+  try {
+    const { paymentId, paymentStatus } = req.body || {};
+
+    if (!paymentId || paymentStatus !== 'Paid') {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment verification failed. Subscription renewal requires a successful ₹29 payment.'
+      });
+    }
+
+    const newExpiresAt = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
+
+    let user;
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running renewSubscription in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      const rawUser = usersList.find(u => String(u._id) === String(req.user._id));
+      if (!rawUser) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+      rawUser.paymentId = paymentId;
+      rawUser.paymentStatus = 'Paid';
+      rawUser.subscriptionExpiresAt = newExpiresAt.toISOString();
+      await dbFallback.saveUser(rawUser);
+      user = rawUser;
+    } else {
+      user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+          paymentId,
+          paymentStatus: 'Paid',
+          subscriptionExpiresAt: newExpiresAt
+        },
+        { new: true }
+      ).populate('tutorProfile');
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Subscription successfully renewed for 6 months.',
+      data: user
+    });
+  } catch (err) {
+    console.error(`[RENEW SYSTEM ERROR] Uncaught error in renewSubscription | Error: ${err.message}`);
     next(err);
   }
 };

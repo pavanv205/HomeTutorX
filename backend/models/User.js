@@ -34,6 +34,17 @@ const UserSchema = new mongoose.Schema({
   tutorProfile: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tutor'
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['Pending', 'Paid'],
+    default: 'Pending'
+  },
+  paymentId: {
+    type: String
+  },
+  subscriptionExpiresAt: {
+    type: Date
   }
 }, {
   timestamps: true

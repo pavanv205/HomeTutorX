@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { upload } = require('../utils/uploadHelper');
-const { registerTutor, registerStudent, login, getMe, checkEmail } = require('../controllers/authController');
+const { registerTutor, registerStudent, login, getMe, checkEmail, renewSubscription } = require('../controllers/authController');
 const { forgotPassword, verifyOtp, resetPassword } = require('../controllers/passwordController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -33,7 +33,7 @@ const handleUpload = (req, res, next) => {
       if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({
           success: false,
-          message: 'File size limit exceeded. Maximum allowed size is 2MB per file.'
+          message: 'File size limit exceeded. Maximum allowed size is 100MB per file.'
         });
       }
       
@@ -55,5 +55,6 @@ router.post('/forgot-password', forgotPassword);
 router.post('/verify-otp', verifyOtp);
 router.post('/reset-password', resetPassword);
 router.post('/check-email', checkEmail);
+router.post('/renew-subscription', protect, renewSubscription);
 
 module.exports = router;

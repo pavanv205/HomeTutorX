@@ -40,7 +40,9 @@ const TutorSchema = new mongoose.Schema({
   ownReferralCode: { type: String, unique: true, sparse: true },
   isVerified: { type: Boolean, default: false },
   verifiedAt: { type: Date },
-  verifiedDate: { type: Date }
+  verifiedDate: { type: Date },
+  paymentStatus: { type: String, default: 'Pending', enum: ['Pending', 'Paid'] },
+  paymentId: { type: String }
 }, { timestamps: true });
 
 // Optimize query performance for search filters, sorting, and geo Proximity

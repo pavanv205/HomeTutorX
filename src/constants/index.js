@@ -16,6 +16,7 @@ export const SUBJECTS = [
   "Computer Science",
   "Economics",
   "Telugu",
+  "Hindi",
   "Competitive"
 ];
 
@@ -7147,22 +7148,19 @@ export const SUBJECT_CATEGORIES = [
 export const FAQS = [
   {
     question: "How does TutorConnect connect me with a tutor?",
-    answer: "You can use our 'Find Tutors' page to search and filter through verified tutor profiles based on subject, class, mode (online/offline), and city. Once you find a tutor you like, you can contact them to schedule your lessons."
+    answer: "You can use our 'Find Tutors' page to search and filter through verified tutor profiles based on subject, class, mode (online/offline), and city. Once you find a tutor you like, you can submit a booking request. When the tutor accepts your request, contact details are shared so you can coordinate lessons directly."
   },
   {
     question: "Are the tutors verified?",
-    answer: "Yes, every tutor goes through a comprehensive verification process. We verify their academic qualifications (degrees, transcripts), teaching experience, identity proofs, and conduct basic background checks before listing them."
+    answer: "Yes, every tutor goes through a verification process. We review their uploaded educational certificates and verify their teaching profile details before approval. However, we do not perform comprehensive background checks; users are encouraged to verify credentials in person during initial sessions."
   },
   {
     question: "Can I choose between online and offline classes?",
     answer: "Yes, many of our tutors offer both online (interactive learning) and offline (home visit) classes. You can filter tutors by their teaching mode on the search page."
   },
-  {
-    question: "How are payments handled?",
-    answer: "Payments are processed securely through our platform. You can pay monthly for class hours. Tutors are paid after successful completion of the scheduled sessions, protecting your payments."
-  },
+
   {
     question: "What if I am not satisfied with a tutor after standard classes begin?",
-    answer: "If you are not satisfied with a tutor, you can request a tutor replacement at any time. We will help you select another tutor and transfer your remaining hours without extra fees."
+    answer: "If you are not satisfied with a tutor, you can search for and request a connection with another tutor from our directory at any time. Since class fees and tutoring hours are coordinated directly between you and the tutor, any refunds or scheduling adjustments must be managed directly with them."
   }
 ];

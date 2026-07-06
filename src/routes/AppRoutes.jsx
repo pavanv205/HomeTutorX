@@ -27,6 +27,7 @@ const AdminDashboard = lazy(() => import('../pages/AdminDashboard'));
 const TutorDashboard = lazy(() => import('../pages/TutorDashboard'));
 const StudentDashboard = lazy(() => import('../pages/StudentDashboard'));
 const NotFound = lazy(() => import('../pages/NotFound'));
+const SubscriptionExpired = lazy(() => import('../pages/SubscriptionExpired'));
 
 const AppRoutes = () => {
   return (
@@ -42,6 +43,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/subscription-expired" element={<SubscriptionExpired />} />
         
         {/* Protected Dashboard Routes */}
         <Route

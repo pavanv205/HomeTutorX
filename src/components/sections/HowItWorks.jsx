@@ -12,7 +12,7 @@ const STEPS = [
   {
     step: '02',
     title: 'Begin Learning',
-    description: 'Finalize schedules, pay securely through the platform, and start customized home or online learning classes.',
+    description: 'Finalize schedules and payment terms directly with your tutor, and start customized home or online learning classes.',
     icon: <FaBookReader className="h-6 w-6" />,
     color: 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-450 dark:border-emerald-900/50'
   }

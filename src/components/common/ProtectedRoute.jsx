@@ -26,6 +26,14 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/" replace />;
   }
 
+  // Subscription Expiration Check
+  if (user && user.role === 'Tutor') {
+    const isExpired = user.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) < new Date();
+    if (isExpired) {
+      return <Navigate to="/subscription-expired" replace />;
+    }
+  }
+
   return children;
 };
 

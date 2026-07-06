@@ -373,8 +373,16 @@ exports.getTutorById = async (req, res, next) => {
       const dbFallback = require('../utils/dbFallback');
       const tutorsList = await dbFallback.getTutors();
       tutor = tutorsList.find(t => String(t._id) === String(req.params.id));
+      if (tutor) {
+        tutor.viewsCount = (tutor.viewsCount || 0) + 1;
+        await dbFallback.updateTutor(tutor._id, { viewsCount: tutor.viewsCount });
+      }
     } else {
-      tutor = await Tutor.findById(req.params.id).lean();
+      tutor = await Tutor.findByIdAndUpdate(
+        req.params.id,
+        { $inc: { viewsCount: 1 } },
+        { new: true }
+      ).lean();
     }
     if (!tutor) {
       return res.status(404).json({ success: false, message: 'Tutor not found' });

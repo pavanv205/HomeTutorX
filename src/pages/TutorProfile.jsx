@@ -74,6 +74,23 @@ const TutorProfile = () => {
     }
   };
 
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to delete this booking request?')) {
+      return;
+    }
+    setUpdatingBookingId(bookingId);
+    try {
+      const res = await api.delete(`/bookings/${bookingId}`);
+      if (res.data && res.data.success) {
+        setProfileBookings(prev => prev.filter(b => b._id !== bookingId));
+      }
+    } catch (err) {
+      console.error('Failed to delete booking request:', err);
+    } finally {
+      setUpdatingBookingId(null);
+    }
+  };
+
 
   useEffect(() => {
     const fetchTutorDetails = async () => {
@@ -321,8 +338,8 @@ const TutorProfile = () => {
                           </button>
                           <button
                             disabled={updatingBookingId !== null}
-                            onClick={() => handleUpdateStatus(booking._id, 'Cancelled')}
-                            className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:hover:bg-red-950/45 dark:text-red-450 rounded-xl text-xs font-bold cursor-pointer transition-colors"
+                            onClick={() => handleDeleteBooking(booking._id)}
+                            className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:hover:bg-red-950/45 dark:text-red-455 rounded-xl text-xs font-bold cursor-pointer transition-colors"
                           >
                             <FaTimes className="h-3 w-3" /> Decline
                           </button>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaBriefcase, FaBook, FaUpload, FaSearch } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaBriefcase, FaBook, FaUpload, FaSearch, FaCreditCard, FaExclamationTriangle } from 'react-icons/fa';
 import { SUBJECTS, CLASSES, CITIES, STATES, STATE_CITIES } from '../../constants';
 import { tutorService } from '../../services/tutorService';
 import { useAuth } from '../../context/AuthContext';
@@ -21,13 +21,10 @@ const validationSchema = yup.object().shape({
   phone: yup.string().required('Phone number is required').matches(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit number'),
   state: yup.string().required('State is required'),
   city: yup.string().required('City is required'),
-  bio: yup.string().required('About section is required'),
+  bio: yup.string().max(30, 'Biography cannot exceed 30 letters'),
   
   // Step 2
   degree: yup.string().required('Highest qualification is required'),
-  institution: yup.string().required('College / University name is required'),
-  passingYear: yup.number().typeError('Passing year must be a number').required('Passing year is required').min(1980, 'Invalid year').max(new Date().getFullYear(), 'Year cannot be in the future'),
-  experienceYears: yup.number().typeError('Experience must be a number').required('Experience is required').min(0, 'Cannot be negative').max(50, 'Invalid experience'),
 
   // Step 3
   subjects: yup.array().min(1, 'Select at least one subject to teach'),
@@ -36,7 +33,7 @@ const validationSchema = yup.object().shape({
   hourlyRate: yup.number()
     .typeError('Hourly rate must be a number')
     .required('Hourly rate is required')
-    .min(100, 'Minimum hourly charge is 100')
+    .min(50, 'Minimum hourly charge is 50')
     .max(500, 'Maximum hourly charge is 500'),
   monthlyRate: yup.number()
     .typeError('Monthly charge must be a number')
@@ -53,9 +50,8 @@ const validationSchema = yup.object().shape({
 
 const STEPS = [
   { title: 'Personal Details', icon: <FaUser /> },
-  { title: 'Education & Exp', icon: <FaGraduationCap /> },
   { title: 'Teaching Prefs', icon: <FaBook /> },
-  { title: 'Location & Profile', icon: <FaUpload /> }
+  { title: 'Profile & Payment', icon: <FaUpload /> }
 ];
 
 const BecomeTutorForm = () => {
@@ -99,9 +95,6 @@ const BecomeTutorForm = () => {
       city: '',
       bio: '',
       degree: '',
-      institution: '',
-      passingYear: '',
-      experienceYears: '',
       subjects: [],
       classes: [],
       teachingMode: 'Both',
@@ -210,9 +203,7 @@ const BecomeTutorForm = () => {
     if (currentStep === 0) {
       fieldsToValidate = ['name', 'email', 'password', 'gender', 'age', 'phone', 'streetAddress', 'state', 'city', 'bio'];
     } else if (currentStep === 1) {
-      fieldsToValidate = ['degree', 'institution', 'passingYear', 'experienceYears'];
-    } else if (currentStep === 2) {
-      fieldsToValidate = ['subjects', 'classes', 'teachingMode', 'hourlyRate', 'monthlyRate'];
+      fieldsToValidate = ['degree', 'subjects', 'classes', 'teachingMode', 'hourlyRate', 'monthlyRate'];
     }
 
     const isStepValid = await trigger(fieldsToValidate);
@@ -349,35 +340,96 @@ const BecomeTutorForm = () => {
     }
   };
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const onSubmit = async (data) => {
     try {
       setLoading(true);
       setSubmitError('');
-      const formData = new FormData();
-      // Append primitive fields
-      for (const key of Object.keys(data)) {
-        const val = data[key];
-        if (Array.isArray(val)) {
-          formData.append(key, JSON.stringify(val));
-        } else {
-          formData.append(key, val ?? '');
-        }
-      }
-      if (resumeFile) {
-        formData.append('resume', resumeFile);
-      }
-      if (certificateFile) {
-        formData.append('certificate', certificateFile);
+
+      // Load Razorpay Script
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        setSubmitError('Failed to load payment gateway. Please check your internet connection.');
+        setLoading(false);
+        return;
       }
 
-      const response = await registerTutorAuth(formData);
-      if (response) {
-        setSuccessMsg('Application Submitted! We have created your tutor account. You can log in using your credentials after admin review.');
-      }
+      // Initialize Razorpay Options
+      const options = {
+        key: 'rzp_test_tutorconnectkey', // Sandbox test key
+        amount: 2900, // ₹29.00 in paise
+        currency: 'INR',
+        name: 'TutorConnect',
+        description: '6-Month Tutor Subscription Plan',
+        image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80',
+        handler: async function (response) {
+          try {
+            setLoading(true);
+            const razorpayPaymentId = response.razorpay_payment_id;
+            console.log('Payment Successful. Payment ID:', razorpayPaymentId);
+
+            const formData = new FormData();
+            // Append primitive fields
+            for (const key of Object.keys(data)) {
+              const val = data[key];
+              if (Array.isArray(val)) {
+                formData.append(key, JSON.stringify(val));
+              } else {
+                formData.append(key, val ?? '');
+              }
+            }
+            if (resumeFile) {
+              formData.append('resume', resumeFile);
+            }
+            if (certificateFile) {
+              formData.append('certificate', certificateFile);
+            }
+            
+            // Append payment fields
+            formData.append('paymentStatus', 'Paid');
+            formData.append('paymentId', razorpayPaymentId);
+
+            const regResponse = await registerTutorAuth(formData);
+            if (regResponse) {
+              setSuccessMsg('Application Submitted! We have created your tutor account. You can log in using your credentials after admin review.');
+            }
+          } catch (error) {
+            console.error(error);
+            setSubmitError(error.message || 'Registration failed. Please try again.');
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: data.name,
+          email: data.email,
+          contact: data.phone
+        },
+        theme: {
+          color: '#3B82F6' // Primary theme blue
+        },
+        modal: {
+          ondismiss: function() {
+            setSubmitError('Payment was cancelled. You must complete the ₹29 payment to submit your application.');
+            setLoading(false);
+          }
+        }
+      };
+
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
     } catch (error) {
       console.error(error);
       setSubmitError(error.message || 'Registration failed. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
@@ -764,12 +816,12 @@ const BecomeTutorForm = () => {
 
             {/* Bio */}
             <div>
-              <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
-                Professional Bio / Teaching Philosophy
+              <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
+                Professional Bio / Teaching Philosophy (Optional)
               </label>
               <textarea
                 rows="4"
-                placeholder="Introduce yourself and explain your teaching methodology (min 30 characters)..."
+                placeholder="Introduce yourself and explain your teaching methodology (Max 30 letters)..."
                 {...register('bio')}
                 className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
               />
@@ -778,98 +830,38 @@ const BecomeTutorForm = () => {
           </div>
         )}
 
-        {/* STEP 2: Qualifications & Experience */}
+        {/* STEP 2: Teaching Preferences */}
         {currentStep === 1 && (
-          <div className="space-y-5">
-            <h4 className="text-lg font-bold text-slate-855 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
-              Academic Qualifications & Work Experience
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {/* Degree */}
-              <div>
-                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
-                  Highest Degree / Qualification
-                </label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-4 text-slate-400"><FaGraduationCap className="h-4 w-4" /></span>
-                  <select
-                    {...register('degree')}
-                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-10 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 appearance-none"
-                  >
-                    <option value="">Select Qualification</option>
-                    <option value="10th Grade">10th Grade</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Diploma">Diploma</option>
-                    <option value="Degree">Degree</option>
-                    <option value="BTech">BTech</option>
-                    <option value="Post-Graduation">Post-Graduation</option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                  </div>
-                </div>
-                {errors.degree && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.degree.message}</p>}
-              </div>
-
-              {/* Institution */}
-              <div>
-                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
-                  University / College / School
-                </label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-4 text-slate-400"><FaGraduationCap className="h-4 w-4" /></span>
-                  <input
-                    type="text"
-                    placeholder="e.g. Delhi University, IIT Bombay"
-                    {...register('institution')}
-                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
-                  />
-                </div>
-                {errors.institution && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.institution.message}</p>}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {/* Passing Year */}
-              <div>
-                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
-                  Year of Graduation
-                </label>
-                <input
-                  type="number"
-                  placeholder="e.g. 2018"
-                  {...register('passingYear')}
-                  className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
-                />
-                {errors.passingYear && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.passingYear.message}</p>}
-              </div>
-
-              {/* Experience Years */}
-              <div>
-                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
-                  Total Teaching Experience (Years)
-                </label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-4 text-slate-400"><FaBriefcase className="h-4 w-4" /></span>
-                  <input
-                    type="number"
-                    placeholder="e.g. 5"
-                    {...register('experienceYears')}
-                    className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
-                  />
-                </div>
-                {errors.experienceYears && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.experienceYears.message}</p>}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: Teaching Preferences */}
-        {currentStep === 2 && (
           <div className="space-y-5">
             <h4 className="text-lg font-bold text-slate-855 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
               Teaching Preferences
             </h4>
+
+            {/* Highest Degree / Qualification */}
+            <div>
+              <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
+                Highest Degree / Qualification
+              </label>
+              <div className="relative flex items-center">
+                <span className="absolute left-4 text-slate-400"><FaGraduationCap className="h-4 w-4" /></span>
+                <select
+                  {...register('degree')}
+                  className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-10 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 appearance-none"
+                >
+                  <option value="">Select Qualification</option>
+                  <option value="10th Grade">10th Grade</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Diploma">Diploma</option>
+                  <option value="Degree">Degree</option>
+                  <option value="BTech">BTech</option>
+                  <option value="Post-Graduation">Post-Graduation</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+              {errors.degree && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.degree.message}</p>}
+            </div>
 
             {/* Subjects Selection */}
             <div>
@@ -961,11 +953,11 @@ const BecomeTutorForm = () => {
               {/* Hourly Rate */}
               <div>
                 <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
-                  Hourly Rate (₹) (100 - 500)
+                  Hourly Rate (₹) (50 - 500)
                 </label>
                 <input
                   type="number"
-                  placeholder="Hourly rate (100 - 500)"
+                  placeholder="Hourly rate (50 - 500)"
                   {...register('hourlyRate')}
                   className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                 />
@@ -989,11 +981,11 @@ const BecomeTutorForm = () => {
           </div>
         )}
 
-        {/* STEP 4: Location & Profile */}
-        {currentStep === 3 && (
+        {/* STEP 3: Profile & Payment */}
+        {currentStep === 2 && (
           <div className="space-y-5">
             <h4 className="text-lg font-bold text-slate-855 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">
-              Location & Profile
+              Profile & Payment
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -1078,7 +1070,7 @@ const BecomeTutorForm = () => {
             {/* Profile Photo Upload */}
             <div>
               <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
-                Upload Profile Photo (Optional) (IMAGE - Max 2MB)
+                Upload Profile Photo (Optional) (IMAGE)
               </label>
               <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all duration-200">
                 <input
@@ -1095,7 +1087,7 @@ const BecomeTutorForm = () => {
                   <div className="text-sm">
                     <span className="font-semibold text-primary dark:text-blue-500 hover:underline">Click to upload</span> or drag and drop
                   </div>
-                  <p className="text-xs text-slate-400">Image file (JPEG, PNG, WEBP) up to 2MB</p>
+                  <p className="text-xs text-slate-400">Image file (JPEG, PNG, WEBP)</p>
                 </div>
               </div>
               {compressionLoading && (
@@ -1155,7 +1147,7 @@ const BecomeTutorForm = () => {
             {/* Educational Certificate Upload */}
             <div>
               <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
-                Upload Educational Certificate (PDF or IMAGE - Max 2MB)
+                Upload Educational Certificate (PDF or IMAGE)
               </label>
               <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-850/20 transition-all duration-200">
                 <input
@@ -1172,7 +1164,7 @@ const BecomeTutorForm = () => {
                   <div className="text-sm">
                     <span className="font-semibold text-primary dark:text-blue-500 hover:underline">Click to upload</span> or drag and drop
                   </div>
-                  <p className="text-xs text-slate-400">PDF or Image file (JPEG, PNG, WEBP) up to 2MB</p>
+                  <p className="text-xs text-slate-400">PDF or Image file (JPEG, PNG, WEBP)</p>
                 </div>
               </div>
               {certificateCompressionLoading && (
@@ -1240,6 +1232,41 @@ const BecomeTutorForm = () => {
                   {certificateError}
                 </p>
               )}
+
+              {/* Payment Method Option */}
+              <div className="space-y-3 mt-6">
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
+                  Select Payment Method
+                </label>
+                <div className="border border-primary bg-primary/5 dark:border-blue-500 dark:bg-blue-950/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
+                  <div className="flex items-center gap-3.5">
+                    <div className="h-5 w-5 rounded-full border-2 border-primary dark:border-blue-500 flex items-center justify-center">
+                      <div className="h-2.5 w-2.5 rounded-full bg-primary dark:bg-blue-500" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Razorpay</h4>
+                      <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
+                    </div>
+                  </div>
+                   <div className="text-right">
+                    <span className="text-xs text-slate-400 font-semibold block">Subscription Fee</span>
+                    <span className="text-base font-extrabold text-primary dark:text-blue-400">₹29</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Verification Notice */}
+              <div className="bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/50 rounded-2xl p-5 flex items-start gap-4 mt-6">
+                <div className="text-xl text-indigo-600 dark:text-indigo-400 mt-0.5">
+                  <FaCreditCard />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Tutor Subscription Plan</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">
+                    TutorConnect charges a fee of <strong className="text-indigo-600 dark:text-indigo-400 font-extrabold text-sm">₹29</strong> for a 6-month tutor subscription plan.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}

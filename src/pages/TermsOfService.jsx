@@ -55,7 +55,7 @@ const TermsOfService = () => {
             <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
               <li>Profile listings of verified and pre-screened private tutors.</li>
               <li>Booking engines for free or paid lessons.</li>
-              <li>Dashboard tracking systems allowing both tutors and students to manage booking states (Pending, Assigned, Completed, Cancelled).</li>
+              <li>Dashboard tracking systems allowing both tutors and students to manage booking states (Pending, Assigned, Completed, Deleted).</li>
               <li>Proximity geolocation calculations to aid matching offline/home lessons.</li>
             </ul>
           </div>
@@ -102,25 +102,40 @@ const TermsOfService = () => {
             <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
               <li>A booking request begins in <strong>Pending</strong> status, visible to both student and tutor.</li>
               <li>Once accepted, the status updates to <strong>Assigned</strong>, and contact details are unlocked.</li>
-              <li>Both Students and Tutors have the authority to update booking records to <strong>Completed</strong> or <strong>Cancelled</strong> through their respective dashboards.</li>
-              <li>Students have a dedicated button to cancel requests directly from their student portal, preventing schedule confusion.</li>
+              <li>Both Students and Tutors have the authority to update booking records to <strong>Completed</strong> or <strong>Deleted</strong> through their respective dashboards.</li>
+              <li>Students have a dedicated button to delete requests directly from their student portal, preventing schedule confusion.</li>
             </ul>
           </div>
 
           {/* Section 5 */}
           <div className="space-y-3.5">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">
-              5. Intellectual Property
+              5. Registration Fees, Subscriptions & Lesson Payments
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+              We apply the following payment rules for registrations and subscriptions on the platform:
+            </p>
+            <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
+              <li><strong>Student Verification Fee:</strong> Students pay a one-time profile verification fee of ₹29 upon registration to activate their account and request classes.</li>
+              <li><strong>Tutor Subscription Plan:</strong> Tutors pay ₹29 to register for a 6-month subscription plan. The subscription must be renewed every 6 months to maintain dashboard access and profile listing visibility.</li>
+              <li><strong>Lesson Payments:</strong> All regular tutoring class hours and fees are negotiated and coordinated directly between the Student and the Tutor. TutorConnect does not process or manage standard lesson payments.</li>
+            </ul>
+          </div>
+
+          {/* Section 6 */}
+          <div className="space-y-3.5">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">
+              6. Intellectual Property
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
               All branding assets, site design, text formatting, and proprietary matchmaking codes are the intellectual property of TutorConnect. You may not copy, extract, scraper-harvest, or reuse code segments without express written authorization.
             </p>
           </div>
 
-          {/* Section 6 */}
+          {/* Section 7 */}
           <div className="space-y-3.5">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">
-              6. Limitation of Liability
+              7. Limitation of Liability
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
               TutorConnect does not guarantee that matching will result in a specific academic grade or learning outcome. Under no circumstances will TutorConnect, its developers, or its team be held liable for direct or indirect damages, personal injuries, loss of profits, or data loss occurring as a result of platform usage.
