@@ -1256,14 +1256,21 @@ const BecomeTutorForm = () => {
               </div>
 
               {/* Payment Verification Notice */}
-              <div className="bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/50 rounded-2xl p-5 flex items-start gap-4 mt-6">
-                <div className="text-xl text-indigo-600 dark:text-indigo-400 mt-0.5">
-                  <FaCreditCard />
+              <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-5 flex items-center gap-4 mt-6">
+                <div className="h-10 w-10 rounded-xl bg-slate-950 border border-slate-900 shadow-md flex items-center justify-center text-white relative overflow-hidden shrink-0">
+                  <svg width="0" height="0" className="absolute">
+                    <linearGradient id="card-gradient-tutor" x1="0%" y1="100%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#d4af37" />
+                      <stop offset="50%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#fffbdf" />
+                    </linearGradient>
+                  </svg>
+                  <FaCreditCard style={{ fill: "url(#card-gradient-tutor)" }} className="h-5 w-5 filter drop-shadow-[0_1px_3px_rgba(212,175,55,0.4)]" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Tutor Subscription Plan</h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">
-                    TutorConnect charges a fee of <strong className="text-indigo-600 dark:text-indigo-400 font-extrabold text-sm">₹29</strong> for a 6-month tutor subscription plan.
+                    TutorConnect charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹29</strong> for a 6-month tutor subscription plan.
                   </p>
                 </div>
               </div>
