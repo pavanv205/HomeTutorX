@@ -7,7 +7,7 @@ const VALUES = [
     icon: <FaGraduationCap />,
     title: 'Academic Excellence',
     description: 'We prioritize personalized, high-quality learning that supports academic success and unlocks students\' potential.',
-    iconClass: 'bg-blue-50 text-blue-600 border-blue-100/50 dark:bg-blue-950/20 dark:border-blue-900/30 dark:text-blue-400'
+    iconClass: 'bg-slate-100 text-slate-900 border-slate-200/50 dark:bg-slate-800/40 dark:border-slate-700/50 dark:text-slate-100'
   },
   {
     icon: <FaUserCheck />,
