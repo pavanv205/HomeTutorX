@@ -16,7 +16,22 @@ const VALUES = [
     iconClass: 'bg-emerald-50 text-emerald-600 border-emerald-100/50 dark:bg-emerald-950/20 dark:border-emerald-900/30 dark:text-emerald-400'
   },
   {
-    icon: <FaSmileBeam />,
+    icon: (
+      <div className="scale-[0.15] transform-gpu origin-center absolute select-none pointer-events-none">
+        <div className="emoji">
+          <div className="eyes">
+            <div className="eye1"></div>
+            <div className="eye2"></div>
+          </div>
+          <div className="mouth">
+            <div className="mask">
+              <div className="teeth"></div>
+              <div className="toungue"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
     title: 'Student Centricity',
     description: 'We match teaching methodologies to the student\'s learning style, ensuring interest, pace compatibility, and conceptual clarity.',
     iconClass: 'bg-amber-50 text-amber-600 border-amber-100/50 dark:bg-amber-950/20 dark:border-amber-900/30 dark:text-amber-400'
@@ -106,7 +121,7 @@ const AboutUs = () => {
                 transition={{ duration: 0.4, delay: idx * 0.15 }}
                 className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center space-y-4 group"
               >
-                <div className={`h-12 w-12 rounded-2xl border flex items-center justify-center text-xl shadow-sm transition-transform duration-300 group-hover:scale-110 ${val.iconClass}`}>
+                <div className={`h-12 w-12 rounded-2xl border flex items-center justify-center text-xl shadow-sm transition-transform duration-300 group-hover:scale-110 relative ${val.iconClass}`}>
                   {val.icon}
                 </div>
                 <h4 className="font-bold text-slate-850 dark:text-slate-205 text-base">{val.title}</h4>
