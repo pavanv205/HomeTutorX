@@ -29,7 +29,7 @@ const Home = () => {
 
       {/* Stats Bar */}
       <section className="py-8 bg-slate-900 text-white dark:bg-[#070b13] border-y border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
               <p className="text-3xl font-extrabold text-primary dark:text-blue-500">98%</p>

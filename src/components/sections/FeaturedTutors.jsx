@@ -173,7 +173,7 @@ const FeaturedTutors = () => {
 
   return (
     <section className="py-20 bg-slate-50 dark:bg-[#0B0F19] border-y border-slate-100/50 dark:border-slate-900/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-12">
           <div className="space-y-3">

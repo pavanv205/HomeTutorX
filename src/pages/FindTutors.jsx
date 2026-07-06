@@ -218,7 +218,7 @@ const FindTutors = () => {
         description="Search qualified local tutors and online tutors. Filter by subject, grade level, city, pricing, and mode. Find the perfect fit today."
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Banner header */}
         <div className="mb-10 text-center md:text-left space-y-2">
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">

@@ -40,7 +40,7 @@ const ContactUs = () => {
         description="Get in touch with TutorConnect support. Submit your queries, seek tutor matching assistance, or reach out to our office in Indiranagar, Bangalore."
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-16">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-16">
         
         {/* Header */}
         <section className="text-center max-w-3xl mx-auto space-y-4">

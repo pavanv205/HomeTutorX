@@ -51,12 +51,19 @@ const Navbar = () => {
             : 'bg-transparent py-5 border-b border-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 focus:outline-none">
-              <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/20 dark:shadow-none shrink-0">
-                <FaGraduationCap className="h-6 w-6" />
+              <div className="h-10 w-10 rounded-xl bg-slate-950 border border-slate-900 shadow-md flex items-center justify-center text-white relative overflow-hidden">
+                <svg width="0" height="0" className="absolute">
+                  <linearGradient id="nav-cap-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#d4af37" />
+                    <stop offset="50%" stopColor="#f59e0b" />
+                    <stop offset="100%" stopColor="#fffbdf" />
+                  </linearGradient>
+                </svg>
+                <FaGraduationCap style={{ fill: "url(#nav-cap-gradient)" }} className="h-6 w-6 filter drop-shadow-[0_1px_3px_rgba(212,175,55,0.4)]" />
               </div>
               <span className="text-xl font-black tracking-tight text-slate-950 dark:text-slate-950">
                 Tutor<span className="text-primary dark:text-blue-500 font-extrabold">Connect</span>

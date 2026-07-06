@@ -35,7 +35,7 @@ const Hero = () => {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl -z-10 -mr-40 -mt-20 dark:bg-blue-500/5" />
       <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-amber-500/10 rounded-full blur-3xl -z-10 -ml-20 -mb-20 dark:bg-amber-500/5" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Hero Left Content */}
           <motion.div

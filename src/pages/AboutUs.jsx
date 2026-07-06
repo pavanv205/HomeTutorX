@@ -57,7 +57,7 @@ const AboutUs = () => {
         description="Learn about TutorConnect, our vision to transform tutoring, and the verified leadership team connecting qualified educators with students."
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-20">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-20">
         
         {/* Story & Introduction */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">

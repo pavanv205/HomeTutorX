@@ -78,7 +78,7 @@ const StudentDashboard = () => {
       <SEO title="Student Dashboard" description="Track the status of your requested home and online tuition classes." />
 
       <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto space-y-8">
+        <div className="max-w-screen-2xl mx-auto space-y-8">
           {/* Header */}
           <div className="border-b border-slate-200 dark:border-slate-800 pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
