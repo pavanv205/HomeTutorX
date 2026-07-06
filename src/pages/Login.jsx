@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaLock, FaUserShield, FaChalkboardTeacher, FaEye, FaEyeSlash, FaUndo, FaGraduationCap, FaExclamationTriangle } from 'react-icons/fa';
+import { FaEnvelope, FaLock, FaUserShield, FaChalkboardTeacher, FaEye, FaEyeSlash, FaUndo, FaGraduationCap, FaExclamationTriangle, FaCheck } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';

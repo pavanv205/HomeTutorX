@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaBriefcase, FaBook, FaUpload, FaSearch, FaCreditCard, FaExclamationTriangle } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaBriefcase, FaBook, FaUpload, FaSearch, FaCreditCard, FaExclamationTriangle, FaCheck } from 'react-icons/fa';
 import { SUBJECTS, CLASSES, CITIES, STATES, STATE_CITIES } from '../../constants';
 import { tutorService } from '../../services/tutorService';
 import { useAuth } from '../../context/AuthContext';
