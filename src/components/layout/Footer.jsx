@@ -15,15 +15,8 @@ const Footer = () => {
           {/* Brand & Description */}
           <div className="space-y-6">
             <Link to="/" className="flex items-center gap-2.5 focus:outline-none">
-              <div className="h-10 w-10 rounded-xl bg-slate-950 border border-slate-900 shadow-md flex items-center justify-center text-white relative overflow-hidden">
-                <svg width="0" height="0" className="absolute">
-                  <linearGradient id="footer-cap-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#d4af37" />
-                    <stop offset="50%" stopColor="#f59e0b" />
-                    <stop offset="100%" stopColor="#fffbdf" />
-                  </linearGradient>
-                </svg>
-                <FaGraduationCap style={{ fill: "url(#footer-cap-gradient)" }} className="h-6 w-6 filter drop-shadow-[0_1px_3px_rgba(212,175,55,0.4)]" />
+              <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white shrink-0">
+                <FaGraduationCap className="h-6 w-6" />
               </div>
               <span className="text-xl font-bold tracking-tight text-white">
                 Tutor<span className="text-primary dark:text-blue-500">Connect</span>
