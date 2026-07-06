@@ -54,11 +54,15 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 focus:outline-none">
-              <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-md shadow-primary/20 dark:shadow-none">
+            <Link to="/" className="flex items-center gap-2.5 focus:outline-none group">
+              <motion.div
+                whileHover={{ scale: 1.08, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                className="h-10 w-10 rounded-xl bg-gradient-to-tr from-pink-500 via-purple-600 to-blue-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/25 dark:shadow-none"
+              >
                 <FaGraduationCap className="h-6 w-6" />
-              </div>
-              <span className="text-xl font-black tracking-tight text-slate-950 dark:text-slate-950">
+              </motion.div>
+              <span className="text-xl font-black tracking-tight text-slate-950 dark:text-slate-950 transition-colors group-hover:text-primary dark:group-hover:text-blue-500">
                 Tutor<span className="text-primary dark:text-blue-500 font-extrabold">Connect</span>
               </span>
             </Link>
