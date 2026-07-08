@@ -434,7 +434,7 @@ const BecomeTutorForm = () => {
         },
         modal: {
           ondismiss: function() {
-            setSubmitError('Payment was cancelled. You must complete the ₹29 payment to submit your application.');
+            setSubmitError('Payment was cancelled. You must complete the ₹1 payment to submit your application.');
             setLoading(false);
           }
         }
@@ -443,7 +443,7 @@ const BecomeTutorForm = () => {
       const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_tutorconnectkey';
       if (razorpayKey === 'rzp_test_tutorconnectkey' || isMock) {
         const simulateSuccess = window.confirm(
-          "TutorConnect Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹29 for this registration?"
+          "TutorConnect Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹1 for this registration?"
         );
         if (simulateSuccess) {
           const mockPaymentId = `pay_mock_${Math.random().toString(36).substring(2, 11)}`;
@@ -1282,7 +1282,7 @@ const BecomeTutorForm = () => {
                   </div>
                    <div className="text-right">
                     <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                    <span className="text-base font-extrabold text-primary dark:text-blue-400">₹29</span>
+                    <span className="text-base font-extrabold text-primary dark:text-blue-400">₹1</span>
                   </div>
                 </div>
               </div>
@@ -1302,7 +1302,7 @@ const BecomeTutorForm = () => {
                 <div>
                   <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Tutor Subscription Plan</h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">
-                    TutorConnect charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹29</strong> for a 6-month tutor subscription plan.
+                    TutorConnect charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹1</strong> for a 6-month tutor subscription plan.
                   </p>
                 </div>
               </div>

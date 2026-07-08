@@ -149,7 +149,7 @@ const RegisterStudent = () => {
         },
         modal: {
           ondismiss: function() {
-            setErrorMsg('Payment was cancelled. You must complete the ₹29 payment to create your account.');
+            setErrorMsg('Payment was cancelled. You must complete the ₹1 payment to create your account.');
             setLoading(false);
           }
         }
@@ -158,7 +158,7 @@ const RegisterStudent = () => {
       const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_tutorconnectkey';
       if (razorpayKey === 'rzp_test_tutorconnectkey' || isMock) {
         const simulateSuccess = window.confirm(
-          "TutorConnect Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹29 for this student registration?"
+          "TutorConnect Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹1 for this student registration?"
         );
         if (simulateSuccess) {
           const mockPaymentId = `pay_mock_${Math.random().toString(36).substring(2, 11)}`;
@@ -382,15 +382,13 @@ const RegisterStudent = () => {
                         <div>
                           <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Razorpay</h4>
                           <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
+                                            <div className="text-right">
                         <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                        <span className="text-base font-extrabold text-primary dark:text-blue-400">₹29</span>
+                        <span className="text-base font-extrabold text-primary dark:text-blue-400">₹1</span>
                       </div>
                     </div>
                   </div>
-
+ 
                   {/* Payment Verification Notice */}
                   <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-4 flex items-center gap-4 mt-4">
                     <div className="h-10 w-10 rounded-xl bg-slate-950 border border-slate-900 shadow-md flex items-center justify-center text-white relative overflow-hidden shrink-0">
@@ -406,9 +404,10 @@ const RegisterStudent = () => {
                     <div>
                       <h4 className="text-[11px] font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Verification Application Fee</h4>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
-                        TutorConnect charges a one-time profile verification fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold">₹29</strong>.
+                        TutorConnect charges a one-time profile verification fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold">₹1</strong>.
                       </p>
                     </div>
+                  </div>           </div>
                   </div>
 
                   <div className="flex gap-4 pt-4">
