@@ -70,7 +70,6 @@ const SubscriptionExpired = () => {
         currency: orderData.currency,
         name: 'TutorConnect',
         description: `${user.role} Subscription Renewal`,
-        image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80',
         order_id: isMock ? undefined : orderData.id,
         handler: async function (response) {
           try {
