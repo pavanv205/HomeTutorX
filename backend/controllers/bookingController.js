@@ -19,6 +19,22 @@ exports.createBooking = async (req, res, next) => {
       console.log('🔌 MongoDB is offline. Running createBooking in Fallback mode.');
       const bookingId = 'fallback-booking-' + Math.random().toString(36).substr(2, 9);
       
+      // Check for duplicate active request
+      if (tutorId) {
+        const bookingsList = await dbFallback.getBookings();
+        const existing = bookingsList.find(b => 
+          String(b.assignedTutor) === String(tutorId) &&
+          (String(b.studentEmail).toLowerCase() === String(resolvedEmail).toLowerCase() || String(b.studentPhone) === String(resolvedPhone)) &&
+          ['Pending', 'Assigned', 'Contacted'].includes(b.status)
+        );
+        if (existing) {
+          return res.status(400).json({
+            success: false,
+            message: 'You have already sent an active request to this tutor. You cannot send another until it is completed or deleted.'
+          });
+        }
+      }
+      
       const newBooking = {
         _id: bookingId,
         studentName,
@@ -48,6 +64,24 @@ exports.createBooking = async (req, res, next) => {
         message: 'Trial class request received successfully! We will reach out shortly.',
         bookingId: bookingId
       });
+    }
+
+    // Check for duplicate active request
+    if (tutorId && mongoose.Types.ObjectId.isValid(tutorId)) {
+      const existing = await Booking.findOne({
+        assignedTutor: new mongoose.Types.ObjectId(tutorId),
+        $or: [
+          { studentEmail: { $regex: new RegExp(`^${resolvedEmail}$`, 'i') } },
+          { studentPhone: resolvedPhone }
+        ],
+        status: { $in: ['Pending', 'Assigned', 'Contacted'] }
+      });
+      if (existing) {
+        return res.status(400).json({
+          success: false,
+          message: 'You have already sent an active request to this tutor. You cannot send another until it is completed or deleted.'
+        });
+      }
     }
 
     const bookingData = {

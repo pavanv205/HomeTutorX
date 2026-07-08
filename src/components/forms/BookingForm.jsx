@@ -104,6 +104,10 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
         }
       } catch (err) {
         console.error(err);
+        alert(err.message || 'Failed to send request. You might have an active request already.');
+        if (onSuccess) {
+          onSuccess();
+        }
       } finally {
         setLoading(false);
       }
@@ -136,6 +140,10 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
       }
     } catch (error) {
       console.error(error);
+      alert(error.message || 'Failed to send request. You might have an active request already.');
+      if (onSuccess) {
+        onSuccess();
+      }
     } finally {
       setLoading(false);
     }

@@ -7,7 +7,7 @@ const LoadingPage = () => (
   <div className="min-h-[70vh] flex items-center justify-center bg-slate-50 dark:bg-[#0B0F19]">
     <div className="flex flex-col items-center gap-4">
       <div className="h-12 w-12 rounded-full border-4 border-slate-200 border-t-primary dark:border-slate-800 dark:border-t-blue-500 animate-spin" />
-      <p className="text-sm font-semibold text-slate-550 dark:text-slate-400">Loading TutorConnect...</p>
+      <p className="text-sm font-semibold text-slate-550 dark:text-slate-400">Loading HomeTutorX...</p>
     </div>
   </div>
 );

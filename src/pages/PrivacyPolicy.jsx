@@ -8,7 +8,7 @@ const PrivacyPolicy = () => {
     <>
       <SEO
         title="Privacy Policy"
-        description="Review the privacy policies and practices of TutorConnect regarding how we collect, store, protect, and use your personal information."
+        description="Review the privacy policies and practices of HomeTutorX regarding how we collect, store, protect, and use your personal information."
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-12">
@@ -35,7 +35,7 @@ const PrivacyPolicy = () => {
             Introduction & Scope
           </h3>
           <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed font-medium">
-            Welcome to TutorConnect ("we," "our," or "us"). We are committed to protecting your privacy and ensuring your personal data is handled securely and transparently. This Privacy Policy details how we collect, store, process, and protect your personal information when you use our web application, search for tutors, book tutoring classes, or register as an educator.
+            Welcome to HomeTutorX ("we," "our," or "us"). We are committed to protecting your privacy and ensuring your personal data is handled securely and transparently. This Privacy Policy details how we collect, store, process, and protect your personal information when you use our web application, search for tutors, book tutoring classes, or register as an educator.
           </p>
           <p className="text-sm text-slate-650 dark:text-slate-405 leading-relaxed font-medium">
             By registering an account or booking tutoring classes on our platform, you acknowledge and agree to the practices outlined in this Privacy Policy.
@@ -143,7 +143,7 @@ const PrivacyPolicy = () => {
             If you need clarification about this policy, want to request account deletion, or have questions about how geolocation details are processed, please reach out.
           </p>
           <p className="text-xs font-bold text-primary dark:text-blue-400">
-            supporttutorconnect@gmail.com
+            supporthometutorx@gmail.com
           </p>
         </section>
       </div>

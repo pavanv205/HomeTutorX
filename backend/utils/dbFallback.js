@@ -13,7 +13,7 @@ const initializeSeeds = async () => {
   const defaultAdmin = {
     _id: '6a3956421c7fc8576e26c6aa',
     name: 'System Admin',
-    email: 'admin@tutorconnect.com',
+    email: 'admin@hometutorx.com',
     password: adminPasswordHash,
     role: 'Admin',
     createdAt: new Date().toISOString()
@@ -23,7 +23,7 @@ const initializeSeeds = async () => {
   const defaultTutorUser = {
     _id: '6a3956421c7fc8576e26c6ab',
     name: 'Default Tutor',
-    email: 'tutor@tutorconnect.com',
+    email: 'tutor@hometutorx.com',
     password: tutorPasswordHash,
     role: 'Tutor',
     tutorProfile: defaultTutorProfileId,
@@ -33,7 +33,7 @@ const initializeSeeds = async () => {
   const defaultStudentUser = {
     _id: '6a3956421c7fc8576e26c6ac',
     name: 'Default Student',
-    email: 'student@tutorconnect.com',
+    email: 'student@hometutorx.com',
     password: studentPasswordHash,
     role: 'Student',
     phone: '9876543222',
@@ -45,7 +45,7 @@ const initializeSeeds = async () => {
     userId: '6a3956421c7fc8576e26c6ab',
     fullName: 'Default Tutor',
     mobile: '9876543210',
-    email: 'tutor@tutorconnect.com',
+    email: 'tutor@hometutorx.com',
     gender: 'Male',
     age: 30,
     qualification: 'M.Sc. Physics',

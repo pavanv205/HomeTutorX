@@ -51,7 +51,7 @@ const HowItWorks = () => {
             Simple & Transparent
           </h2>
           <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight">
-            How TutorConnect Works
+            How HomeTutorX Works
           </h3>
           <p className="text-base text-slate-650 dark:text-slate-400 font-medium">
             Get personalized learning for your student in two easy steps.

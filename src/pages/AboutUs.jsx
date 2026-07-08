@@ -54,7 +54,7 @@ const AboutUs = () => {
     <>
       <SEO
         title="About Us"
-        description="Learn about TutorConnect, our vision to transform tutoring, and the verified leadership team connecting qualified educators with students."
+        description="Learn about HomeTutorX, our vision to transform tutoring, and the verified leadership team connecting qualified educators with students."
       />
 
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-20">
@@ -69,7 +69,7 @@ const AboutUs = () => {
               Transforming Home Tuition in India
             </h1>
             <p className="text-sm text-slate-650 dark:text-slate-450 leading-relaxed font-medium">
-               TutorConnect was founded in 2026 to address a common parent struggle: finding qualified, reliable home tutors who genuinely understand a student's individual learning speed and requirements. 
+               HomeTutorX was founded in 2026 to address a common parent struggle: finding qualified, reliable home tutors who genuinely understand a student's individual learning speed and requirements. 
             </p>
             <p className="text-sm text-slate-650 dark:text-slate-455 leading-relaxed font-medium">
               What started as a localized tutor directory in Vizianagaram has evolved into a robust nationwide platform connecting thousands of parents with pre-screened, certified subject matter experts. We combine the personal touch of face-to-face home tuition with modern scheduling tools.

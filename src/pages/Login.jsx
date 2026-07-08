@@ -132,7 +132,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      setErrorMsg('Please enter both email and password.');
+      setErrorMsg('Please enter both email and OTP.');
       return;
     }
 
@@ -158,15 +158,15 @@ const Login = () => {
 
   const handleQuickFill = (roleType) => {
     if (roleType === 'Admin') {
-      setEmail('admin@tutorconnect.com');
+      setEmail('admin@hometutorx.com');
       setPassword('adminpassword123');
       setActiveTab('Admin');
     } else if (roleType === 'Student') {
-      setEmail('student@tutorconnect.com');
+      setEmail('student@hometutorx.com');
       setPassword('student123');
       setActiveTab('Student');
     } else {
-      setEmail('tutor@tutorconnect.com');
+      setEmail('tutor@hometutorx.com');
       setPassword('tutor123');
       setActiveTab('Tutor');
     }
@@ -292,9 +292,7 @@ const Login = () => {
               <div className="space-y-4">
                 {/* Email */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wider">
-                    Email Address
-                  </label>
+                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wider">{activeTab === 'Admin' ? 'Admin Email' : 'Email Address'}</label>
                   <div className="relative flex items-center">
                     <span className="absolute left-4 text-slate-400"><FaEnvelope className="h-4 w-4" /></span>
                     <input
@@ -302,34 +300,27 @@ const Login = () => {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder={activeTab === 'Admin' ? 'admin@tutorconnect.com' : activeTab === 'Student' ? 'student@example.com' : 'tutor@example.com'}
+                      placeholder={activeTab === 'Admin' ? 'admin@hometutorx.com' : activeTab === 'Student' ? 'student@example.com' : 'tutor@example.com'}
                       className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl py-3.5 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     />
                   </div>
                 </div>
 
-                {/* Password */}
+                {/* OTP */}
                 <div>
                   <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wider">
-                    Password
+                    OTP
                   </label>
                   <div className="relative flex items-center">
                     <span className="absolute left-4 text-slate-400"><FaLock className="h-4 w-4" /></span>
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type="text"
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder="Enter OTP"
                       className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl py-3.5 pl-11 pr-12 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 text-slate-400 hover:text-slate-650 focus:outline-none cursor-pointer"
-                    >
-                      {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
-                    </button>
                   </div>
                   {(activeTab === 'Tutor' || activeTab === 'Student') && (
                     <div className="flex justify-end mt-2">
@@ -503,7 +494,7 @@ const Login = () => {
                     className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 p-2 rounded-xl text-left focus:outline-none cursor-pointer"
                   >
                     <p className="text-[9px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-0.5 text-center">Teacher</p>
-                    <p className="text-[8px] text-slate-450 dark:text-slate-500 font-semibold truncate text-center">tutor@tutorconnect.com</p>
+                    <p className="text-[8px] text-slate-450 dark:text-slate-500 font-semibold truncate text-center">tutor@hometutorx.com</p>
                   </button>
                 )}
                 {(!hasRoleQuery || activeTab === 'Student') && (
@@ -513,7 +504,7 @@ const Login = () => {
                     className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 p-2 rounded-xl text-left focus:outline-none cursor-pointer"
                   >
                     <p className="text-[9px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-0.5 text-center">Student</p>
-                    <p className="text-[8px] text-slate-450 dark:text-slate-500 font-semibold truncate text-center">student@tutorconnect.com</p>
+                    <p className="text-[8px] text-slate-450 dark:text-slate-500 font-semibold truncate text-center">student@hometutorx.com</p>
                   </button>
                 )}
                 {(!hasRoleQuery || activeTab === 'Admin') && (
@@ -523,7 +514,7 @@ const Login = () => {
                     className="border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 p-2 rounded-xl text-left focus:outline-none cursor-pointer"
                   >
                     <p className="text-[9px] font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-0.5 text-center">Admin</p>
-                    <p className="text-[8px] text-slate-450 dark:text-slate-500 font-semibold truncate text-center">admin@tutorconnect.com</p>
+                    <p className="text-[8px] text-slate-450 dark:text-slate-500 font-semibold truncate text-center">admin@hometutorx.com</p>
                   </button>
                 )}
               </div>

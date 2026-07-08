@@ -26,7 +26,7 @@ const Footer = () => {
                 <FaGraduationCap style={{ fill: "url(#footer-cap-gradient)" }} className="h-6 w-6 filter drop-shadow-[0_1px_3px_rgba(212,175,55,0.4)]" />
               </div>
               <span className="text-xl font-bold tracking-tight text-white">
-                Tutor<span className="text-primary dark:text-blue-500">Connect</span>
+                Home<span className="text-primary dark:text-blue-500">Tutor</span><span className="text-[#d4af37] font-black">X</span>
               </span>
             </Link>
             <p className="text-sm text-slate-400 leading-relaxed">
@@ -74,7 +74,7 @@ const Footer = () => {
 
         {/* Footer Bottom */}
         <div className="mt-16 pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} TutorConnect. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} HomeTutorX. All rights reserved.</p>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-slate-400 transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-slate-400 transition-colors">Terms of Service</Link>

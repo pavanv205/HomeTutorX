@@ -218,7 +218,11 @@ const StudentDashboard = () => {
                         {booking.status === 'Pending' && (
                           <button
                             disabled={updatingBookingId !== null}
-                            onClick={() => handleUpdateBookingStatus(booking._id, 'Deleted')}
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to delete this tuition request?')) {
+                                handleUpdateBookingStatus(booking._id, 'Deleted');
+                              }
+                            }}
                             className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
                           >
                             <FaTimes className="h-3 w-3" />
@@ -230,15 +234,11 @@ const StudentDashboard = () => {
                           <div className="flex gap-2">
                             <button
                               disabled={updatingBookingId !== null}
-                              onClick={() => handleUpdateBookingStatus(booking._id, 'Completed')}
-                              className="flex items-center gap-1.5 py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40 dark:text-emerald-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
-                            >
-                              <FaCheck className="h-3 w-3" />
-                              Complete
-                            </button>
-                            <button
-                              disabled={updatingBookingId !== null}
-                              onClick={() => handleUpdateBookingStatus(booking._id, 'Deleted')}
+                              onClick={() => {
+                                if (window.confirm('Are you sure you want to delete this tuition request?')) {
+                                  handleUpdateBookingStatus(booking._id, 'Deleted');
+                                }
+                              }}
                               className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
                             >
                               <FaTimes className="h-3 w-3" />

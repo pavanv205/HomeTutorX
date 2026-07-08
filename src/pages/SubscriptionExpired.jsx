@@ -65,10 +65,10 @@ const SubscriptionExpired = () => {
 
       // 2. Initialize Options
       const options = {
-        key: 'rzp_test_tutorconnectkey', // Fallback key
+        key: 'rzp_test_hometutorxkey', // Fallback key
         amount: orderData.amount, // ₹29.00 in paise
         currency: orderData.currency,
-        name: 'TutorConnect',
+        name: 'HomeTutorX',
         description: `${user.role} Subscription Renewal`,
         order_id: isMock ? undefined : orderData.id,
         handler: async function (response) {
@@ -119,10 +119,10 @@ const SubscriptionExpired = () => {
         }
       };
 
-      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_tutorconnectkey';
-      if (razorpayKey === 'rzp_test_tutorconnectkey' || isMock) {
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_hometutorxkey';
+      if (razorpayKey === 'rzp_test_hometutorxkey' || isMock) {
         const simulateSuccess = window.confirm(
-          "TutorConnect Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay renewal payment of ₹1?"
+          "HomeTutorX Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay renewal payment of ₹1?"
         );
         if (simulateSuccess) {
           const mockPaymentId = `pay_mock_${Math.random().toString(36).substring(2, 11)}`;
@@ -157,7 +157,7 @@ const SubscriptionExpired = () => {
     <>
       <SEO
         title="Subscription Expired"
-        description="Your TutorConnect subscription has expired. Please renew your subscription plan to continue accessing services."
+        description="Your HomeTutorX subscription has expired. Please renew your subscription plan to continue accessing services."
       />
 
       <div className="min-h-[85vh] flex items-center justify-center bg-slate-50 dark:bg-[#0B0F19] py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -177,7 +177,7 @@ const SubscriptionExpired = () => {
               Subscription Expired
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-sm mx-auto">
-              Your 6-month TutorConnect subscription expired on <strong className="text-rose-600 dark:text-rose-400">{formattedExpiry}</strong>.
+              Your 6-month HomeTutorX subscription expired on <strong className="text-rose-600 dark:text-rose-400">{formattedExpiry}</strong>.
             </p>
           </div>
 

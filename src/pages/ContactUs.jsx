@@ -9,7 +9,7 @@ const CONTACT_INFO = [
     color: 'text-green-500',
     type: 'phone',
     details: [
-      { label: '+91 98850 64713', href: 'https://wa.me/919885064713?text=Hi%2C%20I%20found%20you%20on%20TutorConnect%20and%20would%20like%20to%20enquire%20about%20tuition.' }
+      { label: '+91 98850 64713', href: 'https://wa.me/919885064713?text=Hi%2C%20I%20found%20you%20on%20HomeTutorX%20and%20would%20like%20to%20enquire%20about%20tuition.' }
     ]
   },
   {
@@ -18,7 +18,7 @@ const CONTACT_INFO = [
     color: 'text-amber-500',
     type: 'email',
     details: [
-      { label: 'supporttutorconnect@gmail.com', href: 'mailto:supporttutorconnect@gmail.com' }
+      { label: 'supporthometutorx@gmail.com', href: 'mailto:supporthometutorx@gmail.com' }
     ]
   },
   {
@@ -37,7 +37,7 @@ const ContactUs = () => {
     <>
       <SEO
         title="Contact Us"
-        description="Get in touch with TutorConnect support. Submit your queries, seek tutor matching assistance, or reach out to our office in Indiranagar, Bangalore."
+        description="Get in touch with HomeTutorX support. Submit your queries, seek tutor matching assistance, or reach out to our office in Indiranagar, Bangalore."
       />
 
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-16">

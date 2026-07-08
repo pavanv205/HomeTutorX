@@ -8,7 +8,7 @@ const TermsOfService = () => {
     <>
       <SEO
         title="Terms of Service"
-        description="Read the terms and conditions for using TutorConnect, managing bookings, student/tutor accounts, and booking guidelines."
+        description="Read the terms and conditions for using HomeTutorX, managing bookings, student/tutor accounts, and booking guidelines."
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-12">
@@ -35,7 +35,7 @@ const TermsOfService = () => {
             Terms Agreement
           </h3>
           <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed font-medium">
-            Welcome to TutorConnect. These Terms of Service ("Terms") govern your access to and use of our website, databases, matchmaking algorithms, and services. By registering as a Student or a Tutor, booking sessions, or accessing any section of the platform, you agree to comply with and be bound by these legal terms.
+            Welcome to HomeTutorX. These Terms of Service ("Terms") govern your access to and use of our website, databases, matchmaking algorithms, and services. By registering as a Student or a Tutor, booking sessions, or accessing any section of the platform, you agree to comply with and be bound by these legal terms.
           </p>
           <p className="text-sm text-slate-650 dark:text-slate-405 leading-relaxed font-medium">
             Please read these Terms carefully before proceeding. If you do not agree to all terms and conditions set forth herein, you must immediately cease using the platform.
@@ -50,7 +50,7 @@ const TermsOfService = () => {
               1. Services Offered
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-              TutorConnect is an educational search and matching directory that connects independent tutors ("Educators") with students and parents ("Students"). We facilitate:
+              HomeTutorX is an educational search and matching directory that connects independent tutors ("Educators") with students and parents ("Students"). We facilitate:
             </p>
             <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
               <li>Profile listings of verified and pre-screened private tutors.</li>
@@ -83,11 +83,11 @@ const TermsOfService = () => {
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium flex items-start gap-2.5">
               <FaExclamationTriangle className="text-amber-500 text-lg shrink-0 mt-0.5" />
               <span>
-                <strong>Verification Limits:</strong> Although TutorConnect screens qualification certificates and profile photos, we do not perform comprehensive background checks or criminal vetting. Parents and students are strongly encouraged to inspect physical identification, verify credentials in person, and supervise the first sessions.
+                <strong>Verification Limits:</strong> Although HomeTutorX screens qualification certificates and profile photos, we do not perform comprehensive background checks or criminal vetting. Parents and students are strongly encouraged to inspect physical identification, verify credentials in person, and supervise the first sessions.
               </span>
             </p>
             <p className="text-sm text-slate-600 dark:text-slate-405 leading-relaxed font-medium">
-              TutorConnect is not liable for any issues, disputes, damages, or occurrences that happen during offline or online home tuitions.
+              HomeTutorX is not liable for any issues, disputes, damages, or occurrences that happen during offline or online home tuitions.
             </p>
           </div>
 
@@ -118,7 +118,7 @@ const TermsOfService = () => {
             <ul className="list-disc pl-5 text-sm text-slate-600 dark:text-slate-400 space-y-2 font-medium">
               <li><strong>Student Verification Fee:</strong> Students pay a one-time profile verification fee of ₹29 upon registration to activate their account and request classes.</li>
               <li><strong>Tutor Subscription Plan:</strong> Tutors pay ₹29 to register for a 6-month subscription plan. The subscription must be renewed every 6 months to maintain dashboard access and profile listing visibility.</li>
-              <li><strong>Lesson Payments:</strong> All regular tutoring class hours and fees are negotiated and coordinated directly between the Student and the Tutor. TutorConnect does not process or manage standard lesson payments.</li>
+              <li><strong>Lesson Payments:</strong> All regular tutoring class hours and fees are negotiated and coordinated directly between the Student and the Tutor. HomeTutorX does not process or manage standard lesson payments.</li>
             </ul>
           </div>
 
@@ -128,7 +128,7 @@ const TermsOfService = () => {
               6. Intellectual Property
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-              All branding assets, site design, text formatting, and proprietary matchmaking codes are the intellectual property of TutorConnect. You may not copy, extract, scraper-harvest, or reuse code segments without express written authorization.
+              All branding assets, site design, text formatting, and proprietary matchmaking codes are the intellectual property of HomeTutorX. You may not copy, extract, scraper-harvest, or reuse code segments without express written authorization.
             </p>
           </div>
 
@@ -138,7 +138,7 @@ const TermsOfService = () => {
               7. Limitation of Liability
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-              TutorConnect does not guarantee that matching will result in a specific academic grade or learning outcome. Under no circumstances will TutorConnect, its developers, or its team be held liable for direct or indirect damages, personal injuries, loss of profits, or data loss occurring as a result of platform usage.
+              HomeTutorX does not guarantee that matching will result in a specific academic grade or learning outcome. Under no circumstances will HomeTutorX, its developers, or its team be held liable for direct or indirect damages, personal injuries, loss of profits, or data loss occurring as a result of platform usage.
             </p>
           </div>
         </div>
@@ -153,7 +153,7 @@ const TermsOfService = () => {
             If you represent an educational institution, have inquiries regarding policy compliance, or wish to clarify billing and dispute guidelines, please contact support.
           </p>
           <p className="text-xs font-bold text-primary dark:text-blue-400">
-            supporttutorconnect@gmail.com
+            supporthometutorx@gmail.com
           </p>
         </section>
       </div>

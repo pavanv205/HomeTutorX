@@ -279,5 +279,5 @@ app.post('/api/tutors', upload.any(), async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`TutorConnect API listening on http://localhost:${PORT}`);
+  console.log(`HomeTutorX API listening on http://localhost:${PORT}`);
 });

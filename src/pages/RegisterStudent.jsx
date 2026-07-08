@@ -100,10 +100,10 @@ const RegisterStudent = () => {
 
       // 3. Initialize Razorpay Options
       const options = {
-        key: 'rzp_test_tutorconnectkey', // Fallback key
+        key: 'rzp_test_hometutorxkey', // Fallback key
         amount: orderData.amount, // ₹29.00 in paise
         currency: orderData.currency,
-        name: 'TutorConnect',
+        name: 'HomeTutorX',
         description: 'Student Registration Fee',
         order_id: isMock ? undefined : orderData.id,
         handler: async function (response) {
@@ -127,7 +127,7 @@ const RegisterStudent = () => {
               razorpay_signature: razorpaySignature
             });
 
-            setSuccessMsg('Registration successful! Welcome to TutorConnect.');
+            setSuccessMsg('Registration successful! Welcome to HomeTutorX.');
             setTimeout(() => {
               navigate('/student/dashboard');
             }, 1500);
@@ -154,10 +154,10 @@ const RegisterStudent = () => {
         }
       };
 
-      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_tutorconnectkey';
-      if (razorpayKey === 'rzp_test_tutorconnectkey' || isMock) {
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_hometutorxkey';
+      if (razorpayKey === 'rzp_test_hometutorxkey' || isMock) {
         const simulateSuccess = window.confirm(
-          "TutorConnect Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹1 for this student registration?"
+          "HomeTutorX Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹1 for this student registration?"
         );
         if (simulateSuccess) {
           const mockPaymentId = `pay_mock_${Math.random().toString(36).substring(2, 11)}`;
@@ -184,7 +184,7 @@ const RegisterStudent = () => {
     <>
       <SEO
         title="Student Registration"
-        description="Sign up as a student on TutorConnect to browse and book tutoring classes with verified tutors."
+        description="Sign up as a student on HomeTutorX to browse and book tutoring classes with verified tutors."
       />
 
       <div className="min-h-[85vh] flex items-center justify-center bg-slate-50 dark:bg-[#0B0F19] py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -200,7 +200,7 @@ const RegisterStudent = () => {
               Create Student Account
             </h2>
             <p className="mt-2 text-sm text-slate-550 dark:text-slate-400 font-medium">
-              Join TutorConnect to find your perfect tutor today
+              Join HomeTutorX to find your perfect tutor today
             </p>
           </div>
 
@@ -379,15 +379,16 @@ const RegisterStudent = () => {
                           <div className="h-2.5 w-2.5 rounded-full bg-primary dark:bg-blue-500" />
                         </div>
                         <div>
-                          <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Razorpay</h4>
                           <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
-                                            <div className="text-right">
+                        </div>
+                      </div>
+                      <div className="text-right">
                         <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
                         <span className="text-base font-extrabold text-primary dark:text-blue-400">₹1</span>
                       </div>
                     </div>
                   </div>
- 
+
                   {/* Payment Verification Notice */}
                   <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-4 flex items-center gap-4 mt-4">
                     <div className="h-10 w-10 rounded-xl bg-slate-950 border border-slate-900 shadow-md flex items-center justify-center text-white relative overflow-hidden shrink-0">
@@ -403,10 +404,9 @@ const RegisterStudent = () => {
                     <div>
                       <h4 className="text-[11px] font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Verification Application Fee</h4>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
-                        TutorConnect charges a one-time profile verification fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold">₹1</strong>.
+                        HomeTutorX charges a one-time profile verification fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold">₹1</strong>.
                       </p>
                     </div>
-                  </div>           </div>
                   </div>
 
                   <div className="flex gap-4 pt-4">

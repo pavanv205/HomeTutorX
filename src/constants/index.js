@@ -7147,7 +7147,7 @@ export const SUBJECT_CATEGORIES = [
 
 export const FAQS = [
   {
-    question: "How does TutorConnect connect me with a tutor?",
+    question: "How does HomeTutorX connect me with a tutor?",
     answer: "You can use our 'Find Tutors' page to search and filter through verified tutor profiles based on subject, class, mode (online/offline), and city. Once you find a tutor you like, you can submit a booking request. When the tutor accepts your request, contact details are shared so you can coordinate lessons directly."
   },
   {

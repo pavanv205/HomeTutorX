@@ -25,12 +25,12 @@ const seedDatabase = async () => {
     if (!adminExists) {
       await User.create({
         name: 'System Admin',
-        email: 'admin@tutorconnect.com',
+        email: 'admin@hometutorx.com',
         password: 'adminpassword123',
         role: 'Admin'
       });
       console.log('ℹ️ Default Admin Account Seeded:');
-      console.log('   Email: admin@tutorconnect.com');
+      console.log('   Email: admin@hometutorx.com');
       console.log('   Password: adminpassword123');
       console.log('=========================================');
     } else {
@@ -38,11 +38,11 @@ const seedDatabase = async () => {
     }
 
     // 2. Seed Tutor Account
-    const tutorExists = await User.findOne({ email: 'tutor@tutorconnect.com' });
+    const tutorExists = await User.findOne({ email: 'tutor@hometutorx.com' });
     if (!tutorExists) {
       const user = await User.create({
         name: 'Default Tutor',
-        email: 'tutor@tutorconnect.com',
+        email: 'tutor@hometutorx.com',
         password: 'tutor123',
         role: 'Tutor'
       });
@@ -51,7 +51,7 @@ const seedDatabase = async () => {
         userId: user._id,
         fullName: 'Default Tutor',
         mobile: '9876543210',
-        email: 'tutor@tutorconnect.com',
+        email: 'tutor@hometutorx.com',
         gender: 'Male',
         age: 30,
         qualification: 'M.Sc. Physics',
@@ -79,7 +79,7 @@ const seedDatabase = async () => {
       await user.save();
 
       console.log('ℹ️ Default Tutor Account Seeded:');
-      console.log('   Email: tutor@tutorconnect.com');
+      console.log('   Email: tutor@hometutorx.com');
       console.log('   Password: tutor123');
       console.log('=========================================');
     } else {
@@ -87,17 +87,17 @@ const seedDatabase = async () => {
     }
 
     // 3. Seed Student Account
-    const studentExists = await User.findOne({ email: 'student@tutorconnect.com' });
+    const studentExists = await User.findOne({ email: 'student@hometutorx.com' });
     if (!studentExists) {
       await User.create({
         name: 'Default Student',
-        email: 'student@tutorconnect.com',
+        email: 'student@hometutorx.com',
         password: 'student123',
         role: 'Student',
         phone: '9876543222'
       });
       console.log('ℹ️ Default Student Account Seeded:');
-      console.log('   Email: student@tutorconnect.com');
+      console.log('   Email: student@hometutorx.com');
       console.log('   Password: student123');
       console.log('=========================================');
     } else {

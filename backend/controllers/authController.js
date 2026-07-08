@@ -616,7 +616,8 @@ exports.login = async (req, res, next) => {
       console.log('🔌 MongoDB is offline. Running login in Fallback mode.');
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      user = usersList.find(u => u.email === email);
+      console.log('[LOGIN DIAGNOSTIC] Fallback users in memory:', usersList.map(u => u.email));
+      user = usersList.find(u => u.email.trim().toLowerCase() === email.trim().toLowerCase());
     } else {
       user = await User.findOne({ email }).select('+password');
     }

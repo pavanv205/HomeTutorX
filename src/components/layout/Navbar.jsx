@@ -65,8 +65,8 @@ const Navbar = () => {
                 </svg>
                 <FaGraduationCap style={{ fill: "url(#nav-cap-gradient)" }} className="h-6 w-6 filter drop-shadow-[0_1px_3px_rgba(212,175,55,0.4)]" />
               </div>
-              <span className="text-xl font-black tracking-tight text-slate-950 dark:text-slate-950">
-                Tutor<span className="text-primary dark:text-blue-500 font-extrabold">Connect</span>
+              <span className="text-xl font-black tracking-tight text-slate-950 dark:text-white">
+                Home<span className="text-primary dark:text-blue-500">Tutor</span><span className="text-[#d4af37] font-black">X</span>
               </span>
             </Link>
 

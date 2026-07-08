@@ -35,7 +35,7 @@ async function sendOtp(email, otp) {
     }
   });
 
-  const fromName = process.env.FROM_NAME || 'TutorConnect Support';
+  const fromName = process.env.FROM_NAME || 'HomeTutorX Support';
   const fromEmail = process.env.FROM_EMAIL || process.env.FROM_MAIL || user;
   const expiration = process.env.OTP_EXPIRATION_MINUTES || 10;
   const mailOptions = {

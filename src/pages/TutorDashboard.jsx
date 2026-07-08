@@ -629,14 +629,6 @@ const TutorDashboard = () => {
                               <div className="flex gap-2">
                                 <button
                                   disabled={updatingBookingId !== null}
-                                  onClick={() => handleUpdateBookingStatus(booking._id, 'Completed')}
-                                  className="flex items-center gap-1.5 py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40 dark:text-emerald-400 rounded-xl text-xs font-bold cursor-pointer transition-colors"
-                                >
-                                  <FaCheck className="h-3 w-3" />
-                                  Complete
-                                </button>
-                                <button
-                                  disabled={updatingBookingId !== null}
                                   onClick={() => handleDeleteBooking(booking._id)}
                                   className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-655 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-xs font-bold cursor-pointer transition-colors"
                                 >
@@ -721,9 +713,8 @@ const TutorDashboard = () => {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] font-extrabold text-slate-400 dark:text-slate-505 uppercase tracking-wide">
+                          <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] font-extrabold text-slate-400 dark:text-slate-555 uppercase tracking-wide">
                             <th className="pb-3 pl-2">Referred Tutor</th>
-                            <th className="pb-3">Email / Mobile</th>
                             <th className="pb-3 text-center">Registration Date</th>
                             <th className="pb-3 pr-2 text-right">Joined in {selectedMonthLabel}</th>
                           </tr>
@@ -734,7 +725,7 @@ const TutorDashboard = () => {
                             return r.name.toLowerCase().includes(query) || r.email.toLowerCase().includes(query);
                           }).length === 0 ? (
                             <tr>
-                              <td colSpan="4" className="py-8 text-center text-slate-400 font-medium">No referred tutors found.</td>
+                              <td colSpan="3" className="py-8 text-center text-slate-400 font-medium">No referred tutors found.</td>
                             </tr>
                           ) : (
                             referralStats.list
@@ -749,10 +740,6 @@ const TutorDashboard = () => {
                                       <img src={ref.photo} alt={ref.name} className="h-8 w-8 rounded-full object-cover border" />
                                       <span className="font-bold text-slate-850 dark:text-slate-200">{ref.name}</span>
                                     </div>
-                                  </td>
-                                  <td className="py-3.5">
-                                    <p className="font-semibold text-slate-700 dark:text-slate-300">{ref.email}</p>
-                                    <p className="text-[10px] text-slate-400">{ref.mobile}</p>
                                   </td>
                                   <td className="py-3.5 text-center font-semibold text-slate-650 dark:text-slate-300">
                                     {new Date(ref.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}

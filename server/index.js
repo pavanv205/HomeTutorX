@@ -107,5 +107,5 @@ app.post('/api/tutors/register', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`TutorConnect API listening on http://localhost:${PORT}`);
+  console.log(`HomeTutorX API listening on http://localhost:${PORT}`);
 });

@@ -8,7 +8,7 @@ const getRazorpayInstance = () => {
   const keyId = process.env.RAZORPAY_KEY_ID;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
-  if (!keyId || !keySecret || keyId === 'rzp_test_tutorconnectkey') {
+  if (!keyId || !keySecret || keyId === 'rzp_test_hometutorxkey') {
     console.warn('[PAYMENT] Razorpay keys not configured or using default sandbox key. Using mock payment simulation.');
     return null;
   }
