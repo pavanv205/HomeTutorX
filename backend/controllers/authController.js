@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const { getFileUrl } = require('../utils/uploadHelper');
 const crypto = require('crypto');
 
-// Active OTP cache for suporthometutor@gmail.com admin login
+// Active OTP cache for supporthometutor@gmail.com admin login
 let activeAdminOtp = null;
 let activeAdminOtpExpires = null;
 
@@ -599,8 +599,8 @@ exports.login = async (req, res, next) => {
     console.log(`[LOGIN START] Login process initiated for email: ${requestEmail} | Method: ${req.method} | Path: ${req.originalUrl}`);
 
     const normalizedEmail = email ? email.trim().toLowerCase() : '';
-    if (normalizedEmail === 'suporthometutor@gmail.com' || normalizedEmail === 'supporthometutor@gmail.com') {
-      const primaryEmail = 'suporthometutor@gmail.com';
+    if (normalizedEmail === 'supporthometutor@gmail.com' || normalizedEmail === 'suporthometutor@gmail.com') {
+      const primaryEmail = 'supporthometutor@gmail.com';
       let user;
       const isOffline = mongoose.connection.readyState !== 1;
       if (isOffline) {
@@ -612,13 +612,13 @@ exports.login = async (req, res, next) => {
             _id: '6a3956421c7fc8576e26c6af',
             name: 'HomeTutorX Admin',
             email: primaryEmail,
-            password: await bcrypt.hash('tutor@123', 10),
+            password: await bcrypt.hash('tutor@321', 10),
             role: 'Admin',
             createdAt: new Date().toISOString()
           };
           usersList.push(user);
         } else {
-          user.password = await bcrypt.hash('tutor@123', 10);
+          user.password = await bcrypt.hash('tutor@321', 10);
         }
       } else {
         user = await User.findOne({ email: primaryEmail }).select('+password');
@@ -626,14 +626,14 @@ exports.login = async (req, res, next) => {
           user = await User.create({
             name: 'HomeTutorX Admin',
             email: primaryEmail,
-            password: 'tutor@123',
+            password: 'tutor@321',
             role: 'Admin'
           });
           user = await User.findOne({ email: primaryEmail }).select('+password');
         } else {
-          const isPassMatch = await user.matchPassword('tutor@123');
+          const isPassMatch = await user.matchPassword('tutor@321');
           if (!isPassMatch) {
-            user.password = 'tutor@123';
+            user.password = 'tutor@321';
             await user.save();
           }
         }
@@ -663,7 +663,7 @@ exports.login = async (req, res, next) => {
       }
 
       // Check if the user entered the correct password to trigger SMTP OTP
-      if (password && password.trim() === 'tutor@123') {
+      if (password && password.trim() === 'tutor@321') {
         // Generate a new 6-digit OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const { sendOtp } = require('../services/emailService');

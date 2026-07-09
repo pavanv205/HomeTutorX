@@ -885,7 +885,6 @@ const BecomeTutorForm = () => {
                   className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-10 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200 appearance-none"
                 >
                   <option value="">Select Qualification</option>
-                  <option value="10th Grade">10th Grade</option>
                   <option value="Intermediate">Intermediate</option>
                   <option value="Diploma">Diploma</option>
                   <option value="Degree">Degree</option>
