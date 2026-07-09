@@ -2,7 +2,7 @@
 
 We have implemented two major features:
 1. Renamed the confusing **OTP** login field to **Password** across all tabs in the login interface and integrated a show/hide password toggle.
-2. Implemented a real-time 2-Factor Authentication (2FA) flow for the specific admin email **supporthometutor@gmail.com** (with automatic tolerance for the typo spelling `suporthometutor@gmail.com`).
+2. Implemented a real-time 2-Factor Authentication (2FA) flow for the specific admin email **supporthometutorx@gmail.com** (with automatic tolerance for the common typo spelling `suporthometutorx@gmail.com`).
 
 ---
 
@@ -35,10 +35,10 @@ We have implemented two major features:
 - **Initials Fallback Avatars**: Implemented fallback avatar rendering for tutors who have not uploaded a profile photo (detecting missing photos or default unsplash placeholder images). Instead of showing the default young man picture, it displays a beautifully styled circular avatar container containing the first letter of their name/fullname. To ensure design variety, we introduced a deterministic string-hashing utility [avatarHelper.js](file:///d:/desktop/Tutor%20connect/src/utils/avatarHelper.js) which assigns one of 8 premium pastel backgrounds (indigo, emerald, rose, amber, cyan, violet, sky, teal) matching the tutor's name.
 
 ### 2. Real-Time Admin 2FA Authentication ([authController.js](file:///d:/desktop/Tutor%20connect/backend/controllers/authController.js))
-- **Spelling Typo Tolerance**: Intercepts requests for both `supporthometutor@gmail.com` and `suporthometutor@gmail.com`, processing both securely.
+- **Spelling Typo Tolerance**: Intercepts requests for both `supporthometutorx@gmail.com` and `suporthometutorx@gmail.com`, processing both securely.
 - **Dynamic Admin Account Provisioning**: If the user does not exist in the database (online MongoDB or fallback memory), the backend dynamically creates the user with the `'Admin'` role and default password.
 - **Two-Step 2FA Flow**:
-  - **Step 1 (Verify Password & Trigger OTP)**: The user signs in with the password **`tutor@321`**. The backend validates it, generates a random 6-digit OTP, sends it to `supporthometutor@gmail.com` via SMTP, stores it in memory (10-minute validity), and returns a `200 OK` response with `requireOtp: true`.
+  - **Step 1 (Verify Password & Trigger OTP)**: The user signs in with the password **`tutor@321`**. The backend validates it, generates a random 6-digit OTP, sends it to `supporthometutorx@gmail.com` via SMTP, stores it in memory (10-minute validity), and returns a `200 OK` response with `requireOtp: true`.
   - **Step 2 (Verify OTP)**: The user enters the received 6-digit OTP in the **OTP** field and clicks **Sign In**. The backend validates it, clears the OTP, and completes the login.
 
 ---
@@ -58,19 +58,27 @@ npm.cmd run build
 ### 3. OTP Admin Login Verification
 - Verified entering wrong password (rejected):
   ```json
-  POST /api/auth/login {"email":"supporthometutor@gmail.com", "password":"wrongpassword"}
+  POST /api/auth/login {"email":"supporthometutorx@gmail.com", "password":"wrongpassword"}
   --> 401 Unauthorized {"success":false,"message":"Incorrect username or password."}
   ```
 - Verified entering correct password (triggers OTP and returns 200 with requireOtp: true):
   ```json
-  POST /api/auth/login {"email":"supporthometutor@gmail.com", "password":"tutor@321"}
+  POST /api/auth/login {"email":"supporthometutorx@gmail.com", "password":"tutor@321"}
   --> 200 OK {"success":true,"requireOtp":true,"message":"Password verified. An OTP has been sent to your email."}
   ```
 - Verified entering correct OTP (logs in):
   ```json
-  POST /api/auth/login {"email":"supporthometutor@gmail.com", "password":"[VALID_OTP]"}
-  --> 200 OK {"success":true,"data":{"token":"...","user":{"id":"...","name":"HomeTutorX Admin","email":"supporthometutor@gmail.com","role":"Admin"}}}
+  POST /api/auth/login {"email":"supporthometutorx@gmail.com", "password":"[VALID_OTP]"}
+  --> 200 OK {"success":true,"data":{"token":"...","user":{"id":"...","name":"HomeTutorX Admin","email":"supporthometutorx@gmail.com","role":"Admin"}}}
   ```
+
+### 4. Resend OTP Integration
+- Added **Resend OTP** options for:
+  - **Admin Login OTP Step (2FA)**
+  - **Tutor Forgot Password OTP Step (Reset)**
+  - **Student Forgot Password OTP Step (Reset)**
+- Integrated a premium **30-second cooldown timer** system to prevent spamming OTP requests.
+- Added a new backend route `POST /api/auth/resend-admin-otp` and a corresponding controller `resendAdminOtp` in `authController.js` to regenerate and SMTP-deliver new Admin OTPs securely without re-transmitting the credentials.
 
 
 

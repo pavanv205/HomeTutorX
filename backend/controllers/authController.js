@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const { getFileUrl } = require('../utils/uploadHelper');
 const crypto = require('crypto');
 
-// Active OTP cache for supporthometutor@gmail.com admin login
+// Active OTP cache for supporthometutorx@gmail.com admin login
 let activeAdminOtp = null;
 let activeAdminOtpExpires = null;
 
@@ -599,8 +599,8 @@ exports.login = async (req, res, next) => {
     console.log(`[LOGIN START] Login process initiated for email: ${requestEmail} | Method: ${req.method} | Path: ${req.originalUrl}`);
 
     const normalizedEmail = email ? email.trim().toLowerCase() : '';
-    if (normalizedEmail === 'supporthometutor@gmail.com' || normalizedEmail === 'suporthometutor@gmail.com') {
-      const primaryEmail = 'supporthometutor@gmail.com';
+    if (normalizedEmail === 'supporthometutorx@gmail.com' || normalizedEmail === 'suporthometutorx@gmail.com') {
+      const primaryEmail = 'supporthometutorx@gmail.com';
       let user;
       const isOffline = mongoose.connection.readyState !== 1;
       if (isOffline) {
@@ -789,6 +789,43 @@ exports.login = async (req, res, next) => {
       console.error(err.stack);
     }
     next(err);
+  }
+};
+
+// @desc    Resend Admin 2FA OTP
+// @route   POST /api/auth/resend-admin-otp
+// @access  Public
+exports.resendAdminOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body || {};
+    const normalizedEmail = email ? email.trim().toLowerCase() : '';
+    if (normalizedEmail === 'supporthometutorx@gmail.com' || normalizedEmail === 'suporthometutorx@gmail.com') {
+      const primaryEmail = 'supporthometutorx@gmail.com';
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const { sendOtp } = require('../services/emailService');
+      await sendOtp(primaryEmail, otp);
+      
+      activeAdminOtp = otp;
+      activeAdminOtpExpires = Date.now() + 10 * 60 * 1000; // 10 mins expiration
+      
+      console.log(`[ADMIN OTP RESENT] OTP ${otp} generated and sent to ${primaryEmail}`);
+      
+      return res.status(200).json({
+        success: true,
+        message: 'A new OTP has been sent to your email.'
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid request'
+      });
+    }
+  } catch (err) {
+    console.error('[ADMIN OTP RESEND ERROR]', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to resend OTP. Please try again.'
+    });
   }
 };
 

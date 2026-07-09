@@ -27,6 +27,8 @@ const Login = () => {
   
   const [isOtpStep, setIsOtpStep] = useState(false);
   const [savedEmail, setSavedEmail] = useState('');
+  const [adminOtpCooldown, setAdminOtpCooldown] = useState(0);
+  const [forgotOtpCooldown, setForgotOtpCooldown] = useState(0);
   
   const { login, isAuthenticated, role } = useAuth();
   const navigate = useNavigate();
@@ -47,6 +49,7 @@ const Login = () => {
       if (res.data && res.data.success) {
         setSuccessMsg(res.data.message || 'OTP sent successfully!');
         setForgotPasswordStep('reset');
+        setForgotOtpCooldown(30);
       }
     } catch (err) {
       console.error(err);
@@ -132,6 +135,62 @@ const Login = () => {
     }
   }, [location.search]);
 
+  // Cooldown timer effect
+  useEffect(() => {
+    let interval = null;
+    if (adminOtpCooldown > 0 || forgotOtpCooldown > 0) {
+      interval = setInterval(() => {
+        if (adminOtpCooldown > 0) {
+          setAdminOtpCooldown((prev) => prev - 1);
+        }
+        if (forgotOtpCooldown > 0) {
+          setForgotOtpCooldown((prev) => prev - 1);
+        }
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [adminOtpCooldown, forgotOtpCooldown]);
+
+  const handleResendAdminOtp = async () => {
+    if (adminOtpCooldown > 0) return;
+    setErrorMsg('');
+    setSuccessMsg('');
+    setLoadingLocal(true);
+    try {
+      const res = await api.post('/auth/resend-admin-otp', { email: savedEmail });
+      if (res.data && res.data.success) {
+        setSuccessMsg(res.data.message || 'OTP resent successfully!');
+        setAdminOtpCooldown(30);
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg(err.message || 'Failed to resend OTP.');
+    } finally {
+      setLoadingLocal(false);
+    }
+  };
+
+  const handleResendForgotOtp = async () => {
+    if (forgotOtpCooldown > 0) return;
+    setErrorMsg('');
+    setSuccessMsg('');
+    setLoadingLocal(true);
+    try {
+      const res = await api.post('/auth/forgot-password', { email: resetEmail });
+      if (res.data && res.data.success) {
+        setSuccessMsg(res.data.message || 'OTP resent successfully!');
+        setForgotOtpCooldown(30);
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg(err.message || 'Failed to resend OTP.');
+    } finally {
+      setLoadingLocal(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const targetEmail = isOtpStep ? savedEmail : email;
@@ -150,6 +209,7 @@ const Login = () => {
         setIsOtpStep(true);
         setSavedEmail(targetEmail);
         setPassword('');
+        setAdminOtpCooldown(30);
       } else {
         setIsOtpStep(false);
         setSavedEmail('');
@@ -329,7 +389,7 @@ const Login = () => {
                         className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl py-3.5 pl-11 pr-4 text-sm text-center font-extrabold tracking-widest focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                       />
                     </div>
-                    <div className="flex justify-between mt-2">
+                    <div className="flex justify-between mt-2 px-1">
                       <button
                         type="button"
                         onClick={() => {
@@ -340,6 +400,18 @@ const Login = () => {
                         className="text-xs font-extrabold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 focus:outline-none cursor-pointer"
                       >
                         Back to Password
+                      </button>
+                      <button
+                        type="button"
+                        disabled={adminOtpCooldown > 0}
+                        onClick={handleResendAdminOtp}
+                        className={`text-xs font-extrabold focus:outline-none cursor-pointer transition-colors ${
+                          adminOtpCooldown > 0
+                            ? 'text-slate-450 dark:text-slate-650 cursor-not-allowed'
+                            : 'text-primary hover:text-primary/80 dark:text-blue-400 dark:hover:text-blue-300'
+                        }`}
+                      >
+                        {adminOtpCooldown > 0 ? `Resend OTP (${adminOtpCooldown}s)` : 'Resend OTP'}
                       </button>
                     </div>
                   </div>
@@ -469,9 +541,23 @@ const Login = () => {
               <div className="space-y-4">
                 {/* OTP */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wider">
-                    6-Digit OTP
-                  </label>
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                      6-Digit OTP
+                    </label>
+                    <button
+                      type="button"
+                      disabled={forgotOtpCooldown > 0}
+                      onClick={handleResendForgotOtp}
+                      className={`text-xs font-extrabold focus:outline-none cursor-pointer transition-colors ${
+                        forgotOtpCooldown > 0
+                          ? 'text-slate-450 dark:text-slate-650 cursor-not-allowed'
+                          : 'text-primary hover:text-primary/80 dark:text-blue-400 dark:hover:text-blue-300'
+                      }`}
+                    >
+                      {forgotOtpCooldown > 0 ? `Resend OTP (${forgotOtpCooldown}s)` : 'Resend OTP'}
+                    </button>
+                  </div>
                   <input
                     type="text"
                     required
