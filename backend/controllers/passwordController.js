@@ -157,10 +157,9 @@ exports.resetPassword = async (req, res, next) => {
     if (isOffline) {
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      const user = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
-      if (user) {
+      usersList.filter(u => u.email.toLowerCase() === normalizedEmail).forEach(user => {
         user.password = hashed;
-      }
+      });
       
       // Clean up used OTP in-memory
       const existingIdx = memoryPasswordResets.findIndex(r => r.email.toLowerCase() === normalizedEmail && r.otp === otp);
@@ -168,7 +167,7 @@ exports.resetPassword = async (req, res, next) => {
         memoryPasswordResets.splice(existingIdx, 1);
       }
     } else {
-      await User.findOneAndUpdate({ email: normalizedEmail }, { password: hashed });
+      await User.updateMany({ email: normalizedEmail }, { password: hashed });
       // Clean up used OTP in DB
       await PasswordReset.deleteOne({ email: normalizedEmail, otp });
     }

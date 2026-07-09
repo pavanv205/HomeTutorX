@@ -336,6 +336,7 @@ const TutorDashboard = () => {
           ) : (
             <>
               {/* Metrics Grid */}
+              {activeTab === 'Profile' && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {/* Profile Verification Status Card */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
@@ -409,9 +410,9 @@ const TutorDashboard = () => {
                     <p className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/20 px-2.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-900/30 select-all tracking-wider font-mono">
                       {tutorProfile?.ownReferralCode || 'HT-PENDING'}
                     </p>
-                  </div>
                 </div>
               </div>
+              )}
 
               {/* TAB 2: PROFILE MANAGEMENT */}
               {activeTab === 'Profile' && tutorProfile && (

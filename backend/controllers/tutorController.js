@@ -100,9 +100,9 @@ exports.createTutor = async (req, res, next) => {
     if (isOffline) {
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      emailUserExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
+      emailUserExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail && u.role === 'Tutor');
     } else {
-      emailUserExists = await User.findOne({ email: normalizedEmail });
+      emailUserExists = await User.findOne({ email: normalizedEmail, role: 'Tutor' });
     }
 
     if (emailUserExists && emailUserExists._id.toString() !== req.user._id.toString()) {
@@ -439,9 +439,9 @@ exports.updateTutor = async (req, res, next) => {
       if (isOffline) {
         const dbFallback = require('../utils/dbFallback');
         const usersList = await dbFallback.getUsers();
-        emailUserExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
+        emailUserExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail && u.role === 'Tutor');
       } else {
-        emailUserExists = await User.findOne({ email: normalizedEmail });
+        emailUserExists = await User.findOne({ email: normalizedEmail, role: 'Tutor' });
       }
 
       if (emailUserExists && emailUserExists._id.toString() !== tutor.userId?.toString()) {

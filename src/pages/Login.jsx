@@ -144,7 +144,7 @@ const Login = () => {
     setLoadingLocal(true);
 
     try {
-      const result = await login(targetEmail, password);
+      const result = await login(targetEmail, password, activeTab);
       if (result && result.requireOtp) {
         setSuccessMsg(result.message);
         setIsOtpStep(true);

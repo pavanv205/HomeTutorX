@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const { getFileUrl } = require('../utils/uploadHelper');
 const crypto = require('crypto');
 
-// Active OTP cache for pavanvadapalli04@gmail.com admin login
+// Active OTP cache for suporthometutor@gmail.com admin login
 let activeAdminOtp = null;
 let activeAdminOtpExpires = null;
 
@@ -178,10 +178,10 @@ exports.registerTutor = async (req, res, next) => {
       console.log('🔌 MongoDB is offline. Running registerTutor in Fallback mode.');
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      userExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
+      userExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail && u.role === 'Tutor');
     } else {
       try {
-        userExists = await User.findOne({ email: normalizedEmail });
+        userExists = await User.findOne({ email: normalizedEmail, role: 'Tutor' });
       } catch (dbErr) {
         console.error(`[REGISTRATION DATABASE ERROR] Failed to query existing user | Method: ${req.method} | Path: ${req.originalUrl} | Email: ${email} | Error: ${dbErr.message}`);
         return res.status(500).json({
@@ -192,6 +192,7 @@ exports.registerTutor = async (req, res, next) => {
     }
 
     if (userExists) {
+      console.log(`[DEBUG FAIL] userExists triggered for role Tutor on email ${email}`);
       devLog(`[REGISTRATION FAILED] Email already registered: ${email}`);
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
@@ -210,6 +211,7 @@ exports.registerTutor = async (req, res, next) => {
     }
 
     if (tutorExists) {
+      console.log(`[DEBUG FAIL] tutorExists triggered on email ${email}`);
       devLog(`[REGISTRATION FAILED] Tutor profile email already registered: ${email}`);
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
@@ -493,9 +495,9 @@ exports.registerStudent = async (req, res, next) => {
       console.log('🔌 MongoDB is offline. Running registerStudent in Fallback mode.');
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      userExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
+      userExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail && u.role === 'Student');
     } else {
-      userExists = await User.findOne({ email: normalizedEmail });
+      userExists = await User.findOne({ email: normalizedEmail, role: 'Student' });
     }
 
     if (userExists) {
@@ -591,14 +593,14 @@ exports.registerStudent = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   let requestEmail = 'unknown';
   try {
-    const { email, password } = req.body || {};
+    const { email, password, role } = req.body || {};
     requestEmail = email || 'unknown';
 
     console.log(`[LOGIN START] Login process initiated for email: ${requestEmail} | Method: ${req.method} | Path: ${req.originalUrl}`);
 
     const normalizedEmail = email ? email.trim().toLowerCase() : '';
-    if (normalizedEmail === 'pavanvadapalli04@gmail.com' || normalizedEmail === 'pavanvadaplli04@gmail.com') {
-      const primaryEmail = 'pavanvadapalli04@gmail.com';
+    if (normalizedEmail === 'suporthometutor@gmail.com' || normalizedEmail === 'supporthometutor@gmail.com') {
+      const primaryEmail = 'suporthometutor@gmail.com';
       let user;
       const isOffline = mongoose.connection.readyState !== 1;
       if (isOffline) {
@@ -608,30 +610,30 @@ exports.login = async (req, res, next) => {
         if (!user) {
           user = {
             _id: '6a3956421c7fc8576e26c6af',
-            name: 'Pavan Admin',
+            name: 'HomeTutorX Admin',
             email: primaryEmail,
-            password: await bcrypt.hash('123123', 10),
+            password: await bcrypt.hash('tutor@123', 10),
             role: 'Admin',
             createdAt: new Date().toISOString()
           };
           usersList.push(user);
         } else {
-          user.password = await bcrypt.hash('123123', 10);
+          user.password = await bcrypt.hash('tutor@123', 10);
         }
       } else {
         user = await User.findOne({ email: primaryEmail }).select('+password');
         if (!user) {
           user = await User.create({
-            name: 'Pavan Admin',
+            name: 'HomeTutorX Admin',
             email: primaryEmail,
-            password: '123123',
+            password: 'tutor@123',
             role: 'Admin'
           });
           user = await User.findOne({ email: primaryEmail }).select('+password');
         } else {
-          const isPassMatch = await user.matchPassword('123123');
+          const isPassMatch = await user.matchPassword('tutor@123');
           if (!isPassMatch) {
-            user.password = '123123';
+            user.password = 'tutor@123';
             await user.save();
           }
         }
@@ -661,7 +663,7 @@ exports.login = async (req, res, next) => {
       }
 
       // Check if the user entered the correct password to trigger SMTP OTP
-      if (password && password.trim() === '123123') {
+      if (password && password.trim() === 'tutor@123') {
         // Generate a new 6-digit OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const { sendOtp } = require('../services/emailService');
@@ -711,9 +713,10 @@ exports.login = async (req, res, next) => {
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
       console.log('[LOGIN DIAGNOSTIC] Fallback users in memory:', usersList.map(u => u.email));
-      user = usersList.find(u => u.email.trim().toLowerCase() === email.trim().toLowerCase());
+      user = usersList.find(u => u.email.trim().toLowerCase() === email.trim().toLowerCase() && (!role || u.role === role));
     } else {
-      user = await User.findOne({ email }).select('+password');
+      const query = role ? { email, role } : { email };
+      user = await User.findOne(query).select('+password');
     }
     console.log(`[LOGIN DIAGNOSTIC] User lookup completed for email: ${email}. Found user: ${!!user}`);
 
@@ -823,7 +826,7 @@ exports.getMe = async (req, res, next) => {
 // @access  Public
 exports.checkEmail = async (req, res, next) => {
   try {
-    const { email } = req.body || {};
+    const { email, role } = req.body || {};
     if (!email) {
       return res.status(400).json({ success: false, message: 'Please provide an email' });
     }
@@ -836,9 +839,10 @@ exports.checkEmail = async (req, res, next) => {
     if (isOffline) {
       const dbFallback = require('../utils/dbFallback');
       const usersList = await dbFallback.getUsers();
-      userExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail);
+      userExists = usersList.find(u => u.email.toLowerCase() === normalizedEmail && (!role || u.role === role));
     } else {
-      userExists = await User.findOne({ email: normalizedEmail });
+      const query = role ? { email: normalizedEmail, role } : { email: normalizedEmail };
+      userExists = await User.findOne(query);
     }
 
     if (userExists) {

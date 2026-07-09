@@ -9,7 +9,6 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Please add an email'],
-    unique: true,
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please add a valid email'
@@ -64,5 +63,8 @@ UserSchema.pre('save', async function(next) {
 UserSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+
+// Ensure an email can be used for both Student and Tutor roles independently
+UserSchema.index({ email: 1, role: 1 }, { unique: true });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -45,11 +45,11 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   // Login action
-  const login = async (email, password) => {
+  const login = async (email, password, role) => {
     setError(null);
     setLoading(true);
     try {
-      const res = await api.post('/auth/login', { email, password });
+      const res = await api.post('/auth/login', { email, password, role });
       if (res.data && res.data.success) {
         if (res.data.requireOtp) {
           return res.data;

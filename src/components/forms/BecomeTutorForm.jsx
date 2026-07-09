@@ -218,7 +218,7 @@ const BecomeTutorForm = () => {
           setLoading(true);
           setSubmitError('');
           const emailVal = getValues('email');
-          const res = await api.post('/auth/check-email', { email: emailVal });
+          const res = await api.post('/auth/check-email', { email: emailVal, role: 'Tutor' });
           if (res.data && res.data.success && res.data.exists) {
             setError('email', { type: 'manual', message: 'Email already registered' });
             return;
