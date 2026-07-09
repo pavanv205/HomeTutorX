@@ -688,6 +688,19 @@ exports.login = async (req, res, next) => {
       });
     }
 
+    // Block permanently decommissioned admin email addresses from logging in
+    const blockedAdminEmails = [
+      'supporthometutor@gmail.com',
+      'suporthometutor@gmail.com'
+    ];
+    if (blockedAdminEmails.includes(normalizedEmail)) {
+      console.log(`[LOGIN BLOCKED] Login attempt from decommissioned admin email: ${normalizedEmail}`);
+      return res.status(401).json({
+        success: false,
+        message: 'Incorrect username or password.'
+      });
+    }
+
     // Diagnostic: Request body validation
     console.log(`[LOGIN DIAGNOSTIC] Request body validation. Method: ${req.method} | Path: ${req.originalUrl} | Body contains email: ${!!email}, password: ${!!password}`);
 
