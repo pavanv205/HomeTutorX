@@ -410,6 +410,7 @@ const TutorDashboard = () => {
                     <p className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/20 px-2.5 py-0.5 rounded border border-indigo-100 dark:border-indigo-900/30 select-all tracking-wider font-mono">
                       {tutorProfile?.ownReferralCode || 'HT-PENDING'}
                     </p>
+                  </div>
                 </div>
               </div>
               )}
