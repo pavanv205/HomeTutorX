@@ -10,8 +10,8 @@ const SEO = ({ title, description, keywords, ogImage, canonicalUrl }) => {
 
   // Base URL (fallback to explicit domain if env var is missing)
   const siteUrl = import.meta.env.VITE_SITE_URL || 'https://www.hometutorx.in';
-  // Default Open Graph image (assumes public/og-default.png exists)
-  const defaultOgImage = `${siteUrl}/og-default.png`;
+  // Default Open Graph image (assumes public/og-default-v2.png exists)
+  const defaultOgImage = `${siteUrl}/og-default-v2.png`;
   const finalOgImage = ogImage || defaultOgImage;
   // Canonical URL (fallback to current pathname)
   const canonical = canonicalUrl || `${siteUrl}${window.location.pathname}`;
