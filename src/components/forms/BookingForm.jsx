@@ -116,7 +116,8 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
+    watch
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -129,6 +130,8 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
       message: ''
     }
   });
+
+  const watchedMode = watch('mode');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -191,6 +194,10 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
       setLoading(true);
       const payload = {
         ...data,
+        studentName: data.studentName?.trim() || '',
+        phone: data.phone?.trim() || '',
+        preferredSlot: data.preferredSlot?.trim() || '',
+        message: data.message?.trim() || '',
         studentEmail: user?.email || '',
         email: user?.email || '',
         tutorId: tutor ? (tutor._id || tutor.id) : 'general',
@@ -364,7 +371,7 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
           >
             <option value="">Select Subject</option>
             {tutor
-              ? tutor.subjects.map((s, index) => (
+              ? tutor.subjects?.map((s, index) => (
                   <option key={index} value={s}>{s}</option>
                 ))
               : SUBJECTS.map((s, index) => (
@@ -382,25 +389,31 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
             Learning Mode
           </label>
           <div className="grid grid-cols-2 gap-2">
-            {['Online', 'Offline'].map((m) => (
-              <label
-                key={m}
-                className={`flex items-center justify-center p-3 rounded-xl border text-sm font-semibold cursor-pointer transition-all duration-200 ${
-                  tutor && !tutor.modes.includes(m)
-                    ? 'opacity-40 cursor-not-allowed border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-900'
-                    : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                }`}
-              >
-                <input
-                  type="radio"
-                  value={m}
-                  disabled={tutor && !tutor.modes.includes(m)}
-                  {...register('mode')}
-                  className="sr-only"
-                />
-                <span className="text-slate-700 dark:text-slate-300">{m}</span>
-              </label>
-            ))}
+            {['Online', 'Offline'].map((m) => {
+              const isSelected = watchedMode === m;
+              const isDisabled = tutor && !tutor.modes?.includes(m);
+              return (
+                <label
+                  key={m}
+                  className={`flex items-center justify-center p-3 rounded-xl border text-sm font-semibold cursor-pointer transition-all duration-200 ${
+                    isDisabled
+                      ? 'opacity-40 cursor-not-allowed border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-900 text-slate-400'
+                      : isSelected
+                        ? 'border-primary bg-blue-50/50 dark:bg-blue-950/20 text-primary dark:text-blue-405'
+                        : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    value={m}
+                    disabled={isDisabled}
+                    {...register('mode')}
+                    className="sr-only"
+                  />
+                  <span>{m}</span>
+                </label>
+              );
+            })}
           </div>
           {errors.mode && (
             <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.mode.message}</p>
