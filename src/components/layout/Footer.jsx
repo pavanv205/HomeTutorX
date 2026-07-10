@@ -6,7 +6,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-100 text-slate-600 border-t border-slate-200 pt-10 dark:bg-slate-100 dark:text-slate-600 dark:border-slate-200 md:bg-slate-900 md:text-slate-300 md:border-slate-800 md:dark:bg-[#070b13] md:dark:text-slate-300 md:dark:border-slate-800">
+    <footer className="bg-slate-100 text-slate-600 border-t border-slate-200 pt-10 dark:bg-slate-900/40 dark:text-slate-400 dark:border-slate-800 md:bg-slate-900 md:text-slate-300 md:border-slate-800 md:dark:bg-[#070b13] md:dark:text-slate-300 md:dark:border-slate-800">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           {/* Brand & Description */}
@@ -22,11 +22,11 @@ const Footer = () => {
                 </svg>
                 <FaGraduationCap style={{ fill: "url(#footer-cap-gradient)" }} className="h-6 w-6 filter drop-shadow-[0_1px_3px_rgba(212,175,55,0.4)]" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-slate-800 md:text-white dark:text-slate-800 md:dark:text-white">
+              <span className="text-xl font-bold tracking-tight text-slate-800 dark:text-slate-200 md:text-white md:dark:text-white">
                 Home<span className="text-primary dark:text-blue-500">Tutor</span><span className="text-[#d4af37] font-black">X</span>
               </span>
             </Link>
-            <p className="text-sm text-slate-500 md:text-slate-400 dark:text-slate-500 md:dark:text-slate-400 leading-relaxed">
+            <p className="text-sm text-slate-555 md:text-slate-400 dark:text-slate-400 md:dark:text-slate-400 leading-relaxed">
               Connecting students and parents with top-tier, qualified tutors for personalized home and online lessons. Spark learning, build confidence, and achieve academic excellence.
             </p>
           </div>
