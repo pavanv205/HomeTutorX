@@ -43,27 +43,33 @@ const TutorProfile = () => {
     (String(user.tutorProfile) === String(tutor?._id) || String(user.tutorProfile) === String(tutor?.id));
 
   useEffect(() => {
+    let isCurrent = true;
+
     const fetchProfileBookings = async () => {
       if (!isProfileOwner) return;
       try {
         setBookingsLoading(true);
         const res = await api.get('/bookings');
-        if (res.data && res.data.success) {
+        if (isCurrent && res.data && res.data.success) {
           setProfileBookings(res.data.data || []);
         }
       } catch (err) {
         console.error('Failed to load profile bookings:', err);
       } finally {
-        setBookingsLoading(false);
+        if (isCurrent) setBookingsLoading(false);
       }
     };
 
     if (tutor) {
       fetchProfileBookings();
     }
+
+    return () => {
+      isCurrent = false;
+    };
   }, [isProfileOwner, tutor]);
 
-  const handleUpdateStatus = async (bookingId, newStatus) => {
+  const handleUpdateStatus = useCallback(async (bookingId, newStatus) => {
     setUpdatingBookingId(bookingId);
     try {
       const res = await api.put(`/bookings/${bookingId}`, { status: newStatus });
@@ -75,9 +81,9 @@ const TutorProfile = () => {
     } finally {
       setUpdatingBookingId(null);
     }
-  };
+  }, []);
 
-  const handleDeleteBooking = async (bookingId) => {
+  const handleDeleteBooking = useCallback(async (bookingId) => {
     if (!window.confirm('Are you sure you want to delete this booking request?')) {
       return;
     }
@@ -92,24 +98,36 @@ const TutorProfile = () => {
     } finally {
       setUpdatingBookingId(null);
     }
-  };
+  }, []);
 
 
   useEffect(() => {
+    let isCurrent = true;
+
     const fetchTutorDetails = async () => {
       try {
         setLoading(true);
         setError('');
         const data = await tutorService.getTutorById(id);
-        setTutor(data);
+        if (isCurrent) {
+          setTutor(data);
+        }
       } catch (err) {
-        setError(err.message || 'Tutor not found');
+        if (isCurrent) {
+          setError(err.message || 'Tutor not found');
+        }
       } finally {
-        setLoading(false);
+        if (isCurrent) {
+          setLoading(false);
+        }
       }
     };
 
     fetchTutorDetails();
+
+    return () => {
+      isCurrent = false;
+    };
   }, [id]);
 
   if (loading) {
