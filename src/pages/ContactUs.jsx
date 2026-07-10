@@ -9,7 +9,7 @@ const CONTACT_INFO = [
     color: 'text-green-500',
     type: 'phone',
     details: [
-      { label: '+91 98850 64713', href: 'https://wa.me/919885064713?text=Hi%2C%20I%20found%20you%20on%20HomeTutorX%20and%20would%20like%20to%20enquire%20about%20tuition.' }
+      { label: '+91 63015 92025', href: 'https://wa.me/916301592025?text=Hi%2C%20I%20found%20you%20on%20HomeTutorX%20and%20would%20like%20to%20enquire%20about%20tuition.' }
     ]
   },
   {
