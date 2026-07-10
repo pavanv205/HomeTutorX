@@ -438,7 +438,7 @@ const BecomeTutorForm = () => {
         },
         modal: {
           ondismiss: function() {
-            setSubmitError('Payment was cancelled. You must complete the ₹1 payment to submit your application.');
+            setSubmitError('Payment was cancelled. You must complete the ₹29 payment to submit your application.');
             setLoading(false);
           }
         }
@@ -447,7 +447,7 @@ const BecomeTutorForm = () => {
       const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_hometutorxkey';
       if (razorpayKey === 'rzp_test_hometutorxkey' || isMock) {
         const simulateSuccess = window.confirm(
-          "HomeTutorX Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹1 for this registration?"
+          "HomeTutorX Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹29 for this registration?"
         );
         if (simulateSuccess) {
           const mockPaymentId = `pay_mock_${Math.random().toString(36).substring(2, 11)}`;
