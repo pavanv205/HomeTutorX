@@ -22,10 +22,15 @@ exports.protect = async (req, res, next) => {
     });
   }
 
+  if (!process.env.JWT_SECRET) {
+    console.error(`[CRITICAL CONFIG ERROR] JWT_SECRET is missing. Cannot verify token.`);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server configuration error.'
+    });
+  }
+
   try {
-    if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET environment variable is missing.');
-    }
 
     // Verify token
     const decoded = jwt.verify(
