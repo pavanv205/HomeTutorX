@@ -61,12 +61,18 @@
 ### 6. Restored Tutor and Student Registration Fees to ₹29
 - Restored the registration and subscription fee amounts to ₹29 (2900 paise) across Razorpay order logic in [paymentController.js](file:///c:/hometutor/Tutor%20connect/backend/controllers/paymentController.js).
 - Restored all checkout forms, validation rules, confirm alert messages, dashboard listings, and Terms of Service documents to show ₹29 in [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx), [RegisterStudent.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/RegisterStudent.jsx), [SubscriptionExpired.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/SubscriptionExpired.jsx), [TermsOfService.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TermsOfService.jsx), [AdminDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/AdminDashboard.jsx), and [authController.js](file:///c:/hometutor/Tutor%20connect/backend/controllers/authController.js).
+- Corrected the payment method select cards to display ₹29 (removed the incorrect ₹1 display).
 
 ---
 
-### 7. Updated Tutor Subscription Plan Duration
-- Changed the tutor subscription lifespan from 6 months (180 days) to 5 minutes (`5 * 60 * 1000` milliseconds) inside tutor registration handlers and renewal endpoints in [authController.js](file:///c:/hometutor/Tutor%20connect/backend/controllers/authController.js).
-- Updated user-facing descriptions and renewal options in [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx), [SubscriptionExpired.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/SubscriptionExpired.jsx), and [TermsOfService.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TermsOfService.jsx).
+### 7. Restored Tutor Subscription Plan Duration to 6 Months
+- Restored the tutor subscription lifespan back to 6 months (180 days) inside tutor registration handlers and renewal endpoints in [authController.js](file:///c:/hometutor/Tutor%20connect/backend/controllers/authController.js).
+- Restored descriptions, Terms of Service, and expired views back to 6-month definitions.
+
+---
+
+### 8. Enforced Mandatory Educational Certificate Upload
+- Modified the form submission handler in [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx) to make the educational certificate upload mandatory, displaying a validation error if the user attempts to proceed without a file.
 
 ---
 

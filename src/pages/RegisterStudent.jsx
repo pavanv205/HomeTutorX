@@ -384,7 +384,7 @@ const RegisterStudent = () => {
                       </div>
                       <div className="text-right">
                         <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                        <span className="text-base font-extrabold text-primary dark:text-blue-400">₹1</span>
+                        <span className="text-base font-extrabold text-primary dark:text-blue-400">₹29</span>
                       </div>
                     </div>
                   </div>
@@ -404,7 +404,7 @@ const RegisterStudent = () => {
                     <div>
                       <h4 className="text-[11px] font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Verification Application Fee</h4>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
-                        HomeTutorX charges a one-time profile verification fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold">₹1</strong>.
+                        HomeTutorX charges a one-time profile verification fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold">₹29</strong>.
                       </p>
                     </div>
                   </div>

@@ -360,6 +360,13 @@ const BecomeTutorForm = () => {
       setLoading(true);
       setSubmitError('');
 
+      // Enforce educational certificate file upload
+      if (!certificateFile) {
+        setCertificateError('Please upload your educational certificate.');
+        setLoading(false);
+        return;
+      }
+
       // Load Razorpay Script
       const isLoaded = await loadRazorpayScript();
       if (!isLoaded) {
@@ -382,7 +389,7 @@ const BecomeTutorForm = () => {
         amount: orderData.amount, // ₹29.00 in paise
         currency: orderData.currency,
         name: 'HomeTutorX',
-        description: '5-Minute Tutor Subscription Plan',
+        description: '6-Month Tutor Subscription Plan',
         order_id: isMock ? undefined : orderData.id,
         handler: async function (response) {
           try {
@@ -1284,7 +1291,7 @@ const BecomeTutorForm = () => {
                   </div>
                    <div className="text-right">
                     <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                    <span className="text-base font-extrabold text-primary dark:text-blue-400">₹1</span>
+                    <span className="text-base font-extrabold text-primary dark:text-blue-400">₹29</span>
                   </div>
                 </div>
               </div>
@@ -1304,7 +1311,7 @@ const BecomeTutorForm = () => {
                 <div>
                   <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Tutor Subscription Plan</h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">
-                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹29</strong> for a 5-minute tutor subscription plan.
+                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹29</strong> for a 6-month tutor subscription plan.
                   </p>
                 </div>
               </div>
