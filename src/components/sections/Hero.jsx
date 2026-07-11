@@ -44,13 +44,7 @@ const Hero = () => {
             animate="visible"
             className="lg:col-span-7 text-center lg:text-left space-y-6"
           >
-            {/* Tagline */}
-            <motion.span
-              variants={itemVariants}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary dark:bg-blue-500/10 dark:text-blue-400 uppercase tracking-wider"
-            >
-              <FaStar className="h-3 w-3" /> Connect. Learn. Excel.
-            </motion.span>
+
 
             {/* Title */}
             <motion.h1
