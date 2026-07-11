@@ -105,6 +105,13 @@
 
 ---
 
+### 14. Premium Remaining Capacity Card Icons
+- Replaced the simple purple cap and blue outline database icons in the remaining limit estimation cards inside [AdminDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/AdminDashboard.jsx).
+- The *Max Tutor Logins* card now uses the shiny gold/orange graduation cap with a dark rounded wrapper.
+- The *Max Student Logins* card now uses the glossy metallic server cylinders database component (`ColorfulDatabaseIcon`).
+
+---
+
 ## 🚀 Verification Results
 
 ### 1. Successful Client Build Compilation

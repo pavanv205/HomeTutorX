@@ -524,8 +524,15 @@ const AdminDashboard = () => {
                         
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-5 shadow-sm flex items-center gap-4">
-                            <div className="h-12 w-12 rounded-2xl bg-purple-50 text-purple-600 dark:bg-purple-950/20 dark:text-purple-400 flex items-center justify-center text-xl shrink-0">
-                              <FaGraduationCap />
+                            <div className="h-12 w-12 rounded-2xl bg-slate-950 border border-slate-900 shadow-md flex items-center justify-center text-white relative overflow-hidden shrink-0">
+                              <svg width="0" height="0" className="absolute">
+                                <linearGradient id="tutor-cap-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                                  <stop offset="0%" stopColor="#d4af37" />
+                                  <stop offset="50%" stopColor="#f59e0b" />
+                                  <stop offset="100%" stopColor="#fffbdf" />
+                                </linearGradient>
+                              </svg>
+                              <FaGraduationCap style={{ fill: "url(#tutor-cap-gradient)" }} className="h-6 w-6 filter drop-shadow-[0_1px_3px_rgba(212,175,55,0.4)]" />
                             </div>
                             <div>
                               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Max Tutor Logins</p>
@@ -547,10 +554,8 @@ const AdminDashboard = () => {
                           </div>
 
                           <div className="bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-5 shadow-sm flex items-center gap-4">
-                            <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400 flex items-center justify-center text-xl shrink-0">
-                              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                              </svg>
+                            <div className="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-slate-850 flex items-center justify-center shrink-0">
+                              <ColorfulDatabaseIcon className="h-6 w-6" />
                             </div>
                             <div>
                               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Max Student Logins</p>
