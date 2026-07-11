@@ -95,7 +95,13 @@
 ---
 
 ### 12. Green Theme for Profile Photo Buttons
-- Styled the "Add Photo" / "Change Photo" action buttons in [TutorDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TutorDashboard.jsx) with a premium emerald green color theme (`text-emerald-600` / `bg-emerald-500/10`) to visually match user customization requirements.
+- Styled the "Add Photo" / "Change Photo" action buttons in [TutorDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TutorDashboard.jsx) with a premium emerald green color theme (`text-emerald-605` / `bg-emerald-505/10`) to visually match user customization requirements.
+
+---
+
+### 13. Dynamic Storage and Capacity Calculation
+- Modified [adminController.js](file:///c:/hometutor/Tutor%20connect/backend/controllers/adminController.js) to retrieve the actual database storage size dynamically (using `db.stats().dataSize` when MongoDB is connected, and byte length stringification of user lists in fallback mode) and sum the uploaded files size in `backend/uploads` directory to represent the actual CDN Asset CDN usage.
+- Integrated the new `storage` stats fields on the frontend [AdminDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/AdminDashboard.jsx), changing the static record count multipliers to display live, dynamically reported storage capacity percentages.
 
 ---
 

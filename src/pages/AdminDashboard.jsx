@@ -127,7 +127,8 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Tutors', 'Referrals'
   const [stats, setStats] = useState({
     tutors: { total: 0, verified: 0, pending: 0 },
-    students: { total: 0 }
+    students: { total: 0 },
+    storage: { databaseSize: 0, cdnSize: 0 }
   });
   const [tutors, setTutors] = useState([]);
   const [showCapacityDetails, setShowCapacityDetails] = useState(false);
@@ -434,10 +435,17 @@ const AdminDashboard = () => {
                         <div>
                           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Storage Capacity</p>
                           <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">
-                            {(100 - Math.max(
-                              Math.min((((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0) / 1024 / 512) * 100, 100),
-                              Math.min(((stats.tutors?.total || 0) * 1.2 / 25000) * 100, 100)
-                            )).toFixed(2)}% Free
+                            {(stats.storage && stats.storage.databaseSize > 0) ? (
+                              100 - Math.max(
+                                Math.min((stats.storage.databaseSize / (512 * 1024 * 1024)) * 100, 100),
+                                Math.min((stats.storage.cdnSize / (25 * 1024 * 1024 * 1024)) * 100, 100)
+                              )
+                            ).toFixed(2) : (
+                              100 - Math.max(
+                                Math.min((((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0) / 1024 / 512) * 100, 100),
+                                Math.min(((stats.tutors?.total || 0) * 1.2 / 25000) * 100, 100)
+                              )
+                            ).toFixed(2)}% Free
                           </h4>
                         </div>
                       </div>
@@ -469,12 +477,20 @@ const AdminDashboard = () => {
                         <div className="space-y-2">
                           <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-330">
                             <span>MongoDB Database (512 MB Free)</span>
-                            <span>{(((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0) / 1024).toFixed(4)} MB ({Math.min((((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0) / 1024 / 512) * 100, 100).toFixed(4)}%)</span>
+                            <span>
+                              {(stats.storage && stats.storage.databaseSize > 0)
+                                ? `${(stats.storage.databaseSize / (1024 * 1024)).toFixed(4)} MB (${Math.min((stats.storage.databaseSize / (512 * 1024 * 1024)) * 100, 100).toFixed(4)}%)`
+                                : `${(((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0) / 1024).toFixed(4)} MB (${Math.min((((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0) / 1024 / 512) * 100, 100).toFixed(4)}%)`}
+                            </span>
                           </div>
                           <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                             <div 
                               className="h-full bg-blue-500 transition-all duration-500" 
-                              style={{ width: `${Math.min((((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0) / 1024 / 512) * 100, 100)}%` }}
+                              style={{ 
+                                width: `${(stats.storage && stats.storage.databaseSize > 0)
+                                  ? Math.min((stats.storage.databaseSize / (512 * 1024 * 1024)) * 100, 100)
+                                  : Math.min((((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0) / 1024 / 512) * 100, 100)}%` 
+                              }}
                             />
                           </div>
                         </div>
@@ -483,12 +499,20 @@ const AdminDashboard = () => {
                         <div className="space-y-2">
                           <div className="flex justify-between text-xs font-bold text-slate-700 dark:text-slate-330">
                             <span>Cloudinary Asset CDN (25 GB Free)</span>
-                            <span>{((stats.tutors?.total || 0) * 0.9).toFixed(2)} MB ({Math.min(((stats.tutors?.total || 0) * 0.9 / 25000) * 100, 100).toFixed(4)}%)</span>
+                            <span>
+                              {(stats.storage && stats.storage.cdnSize > 0)
+                                ? `${(stats.storage.cdnSize / (1024 * 1024)).toFixed(2)} MB (${Math.min((stats.storage.cdnSize / (25 * 1024 * 1024 * 1024)) * 100, 100).toFixed(4)}%)`
+                                : `${((stats.tutors?.total || 0) * 0.9).toFixed(2)} MB (${Math.min(((stats.tutors?.total || 0) * 0.9 / 25000) * 100, 100).toFixed(4)}%)`}
+                            </span>
                           </div>
                           <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                             <div 
                               className="h-full bg-purple-500 transition-all duration-500" 
-                              style={{ width: `${Math.min(((stats.tutors?.total || 0) * 0.9 / 25000) * 100, 100)}%` }}
+                              style={{ 
+                                width: `${(stats.storage && stats.storage.cdnSize > 0)
+                                  ? Math.min((stats.storage.cdnSize / (25 * 1024 * 1024 * 1024)) * 100, 100)
+                                  : Math.min(((stats.tutors?.total || 0) * 0.9 / 25000) * 100, 100)}%` 
+                              }}
                             />
                           </div>
                         </div>
@@ -506,10 +530,17 @@ const AdminDashboard = () => {
                             <div>
                               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Max Tutor Logins</p>
                               <h4 className="text-xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">
-                                {Math.max(0, Math.min(
-                                  Math.floor((512 * 1024 - ((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0)) / 3.5),
-                                  Math.floor((25000 - (stats.tutors?.total || 0) * 0.9) / 0.9)
-                                )).toLocaleString()}
+                                {(stats.storage && stats.storage.databaseSize > 0) ? (
+                                  Math.max(0, Math.min(
+                                    Math.floor((512 * 1024 * 1024 - stats.storage.databaseSize) / (3.5 * 1024)),
+                                    Math.floor((25 * 1024 * 1024 * 1024 - stats.storage.cdnSize) / (900 * 1024))
+                                  )).toLocaleString()
+                                ) : (
+                                  Math.max(0, Math.min(
+                                    Math.floor((512 * 1024 - ((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0)) / 3.5),
+                                    Math.floor((25000 - (stats.tutors?.total || 0) * 0.9) / 0.9)
+                                  )).toLocaleString()
+                                )}
                               </h4>
                               <p className="text-[8px] text-slate-400 font-bold tracking-tight leading-tight mt-0.5">Bounded by Cloudinary</p>
                             </div>
@@ -524,7 +555,11 @@ const AdminDashboard = () => {
                             <div>
                               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Max Student Logins</p>
                               <h4 className="text-xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">
-                                {Math.max(0, Math.floor((512 * 1024 - ((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0)) / 0.5)).toLocaleString()}
+                                {(stats.storage && stats.storage.databaseSize > 0) ? (
+                                  Math.max(0, Math.floor((512 * 1024 * 1024 - stats.storage.databaseSize) / (0.5 * 1024))).toLocaleString()
+                                ) : (
+                                  Math.max(0, Math.floor((512 * 1024 - ((stats.students?.total || 0) * 0.5 + (stats.tutors?.total || 0) * 3.5 + (stats.bookings?.total || 0) * 1.0)) / 0.5)).toLocaleString()
+                                )}
                               </h4>
                               <p className="text-[8px] text-slate-400 font-bold tracking-tight leading-tight mt-0.5">Bounded by MongoDB</p>
                             </div>
