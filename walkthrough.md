@@ -130,6 +130,12 @@
 
 ---
 
+### 18. Black and Slate Theme for Subject Badges
+- Replaced the blue badges under the **"Subjects Taught"** list in [TutorProfile.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TutorProfile.jsx).
+- Subject badges now use a neutral gray/slate wrapper (`bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-extrabold border-slate-200/50`) to remove all blue color usage and emphasize black bold text as requested.
+
+---
+
 ## 🚀 Verification Results
 
 ### 1. Successful Client Build Compilation

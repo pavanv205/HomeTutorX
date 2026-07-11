@@ -410,7 +410,7 @@ const TutorProfile = () => {
                     {subjects.map((sub, i) => (
                       <span
                         key={i}
-                        className="px-3 py-1.5 bg-blue-50 text-primary dark:bg-blue-950/20 dark:text-blue-400 rounded-xl text-xs font-bold border border-blue-100/50 dark:border-blue-900/30"
+                        className="px-3 py-1.5 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 rounded-xl text-xs font-extrabold border border-slate-200/50 dark:border-slate-700/30"
                       >
                         {sub}
                       </span>
