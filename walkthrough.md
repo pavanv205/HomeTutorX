@@ -94,6 +94,12 @@
 
 ---
 
+### 12. Changed Photo Action Buttons Color Theme to Indigo
+- Removed blue color classes (`bg-primary/10`, `dark:bg-blue-500/10`, `text-primary`, `dark:text-blue-400`, `dark:text-blue-450`) from photo buttons and optimization text in [TutorDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TutorDashboard.jsx).
+- Applied an **indigo** color scheme (`bg-indigo-50`, `text-indigo-600`, `dark:bg-indigo-950/20`, `dark:text-indigo-400`) to perfectly align the buttons with the dashboard styling.
+
+---
+
 ## 🚀 Verification Results
 
 ### 1. Successful Client Build Compilation
