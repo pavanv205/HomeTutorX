@@ -268,7 +268,7 @@ const BecomeTutorForm = () => {
         setResumeError('');
         try {
           setCompressionLoading(true);
-          const result = await compressImage(file, 500 * 1024);
+          const result = await compressImage(file, 350 * 1024);
           setResumeFile(result.file);
           setCompressedPreviewUrl(result.previewUrl);
           setOriginalSize(result.originalSize);

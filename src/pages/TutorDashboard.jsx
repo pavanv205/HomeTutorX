@@ -281,7 +281,7 @@ const TutorDashboard = () => {
       try {
         setCompressing(true);
         const { compressImage } = await import('../utils/imageCompression');
-        const result = await compressImage(file, 500 * 1024);
+        const result = await compressImage(file, 350 * 1024);
         setPhotoFile(result.file);
         setPhotoPreview(result.previewUrl);
       } catch (err) {

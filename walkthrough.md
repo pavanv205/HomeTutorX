@@ -83,6 +83,11 @@
 
 ---
 
+### 10. Compressed Profile Photo to Less Than 350KB
+- Configured the image compression utility threshold to `350 * 1024` (350KB) in both registration [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx) and editing [TutorDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TutorDashboard.jsx) pages to ensure tutor profile photos are compressed below 350KB before upload.
+
+---
+
 ## 🚀 Verification Results
 
 ### 1. Successful Client Build Compilation
