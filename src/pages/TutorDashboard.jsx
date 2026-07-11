@@ -569,7 +569,7 @@ const TutorDashboard = () => {
                         </div>
                         <div className="flex flex-col gap-1.5">
                           <div className="flex items-center gap-2">
-                            <label className="cursor-pointer bg-primary/10 hover:bg-primary/20 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-bold px-3 py-2 rounded-lg text-center transition-colors">
+                            <label className="cursor-pointer bg-emerald-500/10 hover:bg-emerald-500/20 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold px-3 py-2 rounded-lg text-center transition-colors">
                               {photoPreview || tutorProfile.photo ? 'Change Photo' : 'Add Photo'}
                               <input
                                 type="file"

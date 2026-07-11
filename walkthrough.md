@@ -94,8 +94,8 @@
 
 ---
 
-### 12. Improved Add/Change Photo Button Contrast
-- Changed the profile photo upload button text color to a high-contrast dark blue/navy theme (`text-blue-700` and `text-blue-300`) to solve readability and display bleeding issues.
+### 12. Green Theme for Profile Photo Buttons
+- Styled the "Add Photo" / "Change Photo" action buttons in [TutorDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TutorDashboard.jsx) with a premium emerald green color theme (`text-emerald-600` / `bg-emerald-500/10`) to visually match user customization requirements.
 
 ---
 
