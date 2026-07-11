@@ -76,6 +76,13 @@
 
 ---
 
+### 9. Added Profile Photo Edit Option & Removed Experience Field
+- Removed the "Experience (Years)" input field from the profile details edit form in [TutorDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TutorDashboard.jsx).
+- Replaced it with a "Profile Photo" change upload option featuring an image picker, size compression using `compressImage`, a visual thumbnail preview (with initials fallback), and validation error notifications.
+- Integrated the image file upload with the backend multipart updates by submitting tutor profile data via `FormData` when a new photo is selected.
+
+---
+
 ## 🚀 Verification Results
 
 ### 1. Successful Client Build Compilation

@@ -84,6 +84,17 @@ const TutorDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [updatingBookingId, setUpdatingBookingId] = useState(null);
 
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [photoError, setPhotoError] = useState('');
+  const [compressing, setCompressing] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+    };
+  }, [photoPreview]);
+
   const [referrals, setReferrals] = useState([]);
   const [selectedMonthYear, setSelectedMonthYear] = useState(() => {
     const d = new Date();
@@ -247,15 +258,71 @@ const TutorDashboard = () => {
     });
   };
 
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const filename = file.name.toLowerCase();
+      
+      if (filename.includes('.trashed-') || filename.startsWith('.trashed-')) {
+        setPhotoError('Invalid file type: temporary files not allowed');
+        return;
+      }
+      
+      const allowedExts = ['.jpg', '.jpeg', '.png', '.webp'];
+      const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
+      const isAllowedType = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type);
+      
+      if (!isAllowedType && !hasAllowedExt) {
+        setPhotoError('Only image files (JPEG, PNG, WEBP) are allowed');
+        return;
+      }
+
+      setPhotoError('');
+      try {
+        setCompressing(true);
+        const { compressImage } = await import('../utils/imageCompression');
+        const result = await compressImage(file, 500 * 1024);
+        setPhotoFile(result.file);
+        setPhotoPreview(result.previewUrl);
+      } catch (err) {
+        console.error('Image compression failed:', err);
+        setPhotoFile(file);
+        setPhotoPreview(URL.createObjectURL(file));
+      } finally {
+        setCompressing(false);
+      }
+    }
+  };
+
   // Save Profile
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     setSaving(true);
     setMessage({ text: '', type: '' });
     try {
-      const res = await api.put(`/tutors/${tutorProfile._id}`, tutorProfile);
+      let res;
+      if (photoFile) {
+        const formData = new FormData();
+        for (const key of Object.keys(tutorProfile)) {
+          const val = tutorProfile[key];
+          if (Array.isArray(val)) {
+            formData.append(key, JSON.stringify(val));
+          } else {
+            formData.append(key, val ?? '');
+          }
+        }
+        formData.append('resume', photoFile);
+        
+        res = await api.put(`/tutors/${tutorProfile._id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      } else {
+        res = await api.put(`/tutors/${tutorProfile._id}`, tutorProfile);
+      }
+
       if (res.data && res.data.success) {
         setTutorProfile(res.data.data);
+        setPhotoFile(null);
         setMessage({ text: 'Profile updated successfully!', type: 'success' });
       }
     } catch (err) {
@@ -476,17 +543,43 @@ const TutorDashboard = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
-
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2.5 uppercase tracking-wide">Profile Photo</label>
+                      <div className="flex items-center gap-4">
+                        <div className="relative h-16 w-16 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                          {photoPreview || tutorProfile.photo ? (
+                            <img src={photoPreview || tutorProfile.photo} alt="Profile preview" className="h-full w-full object-cover" />
+                          ) : (
+                            <div className={`h-full w-full font-extrabold flex items-center justify-center text-lg ${getAvatarStyle(tutorProfile.fullName)}`}>
+                              {(tutorProfile.fullName || 'T').trim().charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <label className="cursor-pointer bg-primary/10 hover:bg-primary/20 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 text-primary dark:text-blue-400 text-xs font-bold px-3 py-2 rounded-lg text-center transition-colors">
+                            Change Photo
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handlePhotoChange}
+                              className="hidden"
+                            />
+                          </label>
+                          {photoFile && (
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold max-w-[150px] truncate">
+                              {photoFile.name}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      {compressing && (
+                        <p className="text-xs text-primary dark:text-blue-450 mt-1 font-semibold">Optimizing image...</p>
+                      )}
+                      {photoError && (
+                        <p className="text-red-500 text-xs mt-1 font-medium">{photoError}</p>
+                      )}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">Experience (Years)</label>
-                      <input
-                        type="number"
-                        name="experience"
-                        value={tutorProfile.experience || ''}
-                        onChange={handleProfileChange}
-                        className="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl py-3 px-4 text-sm focus:outline-none"
-                      />
+                      {/* Empty column */}
                     </div>
                   </div>
 
