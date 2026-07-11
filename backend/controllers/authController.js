@@ -112,7 +112,7 @@ exports.registerTutor = async (req, res, next) => {
     if (!actualPaymentId || data.paymentStatus !== 'Paid') {
       return res.status(400).json({
         success: false,
-        message: 'Payment verification failed. Tutor profile registration requires a successful ₹1 tutor subscription plan payment.'
+        message: 'Payment verification failed. Tutor profile registration requires a successful ₹29 tutor subscription plan payment.'
       });
     }
 
@@ -470,7 +470,7 @@ exports.registerStudent = async (req, res, next) => {
     if (!actualPaymentId || paymentStatus !== 'Paid') {
       return res.status(400).json({
         success: false,
-        message: 'Payment verification failed. Student account registration requires a successful ₹1 registration fee payment.'
+        message: 'Payment verification failed. Student account registration requires a successful ₹29 registration fee payment.'
       });
     }
 
@@ -953,7 +953,7 @@ exports.renewSubscription = async (req, res, next) => {
     if (!actualPaymentId || paymentStatus !== 'Paid') {
       return res.status(400).json({
         success: false,
-        message: 'Payment verification failed. Subscription renewal requires a successful ₹1 payment.'
+        message: 'Payment verification failed. Subscription renewal requires a successful ₹29 payment.'
       });
     }
 

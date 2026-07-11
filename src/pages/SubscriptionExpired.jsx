@@ -66,7 +66,7 @@ const SubscriptionExpired = () => {
       // 2. Initialize Options
       const options = {
         key: 'rzp_test_hometutorxkey', // Fallback key
-        amount: orderData.amount, // ₹1.00 in paise
+        amount: orderData.amount, // ₹29.00 in paise
         currency: orderData.currency,
         name: 'HomeTutorX',
         description: `${user.role} Subscription Renewal`,
@@ -113,7 +113,7 @@ const SubscriptionExpired = () => {
         },
         modal: {
           ondismiss: function() {
-            setErrorMsg('Payment cancelled. You must complete the ₹1 payment to renew your subscription.');
+            setErrorMsg('Payment cancelled. You must complete the ₹29 payment to renew your subscription.');
             setLoading(false);
           }
         }
@@ -122,7 +122,7 @@ const SubscriptionExpired = () => {
       const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_hometutorxkey';
       if (razorpayKey === 'rzp_test_hometutorxkey' || isMock) {
         const simulateSuccess = window.confirm(
-          "HomeTutorX Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay renewal payment of ₹1?"
+          "HomeTutorX Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay renewal payment of ₹29?"
         );
         if (simulateSuccess) {
           const mockPaymentId = `pay_mock_${Math.random().toString(36).substring(2, 11)}`;
@@ -218,7 +218,7 @@ const SubscriptionExpired = () => {
             </div>
             <div className="text-right">
               <span className="text-xs text-slate-400 font-semibold block">Renewal Fee</span>
-              <span className="text-lg font-extrabold text-primary dark:text-blue-400">₹1</span>
+              <span className="text-lg font-extrabold text-primary dark:text-blue-400">₹29</span>
             </div>
           </div>
 
