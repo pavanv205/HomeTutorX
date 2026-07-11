@@ -739,7 +739,7 @@ const TutorDashboard = () => {
                             {/* Card Header */}
                             <div className="flex items-start justify-between">
                               <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 bg-primary/10 text-primary dark:bg-blue-900/20 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
+                                <div className="h-10 w-10 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 rounded-xl flex items-center justify-center shrink-0">
                                   <FaUser className="h-4.5 w-4.5" />
                                 </div>
                                 <div>

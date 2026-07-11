@@ -124,6 +124,12 @@
 
 ---
 
+### 17. Black Color for User Avatar Icon
+- Changed the color wrapper styling of the `FaUser` avatar icon next to the student's name in tutoring lead cards inside [TutorDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TutorDashboard.jsx).
+- The avatar wrapper is now styled with a clean black/slate theme (`bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100`) rather than the blue/primary theme color.
+
+---
+
 ## 🚀 Verification Results
 
 ### 1. Successful Client Build Compilation
