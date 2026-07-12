@@ -466,7 +466,7 @@ const Login = () => {
                               setSuccessMsg('');
                               setResetEmail(email); // Autofill reset with whatever is typed
                             }}
-                            className="text-xs font-extrabold text-slate-950 hover:underline dark:text-white focus:outline-none cursor-pointer"
+                            className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:underline focus:outline-none cursor-pointer"
                           >
                             Forgot Password?
                           </button>

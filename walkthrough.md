@@ -172,7 +172,7 @@
 - Updated active login tab selectors (Student Login, Tutor Login, and Admin Login) in [Login.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/Login.jsx) to style text and icons in black (`text-slate-950` in light mode, `dark:text-white` in dark mode) instead of primary blue.
 
 ### 28. Rebranded 'Forgot Password?' Link to Black
-- Styled the "Forgot Password?" navigation link button in [Login.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/Login.jsx) (displayed for Student and Tutor roles) to use black classes (`text-slate-950` in light mode, `dark:text-white` in dark mode) instead of primary blue.
+- Styled the "Forgot Password?" navigation link button in [Login.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/Login.jsx) (displayed for Student and Tutor roles) to use standard, soft gray/black colors (`text-slate-600` / `hover:text-slate-900` in light mode, `dark:text-slate-400` / `dark:hover:text-white` in dark mode) and a lighter font weight (`font-semibold` instead of `font-extrabold`) for a cleaner look.
 
 ### 29. Phone Number Enforce exactly 10 Digits
 - Restructured phone input handling in [RegisterStudent.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/RegisterStudent.jsx), [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx), and [BookingForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BookingForm.jsx) to enforce exactly 10 digits (using `maxLength={10}` and digit-only character stripping on user input).
