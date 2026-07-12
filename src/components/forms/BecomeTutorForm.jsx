@@ -525,7 +525,7 @@ const BecomeTutorForm = () => {
           <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-100 dark:bg-slate-800 -translate-y-1/2 z-0" />
           {/* Active progress bar line */}
           <div
-            className="absolute top-1/2 left-0 h-0.5 bg-primary dark:bg-blue-500 -translate-y-1/2 z-0 transition-all duration-300"
+            className="absolute top-1/2 left-0 h-0.5 bg-slate-950 dark:bg-slate-200 -translate-y-1/2 z-0 transition-all duration-300"
             style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
           />
 
@@ -534,9 +534,9 @@ const BecomeTutorForm = () => {
               <div
                 className={`h-11 w-11 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
                   idx < currentStep
-                    ? 'bg-primary border-primary text-white'
+                    ? 'bg-slate-950 border-slate-950 text-white dark:bg-slate-200 dark:border-slate-200 dark:text-slate-950'
                     : idx === currentStep
-                    ? 'bg-white border-primary text-primary dark:bg-slate-900 dark:text-blue-400 dark:border-blue-400 ring-4 ring-primary/10'
+                    ? 'bg-white border-slate-950 text-slate-950 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-100 ring-4 ring-slate-950/10'
                     : 'bg-white border-slate-200 text-slate-400 dark:bg-slate-900 dark:border-slate-800'
                 }`}
               >
@@ -635,7 +635,12 @@ const BecomeTutorForm = () => {
                   <input
                     type="tel"
                     placeholder="10-digit mobile number"
-                    {...register('phone')}
+                    {...register('phone', {
+                      onChange: (e) => {
+                        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      }
+                    })}
+                    maxLength={10}
                     className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                   />
                 </div>
@@ -1127,7 +1132,7 @@ const BecomeTutorForm = () => {
                     <FaUpload className="h-5 w-5" />
                   </div>
                   <div className="text-sm">
-                    <span className="font-semibold text-primary dark:text-blue-500 hover:underline">Click to upload</span> or drag and drop
+                    <span className="font-semibold text-slate-950 dark:text-white hover:underline">Click to upload</span> or drag and drop
                   </div>
                   <p className="text-xs text-slate-400">Image file (JPEG, PNG, WEBP)</p>
                 </div>
@@ -1204,7 +1209,7 @@ const BecomeTutorForm = () => {
                     <FaUpload className="h-5 w-5" />
                   </div>
                   <div className="text-sm">
-                    <span className="font-semibold text-primary dark:text-blue-500 hover:underline">Click to upload</span> or drag and drop
+                    <span className="font-semibold text-slate-950 dark:text-white hover:underline">Click to upload</span> or drag and drop
                   </div>
                   <p className="text-xs text-slate-400">PDF or Image file (JPEG, PNG, WEBP)</p>
                 </div>
@@ -1280,10 +1285,10 @@ const BecomeTutorForm = () => {
                 <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
                   Select Payment Method
                 </label>
-                <div className="border border-primary bg-primary/5 dark:border-blue-500 dark:bg-blue-950/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
+                <div className="border border-slate-950 bg-slate-950/5 dark:border-slate-100 dark:bg-slate-100/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
                   <div className="flex items-center gap-3.5">
-                    <div className="h-5 w-5 rounded-full border-2 border-primary dark:border-blue-500 flex items-center justify-center">
-                      <div className="h-2.5 w-2.5 rounded-full bg-primary dark:bg-blue-500" />
+                    <div className="h-5 w-5 rounded-full border-2 border-slate-950 dark:border-slate-100 flex items-center justify-center">
+                      <div className="h-2.5 w-2.5 rounded-full bg-slate-950 dark:bg-slate-100" />
                     </div>
                     <div>
                       <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
@@ -1291,7 +1296,7 @@ const BecomeTutorForm = () => {
                   </div>
                    <div className="text-right">
                     <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                    <span className="text-base font-extrabold text-primary dark:text-blue-400">₹29</span>
+                    <span className="text-base font-extrabold text-slate-950 dark:text-white">₹29</span>
                   </div>
                 </div>
               </div>
@@ -1338,7 +1343,12 @@ const BecomeTutorForm = () => {
           </Button>
 
           {currentStep < STEPS.length - 1 ? (
-            <Button type="button" variant="primary" onClick={handleNext}>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleNext}
+              className="!bg-slate-950 !hover:bg-slate-900 !text-white dark:!bg-slate-200 dark:!hover:bg-slate-100 dark:!text-slate-950 !shadow-none"
+            >
               Next Step
             </Button>
           ) : (

@@ -10,6 +10,7 @@ import Button from '../common/Button';
 
 
 import { getAvatarStyle } from '../../utils/avatarHelper';
+import { parseArrayField } from '../../utils/arrayHelper';
 
 export const TutorCard = ({ tutor }) => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export const TutorCard = ({ tutor }) => {
 
   const monthlyRate = tutor.monthlyRate || 3000;
   const about = tutor.about || tutor.bio || 'No biography details provided.';
-  const subjects = Array.isArray(tutor.subjects) ? tutor.subjects : [];
+  const subjects = parseArrayField(tutor.subjects);
   const hourlyRate = tutor.hourlyRate || 500;
   const id = tutor.id || '';
 

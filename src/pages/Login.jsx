@@ -292,7 +292,7 @@ const Login = () => {
                   }}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold rounded-xl transition-all duration-200 ${
                     activeTab === 'Tutor'
-                      ? 'bg-white text-primary shadow-md dark:bg-slate-900 dark:text-blue-400'
+                      ? 'bg-white text-slate-950 shadow-md dark:bg-slate-900 dark:text-white'
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                   } ${hasRoleQuery ? 'w-full flex-none cursor-default' : ''}`}
                   disabled={hasRoleQuery}
@@ -312,7 +312,7 @@ const Login = () => {
                   }}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold rounded-xl transition-all duration-200 ${
                     activeTab === 'Student'
-                      ? 'bg-white text-primary shadow-md dark:bg-slate-900 dark:text-blue-400'
+                      ? 'bg-white text-slate-950 shadow-md dark:bg-slate-900 dark:text-white'
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                   } ${hasRoleQuery ? 'w-full flex-none cursor-default' : ''}`}
                   disabled={hasRoleQuery}
@@ -332,7 +332,7 @@ const Login = () => {
                   }}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold rounded-xl transition-all duration-200 ${
                     activeTab === 'Admin'
-                      ? 'bg-white text-primary shadow-md dark:bg-slate-900 dark:text-blue-400'
+                      ? 'bg-white text-slate-950 shadow-md dark:bg-slate-900 dark:text-white'
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                   } ${hasRoleQuery ? 'w-full flex-none cursor-default' : ''}`}
                   disabled={hasRoleQuery}
@@ -466,7 +466,7 @@ const Login = () => {
                               setSuccessMsg('');
                               setResetEmail(email); // Autofill reset with whatever is typed
                             }}
-                            className="text-xs font-extrabold text-primary hover:underline dark:text-blue-450 focus:outline-none cursor-pointer"
+                            className="text-xs font-extrabold text-slate-950 hover:underline dark:text-white focus:outline-none cursor-pointer"
                           >
                             Forgot Password?
                           </button>

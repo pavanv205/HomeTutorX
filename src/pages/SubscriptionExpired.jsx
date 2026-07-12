@@ -206,10 +206,10 @@ const SubscriptionExpired = () => {
           )}
 
           {/* Offer Details */}
-          <div className="border border-primary bg-primary/5 dark:border-blue-500 dark:bg-blue-950/10 rounded-2xl p-5 flex items-center justify-between transition-all duration-200">
+          <div className="border border-slate-950 bg-slate-950/5 dark:border-slate-100 dark:bg-slate-100/10 rounded-2xl p-5 flex items-center justify-between transition-all duration-200">
             <div className="flex items-center gap-3.5 text-left">
-              <div className="h-5 w-5 rounded-full border-2 border-primary dark:border-blue-500 flex items-center justify-center">
-                <div className="h-2.5 w-2.5 rounded-full bg-primary dark:bg-blue-500" />
+              <div className="h-5 w-5 rounded-full border-2 border-slate-950 dark:border-slate-100 flex items-center justify-center">
+                <div className="h-2.5 w-2.5 rounded-full bg-slate-950 dark:bg-slate-100" />
               </div>
               <div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">6-Month Renewal</h4>
@@ -218,7 +218,7 @@ const SubscriptionExpired = () => {
             </div>
             <div className="text-right">
               <span className="text-xs text-slate-400 font-semibold block">Renewal Fee</span>
-              <span className="text-lg font-extrabold text-primary dark:text-blue-400">₹29</span>
+              <span className="text-lg font-extrabold text-slate-950 dark:text-white">₹29</span>
             </div>
           </div>
 

@@ -42,11 +42,7 @@ const ContactUs = () => {
 
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 space-y-16">
         
-        {/* Header */}
         <section className="text-center max-w-3xl mx-auto space-y-4">
-          <h1 className="text-xs font-bold text-primary dark:text-blue-500 uppercase tracking-widest">
-            Reach Out
-          </h1>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white leading-tight">
             We are Here to Help
           </h2>
@@ -74,12 +70,12 @@ const ContactUs = () => {
                       href={detail.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-xs font-semibold text-primary dark:text-blue-400 hover:underline transition-colors"
+                      className="block text-xs font-semibold text-amber-900 dark:text-amber-400 hover:text-amber-950 dark:hover:text-amber-300 hover:underline transition-colors"
                     >
                       {detail.label}
                     </a>
                   ) : (
-                    <p key={dIdx} className="text-xs text-slate-600 dark:text-slate-400 font-medium">
+                    <p key={dIdx} className="text-xs text-amber-900 dark:text-amber-400 font-medium">
                       {detail.label}
                     </p>
                   )

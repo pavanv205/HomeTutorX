@@ -139,6 +139,55 @@
 ### 19. Tagline Removal
 - Completely removed the "★ Connect. Learn. Excel." tagline badge element from the main hero section of the landing page in [Hero.jsx](file:///c:/hometutor/Tutor%20connect/src/components/sections/Hero.jsx).
 
+### 20. Rebranded Navigation Bar to Black/Slate Theme
+- Modified active link styles, active underlines, and hover/focus styles inside [Navbar.jsx](file:///c:/hometutor/Tutor%20connect/src/components/layout/Navbar.jsx) to use premium `slate-950` / `white` classes instead of the primary blue theme.
+
+---
+
+### 21. Stepper and Step Icon Colors Updated to Black
+- Modified the step indicator header and active progress bar styling inside [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx) and [RegisterStudent.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/RegisterStudent.jsx) to use premium dark slate/black colors (`bg-slate-950`, `border-slate-950`, and `ring-slate-950/10`) instead of the blue theme classes.
+
+---
+
+### 22. Custom Next Step and Submit Application Button Color overrides
+- Updated the "Next Step" button styling in [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx) and the step 1 "Next Step" button in [RegisterStudent.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/RegisterStudent.jsx) to render as black (`bg-slate-950` / `!bg-slate-950` in light mode, `dark:bg-slate-200` / `dark:!bg-slate-200` in dark mode) while keeping other layout buttons (like the Back and Submit Application buttons) at their default style rules.
+
+---
+
+### 23. Upload Links Styled in Black
+- Styled the "Click to upload" link span elements inside the Resume and Educational Certificate dropzone components in [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx) with `text-slate-950` (or `dark:text-white` in dark mode) to replace the previous primary blue color.
+
+### 24. Payment Selection Box and Fee Rebranded to Black
+- Updated payment option card selectors and fee labels (`₹29`) to a clean black style (`border-slate-950`, `bg-slate-950/5`, `bg-slate-950` dot, and `text-slate-950` in light mode; `border-slate-100`, `bg-slate-100/10`, and `text-white` in dark mode) inside [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx), [RegisterStudent.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/RegisterStudent.jsx), and [SubscriptionExpired.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/SubscriptionExpired.jsx).
+
+### 25. Rebranded Contact Detail Info Labels to Brown and Removed 'Reach Out' Header
+- Styled the phone/whatsapp link, support email link, and registered office text labels in [ContactUs.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/ContactUs.jsx) using brown/amber classes (`text-amber-900` / `hover:text-amber-950` in light mode, `dark:text-amber-400` / `dark:hover:text-amber-300` in dark mode) to replace the previous primary blue and neutral black/slate classes.
+- Completely removed the "Reach Out" uppercase header element from [ContactUs.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/ContactUs.jsx) as requested.
+
+### 26. Rebranded About Us Subtitle Headers and Removed 'Our Foundations'
+- Styled the "Our Journey" section subtitle header in [AboutUs.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/AboutUs.jsx) with brown/amber text (`text-amber-900` / `dark:text-amber-400`).
+- Completely removed the "Our Foundations" subtitle heading element from [AboutUs.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/AboutUs.jsx) as requested.
+
+### 27. Rebranded Login Tabs to Black/White Theme
+- Updated active login tab selectors (Student Login, Tutor Login, and Admin Login) in [Login.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/Login.jsx) to style text and icons in black (`text-slate-950` in light mode, `dark:text-white` in dark mode) instead of primary blue.
+
+### 28. Rebranded 'Forgot Password?' Link to Black
+- Styled the "Forgot Password?" navigation link button in [Login.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/Login.jsx) (displayed for Student and Tutor roles) to use black classes (`text-slate-950` in light mode, `dark:text-white` in dark mode) instead of primary blue.
+
+### 29. Phone Number Enforce exactly 10 Digits
+- Restructured phone input handling in [RegisterStudent.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/RegisterStudent.jsx), [BecomeTutorForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BecomeTutorForm.jsx), and [BookingForm.jsx](file:///c:/hometutor/Tutor%20connect/src/components/forms/BookingForm.jsx) to enforce exactly 10 digits (using `maxLength={10}` and digit-only character stripping on user input).
+- Updated validation regex schema in [RegisterStudent.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/RegisterStudent.jsx) to require a valid 10-digit mobile number, matching the existing schemas in the other registration forms.
+
+### 30. Added Active Tutors Metric Card to Admin Dashboard
+- Added `activeTutors` computation in [adminController.js](file:///c:/hometutor/Tutor%20connect/backend/controllers/adminController.js) (both online database counts and offline fallback mock datasets) where active status is determined by paid registration status (`paymentStatus: 'Paid'`).
+- Seeded default mock tutor in [dbFallback.js](file:///c:/hometutor/Tutor%20connect/backend/utils/dbFallback.js) and [seed.js](file:///c:/hometutor/Tutor%20connect/backend/seed.js) with `paymentStatus: 'Paid'` for stats consistency.
+- Designed and integrated an "Active Tutors" card inside [AdminDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/AdminDashboard.jsx) using a warm amber theme color and user icon, scaling the overview dashboard layout to support 5 statistics cards natively.
+
+### 31. Sanitized Double-Stringified Arrays and Rebranded to Plain Text
+- Created a robust parser utility in [arrayHelper.js](file:///c:/hometutor/Tutor%20connect/src/utils/arrayHelper.js) to cleanly resolve, flatten, and parse double-stringified JSON escaped string array fields (like `["[\"Mathematics\"]"]`).
+- Replaced the capsule/pill rendering format for subjects and classes on the tutor profile page [TutorProfile.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/TutorProfile.jsx) with clean comma-separated plain text formatting matching standard user preferences.
+- Handled parsed subject array logic in card headers inside [FeaturedTutors.jsx](file:///c:/hometutor/Tutor%20connect/src/components/sections/FeaturedTutors.jsx) and the tutor details list in [AdminDashboard.jsx](file:///c:/hometutor/Tutor%20connect/src/pages/AdminDashboard.jsx).
+
 ---
 
 ## 🚀 Verification Results

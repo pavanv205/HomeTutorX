@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaGraduationCap, FaCheck, FaTimes, FaUserSlash, FaUserCheck, FaInfoCircle, FaDatabase, FaServer } from 'react-icons/fa';
+import { FaGraduationCap, FaCheck, FaTimes, FaUserSlash, FaUserCheck, FaInfoCircle, FaDatabase, FaServer, FaUser } from 'react-icons/fa';
 import api from '../services/api';
+import { parseArrayField } from '../utils/arrayHelper';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
 import { getAvatarStyle } from '../utils/avatarHelper';
@@ -126,7 +127,7 @@ const ColorfulGiftIcon = ({ className = "h-6 w-6" }) => (
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Tutors', 'Referrals'
   const [stats, setStats] = useState({
-    tutors: { total: 0, verified: 0, pending: 0 },
+    tutors: { total: 0, verified: 0, pending: 0, active: 0 },
     students: { total: 0 },
     storage: { databaseSize: 0, cdnSize: 0 }
   });
@@ -377,7 +378,7 @@ const AdminDashboard = () => {
               {activeTab === 'Overview' && (
                 <div className="space-y-8">
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                     <div 
                       onClick={() => setActiveTab('Tutors')}
                       className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all"
@@ -408,6 +409,19 @@ const AdminDashboard = () => {
                       <div>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Verified Tutors</p>
                         <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{stats.tutors?.verified || 0}</h4>
+                      </div>
+                    </div>
+
+                    <div 
+                      onClick={() => setActiveTab('Tutors')}
+                      className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all"
+                    >
+                      <div className="h-12 w-12 rounded-2xl bg-amber-100 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400 flex items-center justify-center text-xl shrink-0">
+                        <FaUser />
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Tutors</p>
+                        <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{stats.tutors?.active || 0}</h4>
                       </div>
                     </div>
 
@@ -644,7 +658,7 @@ const AdminDashboard = () => {
                               </td>
                               <td className="py-3.5">
                                 <p className="font-semibold text-slate-800 dark:text-slate-350">{tutor.qualification}</p>
-                                <p className="text-[9px] text-slate-400">{(tutor.subjects || []).slice(0, 3).join(', ')} • {tutor.experience} Yrs Exp</p>
+                                <p className="text-[9px] text-slate-400">{parseArrayField(tutor.subjects).slice(0, 3).join(', ')} • {tutor.experience} Yrs Exp</p>
                               </td>
                               <td className="py-3.5">
                                 <p>{tutor.city || 'N/A'}</p>

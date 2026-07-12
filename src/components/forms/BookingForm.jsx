@@ -324,7 +324,12 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
             <input
               type="tel"
               placeholder="e.g. 9876543210"
-              {...register('phone')}
+              {...register('phone', {
+                onChange: (e) => {
+                  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                }
+              })}
+              maxLength={10}
               className={`w-full bg-slate-50 dark:bg-slate-800/80 border ${
                 errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary'
               } text-slate-800 dark:text-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:ring-1 transition-all duration-200`}

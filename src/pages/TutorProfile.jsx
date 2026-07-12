@@ -21,6 +21,7 @@ import { TutorProfileSkeleton } from '../components/common/Skeleton';
 import Button from '../components/common/Button';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { parseArrayField } from '../utils/arrayHelper';
 
 
 
@@ -180,8 +181,8 @@ const TutorProfile = () => {
   const fullAddress = fullAddressParts.length > 0 ? fullAddressParts.join(', ') : city;
   const modes = Array.isArray(tutor.modes) ? tutor.modes : ['Online'];
   const about = tutor.about || tutor.bio || 'No biography details provided.';
-  const subjects = Array.isArray(tutor.subjects) ? tutor.subjects : [];
-  const classes = Array.isArray(tutor.classes) ? tutor.classes : [];
+  const subjects = parseArrayField(tutor.subjects);
+  const classes = parseArrayField(tutor.classes);
   const reviews = Array.isArray(tutor.reviews) ? tutor.reviews : [];
   const hourlyRate = tutor.hourlyRate || 500;
   const monthlyRate = tutor.monthlyRate || 3000;
@@ -406,32 +407,18 @@ const TutorProfile = () => {
                   <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
                     Subjects Taught
                   </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {subjects.map((sub, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1.5 bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 rounded-xl text-xs font-extrabold border border-slate-200/50 dark:border-slate-700/30"
-                      >
-                        {sub}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">
+                    {subjects.join(', ')}
+                  </p>
                 </div>
 
                 <div>
                   <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
                     Grade Classes
                   </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {classes.map((cls, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1.5 bg-amber-50 text-amber-700 dark:bg-amber-950/20 dark:text-amber-400 rounded-xl text-xs font-bold border border-amber-100/50 dark:border-amber-900/30"
-                      >
-                        {cls}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="text-sm text-slate-800 dark:text-slate-200 font-medium">
+                    {classes.join(', ')}
+                  </p>
                 </div>
               </div>
             </div>

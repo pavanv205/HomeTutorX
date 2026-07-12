@@ -28,6 +28,7 @@ exports.getDashboardStats = async (req, res, next) => {
       totalTutors = tutorsList.length;
       const verifiedTutors = tutorsList.filter(t => t.isVerified).length;
       const pendingTutors = tutorsList.filter(t => !t.isVerified).length;
+      const activeTutors = tutorsList.filter(t => t.paymentStatus === 'Paid').length;
       totalStudents = usersList.filter(u => u.role === 'Student').length;
 
       totalRequests = bookingsList.length;
@@ -73,7 +74,8 @@ exports.getDashboardStats = async (req, res, next) => {
           tutors: {
             total: totalTutors,
             verified: verifiedTutors,
-            pending: pendingTutors
+            pending: pendingTutors,
+            active: activeTutors
           },
           students: {
             total: totalStudents
@@ -101,6 +103,7 @@ exports.getDashboardStats = async (req, res, next) => {
     totalTutors = await Tutor.countDocuments();
     const verifiedTutors = await Tutor.countDocuments({ isVerified: true });
     const pendingTutors = await Tutor.countDocuments({ isVerified: false });
+    const activeTutors = await Tutor.countDocuments({ paymentStatus: 'Paid' });
     totalStudents = await User.countDocuments({ role: 'Student' });
 
     totalRequests = await StudentRequest.countDocuments();
@@ -165,7 +168,8 @@ exports.getDashboardStats = async (req, res, next) => {
         tutors: {
           total: totalTutors,
           verified: verifiedTutors,
-          pending: pendingTutors
+          pending: pendingTutors,
+          active: activeTutors
         },
         students: {
           total: totalStudents

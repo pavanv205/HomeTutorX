@@ -37,10 +37,10 @@ const RegisterStudent = () => {
       setErrorMsg('Please enter your phone number.');
       return;
     }
-    // Simple phone format checking (e.g. 10 digits)
-    const phoneRegex = /^[0-9]{10,12}$/;
-    if (!phoneRegex.test(phone.replace(/[\s-+()]/g, ''))) {
-      setErrorMsg('Please enter a valid phone number (10-12 digits).');
+    // Enforce exactly 10 digits mobile number starting with 6-9
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(phone.trim())) {
+      setErrorMsg('Please enter a valid 10-digit mobile number.');
       return;
     }
     setErrorMsg('');
@@ -206,11 +206,11 @@ const RegisterStudent = () => {
 
           {/* Stepper Progress Indicator */}
           <div className="flex items-center justify-center gap-2 py-4">
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs transition-colors duration-200 ${step === 1 ? 'bg-primary text-white' : 'bg-emerald-500 text-white'}`}>
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs transition-colors duration-200 ${step === 1 ? 'bg-slate-950 text-white dark:bg-slate-200 dark:text-slate-950' : 'bg-emerald-500 text-white'}`}>
               {step > 1 ? <FaCheck className="w-3.5 h-3.5" /> : '1'}
             </div>
             <div className={`h-1 w-16 rounded transition-colors duration-200 ${step > 1 ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`} />
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs transition-colors duration-200 ${step === 2 ? 'bg-primary text-white' : 'bg-slate-150 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}>
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-xs transition-colors duration-200 ${step === 2 ? 'bg-slate-950 text-white dark:bg-slate-200 dark:text-slate-950' : 'bg-slate-150 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}>
               2
             </div>
           </div>
@@ -277,7 +277,11 @@ const RegisterStudent = () => {
                       type="tel"
                       required
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        if (val.length <= 10) setPhone(val);
+                      }}
+                      maxLength={10}
                       placeholder="9876543210"
                       className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl py-3.5 pl-11 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                     />
@@ -288,7 +292,7 @@ const RegisterStudent = () => {
                   <button
                     type="button"
                     onClick={handleNextStep}
-                    className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-2xl text-sm font-bold shadow-lg shadow-primary/20 dark:shadow-none flex items-center justify-center gap-2 cursor-pointer transition duration-200"
+                    className="w-full bg-slate-950 hover:bg-slate-900 text-white dark:bg-slate-200 dark:hover:bg-slate-100 dark:text-slate-950 py-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 cursor-pointer transition duration-200"
                   >
                     Next Step <FaArrowRight className="h-3.5 w-3.5" />
                   </button>
@@ -373,10 +377,10 @@ const RegisterStudent = () => {
                     <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
                       Select Payment Method
                     </label>
-                    <div className="border border-primary bg-primary/5 dark:border-blue-500 dark:bg-blue-950/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
+                    <div className="border border-slate-950 bg-slate-950/5 dark:border-slate-100 dark:bg-slate-100/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
                       <div className="flex items-center gap-3.5">
-                        <div className="h-5 w-5 rounded-full border-2 border-primary dark:border-blue-500 flex items-center justify-center">
-                          <div className="h-2.5 w-2.5 rounded-full bg-primary dark:bg-blue-500" />
+                        <div className="h-5 w-5 rounded-full border-2 border-slate-950 dark:border-slate-100 flex items-center justify-center">
+                          <div className="h-2.5 w-2.5 rounded-full bg-slate-950 dark:bg-slate-100" />
                         </div>
                         <div>
                           <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
@@ -384,7 +388,7 @@ const RegisterStudent = () => {
                       </div>
                       <div className="text-right">
                         <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                        <span className="text-base font-extrabold text-primary dark:text-blue-400">₹29</span>
+                        <span className="text-base font-extrabold text-slate-950 dark:text-white">₹29</span>
                       </div>
                     </div>
                   </div>

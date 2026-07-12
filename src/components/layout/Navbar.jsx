@@ -38,8 +38,8 @@ const Navbar = () => {
   const activeStyle = ({ isActive }) =>
     `relative text-sm font-extrabold tracking-tight transition-colors duration-200 py-2 ${
       isActive
-        ? 'text-primary dark:text-blue-400 font-black'
-        : 'text-slate-950 hover:text-primary dark:text-slate-950 dark:hover:text-primary'
+        ? 'text-slate-950 dark:text-white font-black'
+        : 'text-slate-950 hover:text-slate-950 dark:text-slate-950 dark:hover:text-white'
     }`;
 
   return (
@@ -80,7 +80,7 @@ const Navbar = () => {
                       {isActive && (
                         <motion.span
                           layoutId="nav-underline"
-                          className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary dark:bg-blue-400 rounded-full"
+                          className="absolute left-0 right-0 bottom-0 h-0.5 bg-slate-950 dark:bg-white rounded-full"
                           transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                         />
                       )}
@@ -134,7 +134,7 @@ const Navbar = () => {
                   onMouseEnter={() => setIsLoginOpen(true)}
                   onMouseLeave={() => setIsLoginOpen(false)}
                 >
-                  <button className="text-xs font-bold text-slate-950 hover:text-primary dark:text-slate-950 dark:hover:text-primary py-2.5 px-3 cursor-pointer focus:outline-none">
+                  <button className="text-xs font-bold text-slate-950 hover:text-slate-950 dark:text-slate-950 dark:hover:text-white py-2.5 px-3 cursor-pointer focus:outline-none">
                     Login ▼
                   </button>
                   {/* Dropdown Menu */}
@@ -218,8 +218,8 @@ const Navbar = () => {
                     className={({ isActive }) =>
                       `text-lg font-bold transition-colors duration-200 ${
                         isActive
-                          ? 'text-primary dark:text-blue-400 font-extrabold'
-                          : 'text-slate-950 hover:text-primary dark:text-slate-950 dark:hover:text-primary'
+                          ? 'text-slate-950 dark:text-white font-extrabold'
+                          : 'text-slate-950 hover:text-slate-950 dark:text-slate-950 dark:hover:text-white'
                       }`
                     }
                   >
@@ -233,7 +233,7 @@ const Navbar = () => {
                     <Link
                       to={role === 'Admin' ? '/admin/dashboard' : role === 'Tutor' ? '/tutor/dashboard' : '/student/dashboard'}
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
+                      className="text-lg font-bold text-slate-950 dark:text-slate-200 hover:text-slate-800 dark:hover:text-white transition-colors"
                     >
                       Dashboard
                     </Link>
@@ -252,21 +252,21 @@ const Navbar = () => {
                     <Link
                       to="/login?role=student"
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
+                      className="text-lg font-bold text-slate-950 dark:text-slate-200 hover:text-slate-800 dark:hover:text-white transition-colors"
                     >
                       Student Login
                     </Link>
                     <Link
                       to="/login?role=teacher"
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
+                      className="text-lg font-bold text-slate-950 dark:text-slate-200 hover:text-slate-800 dark:hover:text-white transition-colors"
                     >
                       Tutor Login
                     </Link>
                     <Link
                       to="/login?role=admin"
                       onClick={() => setIsOpen(false)}
-                      className="text-lg font-bold text-slate-950 dark:text-slate-950 hover:text-primary dark:hover:text-primary transition-colors"
+                      className="text-lg font-bold text-slate-950 dark:text-slate-200 hover:text-slate-800 dark:hover:text-white transition-colors"
                     >
                       Admin Login
                     </Link>

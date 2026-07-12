@@ -62,7 +62,7 @@ const AboutUs = () => {
         {/* Story & Introduction */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 space-y-6">
-            <span className="text-xs font-bold text-primary dark:text-blue-500 uppercase tracking-widest block">
+            <span className="text-xs font-bold text-amber-900 dark:text-amber-400 uppercase tracking-widest block">
               Our Journey
             </span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white leading-tight">
@@ -141,9 +141,6 @@ const AboutUs = () => {
         {/* Core Values / Why Choose Us */}
         <section className="space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <h2 className="text-xs font-bold text-primary dark:text-blue-500 uppercase tracking-widest">
-              Our Foundations
-            </h2>
             <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white">
               Why Parents Choose Us
             </h3>

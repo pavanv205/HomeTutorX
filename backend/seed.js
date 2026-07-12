@@ -72,7 +72,8 @@ const seedDatabase = async () => {
         bio: 'Passionate mathematics and physics tutor with 5+ years of experience helping students achieve academic excellence.',
         photo: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80',
         resumeUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80',
-        isVerified: true
+        isVerified: true,
+        paymentStatus: 'Paid'
       });
 
       user.tutorProfile = tutor._id;
