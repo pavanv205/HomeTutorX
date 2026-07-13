@@ -1,55 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaGraduationCap, FaBars, FaTimes } from 'react-icons/fa';
+import { FaGraduationCap, FaBars, FaTimes, FaBell } from 'react-icons/fa';
 import { NAV_LINKS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-
-const GoldBellIcon = ({ className }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    className={className} 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <radialGradient id="bell-3d-body" cx="45%" cy="35%" r="65%" fx="35%" fy="25%">
-        <stop offset="0%" stopColor="#FFFEE5" />
-        <stop offset="25%" stopColor="#FFDD67" />
-        <stop offset="65%" stopColor="#E6A115" />
-        <stop offset="90%" stopColor="#B37400" />
-        <stop offset="100%" stopColor="#7F4C00" />
-      </radialGradient>
-      <linearGradient id="bell-3d-rim" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stopColor="#FFF9CF" />
-        <stop offset="40%" stopColor="#F5B041" />
-        <stop offset="100%" stopColor="#9A6000" />
-      </linearGradient>
-      <radialGradient id="bell-3d-clapper" cx="40%" cy="30%" r="70%">
-        <stop offset="0%" stopColor="#FFC85E" />
-        <stop offset="70%" stopColor="#B86900" />
-        <stop offset="100%" stopColor="#663300" />
-      </radialGradient>
-    </defs>
-    <path 
-      d="M10 19c0 1.1.9 2 2 2s2-.9 2-2h-4z" 
-      fill="url(#bell-3d-clapper)" 
-    />
-    <path 
-      d="M12 2a2.5 2.5 0 00-2.5 2.5V5h5v-.5A2.5 2.5 0 0012 2z" 
-      fill="url(#bell-3d-rim)" 
-    />
-    <path 
-      d="M12 4.5c-3.3 0-5.5 2.5-5.5 7.5 0 1.8-.7 3.3-1.3 4.5h13.6c-.6-1.2-1.3-2.7-1.3-4.5 0-5-2.2-7.5-5.5-7.5z" 
-      fill="url(#bell-3d-body)" 
-    />
-    <path 
-      d="M4.5 16.5h15a1 1 0 011 1v.5a1 1 0 01-1 1h-15a1 1 0 01-1-1v-.5a1 1 0 011-1z" 
-      fill="url(#bell-3d-rim)" 
-    />
-  </svg>
-);
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -162,8 +117,7 @@ const Navbar = () => {
             <div className="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/40 custom-scrollbar">
               {notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center px-4">
-                  <span className="text-xl mb-2 text-slate-350">🔔</span>
-                  <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">
+                  <p className="text-xs font-semibold text-slate-405 dark:text-slate-500">
                     No notifications yet.
                   </p>
                 </div>
@@ -294,9 +248,9 @@ const Navbar = () => {
                   <div className="relative">
                     <button
                       onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                      className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer relative flex items-center justify-center h-10 w-10"
+                      className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer relative"
                     >
-                      <GoldBellIcon className="h-6.5 w-6.5" />
+                      <FaBell style={{ color: '#FFD700' }} className="h-4.5 w-4.5" />
                       {unreadCount > 0 && (
                         <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-[#070b13]">
                           {unreadCount}
@@ -393,9 +347,9 @@ const Navbar = () => {
                 <div className="relative">
                   <button
                     onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                    className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer relative flex items-center justify-center h-9 w-9"
+                    className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer relative"
                   >
-                    <GoldBellIcon className="h-6 w-6" />
+                    <FaBell style={{ color: '#FFD700' }} className="h-4 w-4" />
                     {unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-[#070b13]">
                         {unreadCount}
