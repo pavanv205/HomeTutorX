@@ -250,7 +250,7 @@ const Navbar = () => {
                       onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                       className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer relative"
                     >
-                      <FaBell style={{ color: '#FFD700' }} className="h-4.5 w-4.5" />
+                      <FaBell className="h-4.5 w-4.5 text-slate-700 dark:text-slate-300" />
                       {unreadCount > 0 && (
                         <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-[#070b13]">
                           {unreadCount}
@@ -349,7 +349,7 @@ const Navbar = () => {
                     onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                     className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:outline-none cursor-pointer relative"
                   >
-                    <FaBell style={{ color: '#FFD700' }} className="h-4 w-4" />
+                    <FaBell className="h-4 w-4 text-slate-700 dark:text-slate-300" />
                     {unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-[#070b13]">
                         {unreadCount}
