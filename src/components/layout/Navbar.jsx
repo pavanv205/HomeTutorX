@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaGraduationCap, FaBars, FaTimes, FaBell } from 'react-icons/fa';
+import { FaGraduationCap, FaBars, FaTimes, FaBell, FaRegBell } from 'react-icons/fa';
 import { NAV_LINKS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
@@ -246,17 +246,20 @@ const Navbar = () => {
                 <>
                   {/* Notification Bell */}
                   <div className="relative">
-                    <button
-                      onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                      className="bell-btn"
-                    >
-                      <FaBell style={{ color: '#FFD700' }} className="bell-icon" />
+                    <label className="bell-container">
+                      <input
+                        type="checkbox"
+                        checked={isNotificationsOpen}
+                        onChange={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                      />
+                      <FaRegBell className="bell-regular" />
+                      <FaBell className="bell-solid" />
                       {unreadCount > 0 && (
                         <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-[#070b13]">
                           {unreadCount}
                         </span>
                       )}
-                    </button>
+                    </label>
                     {/* Render Dropdown */}
                     {notificationDropdown}
                   </div>
@@ -345,17 +348,20 @@ const Navbar = () => {
             <div className="flex md:hidden items-center gap-3">
               {isAuthenticated && (
                 <div className="relative">
-                  <button
-                    onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                    className="bell-btn scale-90"
-                  >
-                    <FaBell style={{ color: '#FFD700' }} className="bell-icon" />
+                  <label className="bell-container">
+                    <input
+                      type="checkbox"
+                      checked={isNotificationsOpen}
+                      onChange={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                    />
+                    <FaRegBell className="bell-regular" />
+                    <FaBell className="bell-solid" />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-[#070b13]">
+                      <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-[#070b13]">
                         {unreadCount}
                       </span>
                     )}
-                  </button>
+                  </label>
                   {/* Render Dropdown */}
                   {notificationDropdown}
                 </div>

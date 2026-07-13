@@ -570,63 +570,75 @@ input[type="range"] {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* From Uiverse.io by vinodjangid07 */ 
-.bell-btn {
+/* From Uiverse.io by catraco — Bell Toggle */
+.bell-container {
+  --color: #a5a5b0;
+  --size: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  font-size: var(--size);
+  user-select: none;
+  fill: var(--color);
   width: 38px;
   height: 38px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
+}
+
+.bell-container .bell-regular {
+  position: absolute;
+  animation: keyframes-bell-fill .5s;
+  color: #FFD700;
+  font-size: var(--size);
+}
+
+.bell-container .bell-solid {
+  position: absolute;
+  display: none;
+  animation: keyframes-bell-fill .5s;
+  color: #FFD700;
+  font-size: var(--size);
+}
+
+/* ------ On check event ------ */
+.bell-container input:checked ~ .bell-regular {
+  display: none;
+}
+
+.bell-container input:checked ~ .bell-solid {
+  display: block;
+}
+
+/* ------ Hide the default checkbox ------ */
+.bell-container input {
+  position: absolute;
+  opacity: 0;
   cursor: pointer;
-  transition-duration: .3s;
-  border: none;
-  outline: none;
+  height: 0;
+  width: 0;
 }
 
-.bell-icon {
-  width: 18px;
-  height: 18px;
-  transition-duration: .3s;
-}
-
-.bell-btn:hover {
-  background-color: transparent;
-}
-
-.bell-btn:hover .bell-icon {
-  animation: bellRing 0.9s both;
-}
-
-/* bell ringing animation keyframes*/
-@keyframes bellRing {
-  0%,
-  100% {
-    transform-origin: top;
+/* ------ Animation ------ */
+@keyframes keyframes-bell-fill {
+  0% {
+    opacity: 0;
   }
 
-  15% {
-    transform: rotateZ(10deg);
+  25% {
+    transform: rotate(25deg);
   }
 
-  30% {
-    transform: rotateZ(-10deg);
-  }
-
-  45% {
-    transform: rotateZ(5deg);
-  }
-
-  60% {
-    transform: rotateZ(-5deg);
+  50% {
+    transform: rotate(-20deg) scale(1.2);
   }
 
   75% {
-    transform: rotateZ(2deg);
+    transform: rotate(5deg);
   }
-}
 
-.bell-btn:active {
-  transform: scale(0.8);
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
 }
