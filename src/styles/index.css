@@ -82,6 +82,8 @@
   }
   html {
     @apply font-sans;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
   }
 }
 
