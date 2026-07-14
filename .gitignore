@@ -31,7 +31,12 @@ dist-ssr
 # Local database and uploads fallback
 backend/data/
 backend/uploads/
+
+# Vercel
 .vercel
 
-.vercel
-.env*
+# Android signing and sensitive files
+*.keystore
+*.jks
+keystore.properties
+local.properties

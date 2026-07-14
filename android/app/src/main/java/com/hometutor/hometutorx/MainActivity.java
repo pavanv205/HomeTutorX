@@ -1,4 +1,4 @@
-package com.hometutor.tutorconnect;
+package com.hometutor.hometutorx;
 
 import com.getcapacitor.BridgeActivity;
 
