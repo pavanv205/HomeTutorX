@@ -244,25 +244,27 @@ const Navbar = () => {
             <div className="hidden md:flex items-center gap-4">
               {isAuthenticated ? (
                 <>
-                  {/* Notification Bell */}
-                  <div className="relative">
-                    <label className="bell-container">
-                      <input
-                        type="checkbox"
-                        checked={isNotificationsOpen}
-                        onChange={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                      />
-                      <FaRegBell className="bell-regular" />
-                      <FaBell className="bell-solid" />
-                      {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-[#070b13]">
-                          {unreadCount}
-                        </span>
-                      )}
-                    </label>
-                    {/* Render Dropdown */}
-                    {notificationDropdown}
-                  </div>
+                  {/* Notification Bell — hidden for Admin */}
+                  {role !== 'Admin' && (
+                    <div className="relative">
+                      <label className="bell-container">
+                        <input
+                          type="checkbox"
+                          checked={isNotificationsOpen}
+                          onChange={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                        />
+                        <FaRegBell className="bell-regular" />
+                        <FaBell className="bell-solid" />
+                        {unreadCount > 0 && (
+                          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[8px] font-black text-white ring-2 ring-white dark:ring-[#070b13]">
+                            {unreadCount}
+                          </span>
+                        )}
+                      </label>
+                      {/* Render Dropdown */}
+                      {notificationDropdown}
+                    </div>
+                  )}
 
                   <div
                     className="relative"
@@ -346,7 +348,7 @@ const Navbar = () => {
 
             {/* Mobile Actions Header */}
             <div className="flex md:hidden items-center gap-3">
-              {isAuthenticated && (
+              {isAuthenticated && role !== 'Admin' && (
                 <div className="relative">
                   <label className="bell-container">
                     <input
