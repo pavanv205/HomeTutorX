@@ -45,6 +45,7 @@ const corsOptions = {
       !origin ||
       allowedOrigins.includes(origin) ||
       origin === 'http://localhost' ||
+      origin === 'https://localhost' ||
       origin === 'capacitor://localhost' ||
       /https?:\/\/.*\.vercel\.app$/.test(origin) ||
       /https?:\/\/.*\.hometutorx\.in$/.test(origin) ||

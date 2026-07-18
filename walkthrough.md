@@ -190,6 +190,13 @@
 
 ---
 
+### 32. Fixed Android API Connectivity and Geolocation Permissions
+- **Added Android HTTPS scheme support in backend CORS policy**: Added `https://localhost` to the allowed origin check in [server.js](file:///d:/desktop/HomeTutorX/backend/server.js). This ensures that requests originating from the Android Capacitor webview (running under `androidScheme: 'https'`) are not rejected by the backend server due to CORS.
+- **Declared Location Permissions in AndroidManifest**: Added `ACCESS_COARSE_LOCATION` and `ACCESS_FINE_LOCATION` permissions, as well as the `android.hardware.location.gps` feature (not required) in [AndroidManifest.xml](file:///d:/desktop/HomeTutorX/android/app/src/main/AndroidManifest.xml). This enables the native Android app to query the system location and prompt the user for permissions when searching for tutors near them.
+- **Synchronized Assets**: Re-ran the production frontend build (`npm run build`) and Capacitor sync (`npx cap sync`) to pack these updates into the Android native assets directory.
+
+---
+
 ## 🚀 Verification Results
 
 ### 1. Successful Client Build Compilation
