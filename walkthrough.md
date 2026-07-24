@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 68. Real-Time Dynamic Tutors Leads and Views Counters
+- **Leads Counter Optimization**: Updated the tutor directory controller [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js) to dynamically calculate the `leadsCount` on fetch from actual, real-time booking requests in the database.
+- **Views Counter Owner Filter**: Enhanced `getTutorById` in [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js) to skip incrementing the profile views counter when the viewer is the tutor themselves. This keeps the dashboard views count authentic and focused only on external visitors.
+
+---
+
 ### 67. Resolved Notification Click Action (Opening the Application on Tap)
 - **FCM Click Action Fix**: Removed the legacy `clickAction: 'FCM_PLUGIN_ACTIVITY'` parameter from the backend Firebase Cloud Messaging delivery payload inside [fcmService.js](file:///d:/desktop/HomeTutorX/backend/services/fcmService.js). Android now successfully defaults to launching the app's `MainActivity` when a notification is clicked in the tray.
 
