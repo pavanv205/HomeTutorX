@@ -172,7 +172,12 @@ const TutorDashboard = () => {
       // 1. Fetch tutor profile
       const tutorId = typeof user.tutorProfile === 'object' ? user.tutorProfile._id : user.tutorProfile;
       const profileRes = await api.get(`/tutors/${tutorId}`);
-      setTutorProfile(profileRes.data || null);
+      const rawProfile = profileRes.data || null;
+      if (rawProfile) {
+        rawProfile.subjects = parseArrayField(rawProfile.subjects);
+        rawProfile.classes = parseArrayField(rawProfile.classes);
+      }
+      setTutorProfile(rawProfile);
 
       // 2. Fetch tutor bookings
       const bookingsRes = await api.get('/bookings');
@@ -335,7 +340,12 @@ const TutorDashboard = () => {
       }
 
       if (res.data && res.data.success) {
-        setTutorProfile(res.data.data);
+        const savedProfile = res.data.data;
+        if (savedProfile) {
+          savedProfile.subjects = parseArrayField(savedProfile.subjects);
+          savedProfile.classes = parseArrayField(savedProfile.classes);
+        }
+        setTutorProfile(savedProfile);
         setPhotoFile(null);
         setMessage({ text: 'Profile updated successfully!', type: 'success' });
       }

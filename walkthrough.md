@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 65. Customized Dedicated Notification Icon Image Asset (`ic_notification.png`)
+- **Asset Registration**: Copied the custom PNG image from the user's Downloads folder directly into the native [android/app/src/main/res/drawable/ic_notification.png](file:///d:/desktop/HomeTutorX/android/app/src/main/res/drawable/ic_notification.png) directory.
+- **System Config Update**: Updated [AndroidManifest.xml](file:///d:/desktop/HomeTutorX/android/app/src/main/AndroidManifest.xml) and [capacitor.config.ts](file:///d:/desktop/HomeTutorX/capacitor.config.ts) to replace `ic_launcher` with `ic_notification` for both push and local notification smallIcon properties.
+- **Frontend & Backend Delivery**: Modified [nativeNotificationHelper.js](file:///d:/desktop/HomeTutorX/src/utils/nativeNotificationHelper.js) and [fcmService.js](file:///d:/desktop/HomeTutorX/backend/services/fcmService.js) to schedule and dispatch native notifications using the newly registered `ic_notification` resource asset.
+
+---
+
 ### 64. Full-Color Large Notification Icon Integration
 - **Local Notification Large Icon**: Updated [nativeNotificationHelper.js](file:///d:/desktop/HomeTutorX/src/utils/nativeNotificationHelper.js) to schedule local notifications with `largeIcon: 'ic_launcher'` and `smallIcon: 'ic_launcher'`. This loads the full-color HomeTutorX logo on the side of the notification block in the drawer.
 - **Background Push Large Icon**: Updated [fcmService.js](file:///d:/desktop/HomeTutorX/backend/services/fcmService.js) to include `icon: 'ic_launcher'` and `color: '#0F172A'` inside the Android notification options payload block for background push alerts.

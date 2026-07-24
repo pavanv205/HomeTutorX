@@ -41,6 +41,50 @@ const devError = (...args) => {
   }
 };
 
+const parseIfJson = (val) => {
+  if (!val) return [];
+  let arr = [];
+  if (Array.isArray(val)) {
+    arr = val;
+  } else if (typeof val === 'string') {
+    const trimmed = val.trim();
+    if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+      try {
+        arr = JSON.parse(trimmed);
+      } catch (e) {
+        arr = [val];
+      }
+    } else {
+      arr = trimmed.split(',').map(s => s.trim()).filter(Boolean);
+    }
+  } else {
+    arr = [val];
+  }
+  
+  const flat = [];
+  const flatten = (item) => {
+    if (Array.isArray(item)) {
+      item.forEach(flatten);
+    } else if (typeof item === 'string') {
+      const t = item.trim();
+      if (t.startsWith('[') && t.endsWith(']')) {
+        try {
+          JSON.parse(t).forEach(flatten);
+        } catch (e) {
+          flat.push(t);
+        }
+      } else {
+        flat.push(t);
+      }
+    } else if (item !== undefined && item !== null) {
+      flat.push(item);
+    }
+  };
+  flatten(arr);
+  
+  return [...new Set(flat.map(s => String(s).trim()).filter(Boolean))];
+};
+
 exports.createTutor = async (req, res, next) => {
   try {
     const data = req.body || {};
@@ -122,16 +166,6 @@ exports.createTutor = async (req, res, next) => {
     if (emailTutorExists && emailTutorExists.userId?.toString() !== req.user._id.toString()) {
       return res.status(400).json({ success: false, message: 'Email already registered' });
     }
-
-    // Parse array fields if sent as JSON strings (multipart/form-data)
-    const parseIfJson = (val) => {
-      if (!val) return [];
-      if (Array.isArray(val)) return val;
-      if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
-        try { return JSON.parse(val); } catch (e) { return [val]; }
-      }
-      return [val];
-    };
 
     const parsedSubjects = parseIfJson(subjectsVal);
     const parsedClasses = parseIfJson(classesVal);
@@ -430,6 +464,14 @@ exports.updateTutor = async (req, res, next) => {
     }
 
     const data = req.body || {};
+
+    // Clean and parse all array fields to prevent nested stringified arrays or duplicates
+    const arrayFields = ['subjects', 'classes', 'preferredLocations', 'availableTimings', 'languages', 'previousInstitutions'];
+    arrayFields.forEach(field => {
+      if (data[field] !== undefined) {
+        data[field] = parseIfJson(data[field]);
+      }
+    });
 
     if (data.email) {
       const normalizedEmail = data.email.trim().toLowerCase();

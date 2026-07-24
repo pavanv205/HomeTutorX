@@ -64,5 +64,6 @@ export const parseArrayField = (fieldData) => {
   };
 
   result.forEach(processItem);
-  return cleanResult.map(item => String(item).trim()).filter(Boolean);
+  const mapped = cleanResult.map(item => String(item).trim()).filter(Boolean);
+  return [...new Set(mapped)];
 };
