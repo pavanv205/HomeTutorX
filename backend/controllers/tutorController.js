@@ -81,8 +81,23 @@ const parseIfJson = (val) => {
     }
   };
   flatten(arr);
-  
   return [...new Set(flat.map(s => String(s).trim()).filter(Boolean))];
+};
+
+const populateDynamicLeads = async (tutors, isOffline) => {
+  if (!tutors || tutors.length === 0) return;
+  if (isOffline) {
+    const dbFallback = require('../utils/dbFallback');
+    const bookingsList = await dbFallback.getBookings();
+    tutors.forEach(t => {
+      t.leadsCount = bookingsList.filter(b => String(b.assignedTutor) === String(t._id)).length;
+    });
+  } else {
+    const Booking = require('../models/Booking');
+    await Promise.all(tutors.map(async (t) => {
+      t.leadsCount = await Booking.countDocuments({ assignedTutor: t._id });
+    }));
+  }
 };
 
 exports.createTutor = async (req, res, next) => {
@@ -358,6 +373,7 @@ exports.getTutors = async (req, res, next) => {
       filters.hourlyRate = { $lte: Number(maxPrice) };
     }
 
+    const isOffline = mongoose.connection.readyState !== 1;
     const page = parseInt(req.query.page, 10);
     const limit = parseInt(req.query.limit, 10) || 10;
 
@@ -370,6 +386,7 @@ exports.getTutors = async (req, res, next) => {
         .skip(skip)
         .limit(limit)
         .lean();
+      await populateDynamicLeads(tutors, isOffline);
       console.log('[GET TUTORS] Returned page count:', tutors.length);
 
       return res.json({
@@ -386,6 +403,7 @@ exports.getTutors = async (req, res, next) => {
     }
 
     const tutors = await Tutor.find(filters).sort({ createdAt: -1 }).limit(100).lean();
+    await populateDynamicLeads(tutors, isOffline);
     console.log('[GET TUTORS] Returned docs count (no pagination):', tutors.length);
     res.json(tutors);
   } catch (err) {
@@ -402,21 +420,66 @@ exports.getTutors = async (req, res, next) => {
 exports.getTutorById = async (req, res, next) => {
   try {
     let tutor;
-    if (mongoose.connection.readyState !== 1) {
+    const isOffline = mongoose.connection.readyState !== 1;
+    if (isOffline) {
       console.log('🔌 MongoDB is offline. Running getTutorById in Fallback mode.');
       const dbFallback = require('../utils/dbFallback');
       const tutorsList = await dbFallback.getTutors();
       tutor = tutorsList.find(t => String(t._id) === String(req.params.id));
       if (tutor) {
-        tutor.viewsCount = (tutor.viewsCount || 0) + 1;
-        await dbFallback.updateTutor(tutor._id, { viewsCount: tutor.viewsCount });
+        let requesterUserId = null;
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+          const token = req.headers.authorization.split(' ')[1];
+          try {
+            if (process.env.JWT_SECRET) {
+              const decoded = jwt.verify(token, process.env.JWT_SECRET);
+              requesterUserId = decoded.id;
+            }
+          } catch (e) {}
+        }
+        const isOwner = requesterUserId && tutor.userId && String(tutor.userId) === String(requesterUserId);
+        if (!isOwner) {
+          tutor.viewsCount = (tutor.viewsCount || 0) + 1;
+          await dbFallback.updateTutor(tutor._id, { viewsCount: tutor.viewsCount });
+        }
+
+        // Calculate dynamic leadsCount
+        const bookingsList = await dbFallback.getBookings();
+        const leadsCount = bookingsList.filter(b => String(b.assignedTutor) === String(tutor._id)).length;
+        tutor.leadsCount = leadsCount;
+        await dbFallback.updateTutor(tutor._id, { leadsCount: leadsCount });
       }
     } else {
-      tutor = await Tutor.findByIdAndUpdate(
-        req.params.id,
-        { $inc: { viewsCount: 1 } },
-        { new: true }
-      ).lean();
+      tutor = await Tutor.findById(req.params.id).lean();
+      if (tutor) {
+        let requesterUserId = null;
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+          const token = req.headers.authorization.split(' ')[1];
+          try {
+            if (process.env.JWT_SECRET) {
+              const decoded = jwt.verify(token, process.env.JWT_SECRET);
+              requesterUserId = decoded.id;
+            }
+          } catch (e) {}
+        }
+        const isOwner = requesterUserId && tutor.userId && String(tutor.userId) === String(requesterUserId);
+
+        const updates = {};
+        if (!isOwner) {
+          updates.$inc = { viewsCount: 1 };
+        }
+
+        // Calculate dynamic leadsCount
+        const Booking = require('../models/Booking');
+        const leadsCount = await Booking.countDocuments({ assignedTutor: tutor._id });
+        updates.leadsCount = leadsCount;
+
+        tutor = await Tutor.findByIdAndUpdate(
+          req.params.id,
+          updates,
+          { new: true }
+        ).lean();
+      }
     }
     if (!tutor) {
       return res.status(404).json({ success: false, message: 'Tutor not found' });

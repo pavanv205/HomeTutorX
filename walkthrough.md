@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 67. Resolved Notification Click Action (Opening the Application on Tap)
+- **FCM Click Action Fix**: Removed the legacy `clickAction: 'FCM_PLUGIN_ACTIVITY'` parameter from the backend Firebase Cloud Messaging delivery payload inside [fcmService.js](file:///d:/desktop/HomeTutorX/backend/services/fcmService.js). Android now successfully defaults to launching the app's `MainActivity` when a notification is clicked in the tray.
+
+---
+
 ### 66. Resolved Tutor Profile Subjects/Classes Duplication Issue
 - **Backend Array Normalization**: Implemented a global parsing and deduplication helper `parseIfJson` inside [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js) and wired it into `updateTutor`. This automatically flattens, deserializes, and deduplicates all incoming arrays (like `subjects` and `classes`) during profile updates.
 - **Frontend Array Normalization**: Updated [TutorDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/TutorDashboard.jsx) to run `parseArrayField` immediately when setting the tutor profile details in local state. This ensures checkbox toggle calculations always match array items exactly.
