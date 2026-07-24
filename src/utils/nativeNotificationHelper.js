@@ -63,7 +63,7 @@ export async function showLocalNotification(title, body, id = Math.floor(Math.ra
           body,
           id,
           channelId: 'hometutorx-alerts', // Route notification through high importance heads-up channel
-          largeIcon: 'ic_notification_large', // Display full-color app logo in drawer side
+          largeIcon: 'ic_notification', // Display full-color app logo in drawer side
           smallIcon: 'ic_notification', // Status bar silhouette mapping
           schedule: { at: new Date(Date.now() + 50) }, // Trigger immediately
           sound: null,
