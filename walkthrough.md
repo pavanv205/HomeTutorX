@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 62. Resolved Vercel 500 Serverless Crashes (Root Packaging & Node 22 Upgrades)
+- **Root Packaging Integration**: Added `firebase-admin` directly inside the root [package.json](file:///d:/desktop/HomeTutorX/package.json) dependencies. Since Vercel builds from the repository root, this ensures the Firebase SDK is successfully installed and compiled into the deployed serverless functions.
+- **Node.js 22 Runtime Configuration**: Added the `"engines": { "node": "22.x" }` configurations to both the root [package.json](file:///d:/desktop/HomeTutorX/package.json) and [package.json](file:///d:/desktop/HomeTutorX/backend/package.json). This upgrades Vercel's serverless builder execution environment from Node 18/20 to Node 22, fulfilling `firebase-admin`'s requirements.
+- **Enhanced API Diagnostics**: Updated the `/api/health` status check inside [server.js](file:///d:/desktop/HomeTutorX/backend/server.js) to monitor and return whether the Firebase Admin instance was successfully initialized on launch.
+
+---
+
 ### 61. Firebase Cloud Messaging (FCM) Integration for Native Push Notifications
 - **Backend Firebase Configuration**: Created [firebase.js](file:///d:/desktop/HomeTutorX/backend/config/firebase.js) to initialize the Firebase Admin SDK using the generated service account credentials (`firebase-service-account.json.json`). Also supported parsing credentials from the `FIREBASE_SERVICE_ACCOUNT` environment variable for secure serverless Vercel deployment.
 - **Backend Firebase Services**: Created [fcmService.js](file:///d:/desktop/HomeTutorX/backend/services/fcmService.js) to send multicast native pushes to device tokens, including custom notification payload handling and database token pruning of expired/dead registration keys.
