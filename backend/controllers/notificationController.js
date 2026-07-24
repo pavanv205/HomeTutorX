@@ -167,3 +167,45 @@ exports.subscribePush = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Subscribe client device to native FCM push notifications
+// @route   POST /api/notifications/subscribe-fcm
+// @access  Private
+exports.subscribeFcm = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ success: false, message: 'Invalid payload: FCM token is required' });
+    }
+
+    const isOffline = mongoose.connection.readyState !== 1;
+    if (isOffline) {
+      const usersList = await dbFallback.getUsers();
+      const user = usersList.find(u => String(u._id) === String(req.user._id));
+      if (user) {
+        if (!user.fcmTokens) user.fcmTokens = [];
+        if (!user.fcmTokens.includes(token)) {
+          user.fcmTokens.push(token);
+        }
+      }
+    } else {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      if (!user.fcmTokens) user.fcmTokens = [];
+      if (!user.fcmTokens.includes(token)) {
+        user.fcmTokens.push(token);
+        await user.save();
+      }
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'FCM token registered successfully'
+    });
+  } catch (err) {
+    next(err);
+  }
+};

@@ -10,6 +10,11 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     allowNavigation: ['hometutorx.in', '*.hometutorx.in', '*.razorpay.com', 'api.razorpay.com', 'checkout.razorpay.com']
+  },
+  plugins: {
+    PushNotifications: {
+      presentationOptions: ['badge', 'sound', 'alert']
+    }
   }
 };
 

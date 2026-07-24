@@ -448,6 +448,18 @@ npm run build
 
 ---
 
+### 61. Firebase Cloud Messaging (FCM) Integration for Native Push Notifications
+- **Backend Firebase Configuration**: Created [firebase.js](file:///d:/desktop/HomeTutorX/backend/config/firebase.js) to initialize the Firebase Admin SDK using the generated service account credentials (`firebase-service-account.json.json`). Also supported parsing credentials from the `FIREBASE_SERVICE_ACCOUNT` environment variable for secure serverless Vercel deployment.
+- **Backend Firebase Services**: Created [fcmService.js](file:///d:/desktop/HomeTutorX/backend/services/fcmService.js) to send multicast native pushes to device tokens, including custom notification payload handling and database token pruning of expired/dead registration keys.
+- **Extended User Schema**: Added `fcmTokens: { type: [String], default: [] }` in [User.js](file:///d:/desktop/HomeTutorX/backend/models/User.js).
+- **FCM Registration Endpoint**: Exposed a protected `/subscribe-fcm` endpoint inside [notificationRoutes.js](file:///d:/desktop/HomeTutorX/backend/routes/notificationRoutes.js) and [notificationController.js](file:///d:/desktop/HomeTutorX/backend/controllers/notificationController.js) for registration.
+- **Frontend native push integration**: Created [fcmPushHelper.js](file:///d:/desktop/HomeTutorX/src/utils/fcmPushHelper.js) to request permissions, register native devices with Google FCM, catch incoming messages in the foreground, and trigger role-based router redirections on banner click.
+- **Server Startup Hook**: Added config import in [server.js](file:///d:/desktop/HomeTutorX/backend/server.js) to initialize Firebase on server startup.
+- **Capacitor Sync & Plugin Config**: Updated and synced `@capacitor/push-notifications` to compile Firebase Messaging dependency structures natively on Android.
+- **Incremented Release Version**: Updated [build.gradle](file:///d:/desktop/HomeTutorX/android/app/build.gradle) to `versionCode 32` and `versionName "1.3.1"`.
+
+---
+
 ### 60. Enabled Native Heads-Up Banners (Notification Channel Importance High/Max Config)
 - **Notification Channel Creation**: Updated [nativeNotificationHelper.js](file:///d:/desktop/HomeTutorX/src/utils/nativeNotificationHelper.js) to programmatically register an Android notification channel (`hometutorx-alerts`) with **`importance: 5` (MAX)**, enabling heads-up banners, system default sounds, and device vibrations.
 - **Route Specific Notifications**: Modified scheduling calls to target the `hometutorx-alerts` channel explicitly. This forces Android to display visual peeking alert banners when notifications arrive.

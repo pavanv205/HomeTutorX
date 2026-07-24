@@ -66,11 +66,19 @@ const Navbar = () => {
 
     Promise.resolve().then(() => {
       fetchNotifications();
-      import('../../utils/pushSubscriptionHelper')
-        .then(({ subscribeUserToPush }) => {
-          subscribeUserToPush();
-        })
-        .catch(err => console.error('Failed to load push subscription helper:', err));
+      if (Capacitor.isNativePlatform()) {
+        import('../../utils/fcmPushHelper')
+          .then(({ registerFcmPush }) => {
+            registerFcmPush();
+          })
+          .catch(err => console.error('Failed to load FCM push helper:', err));
+      } else {
+        import('../../utils/pushSubscriptionHelper')
+          .then(({ subscribeUserToPush }) => {
+            subscribeUserToPush();
+          })
+          .catch(err => console.error('Failed to load push subscription helper:', err));
+      }
     });
 
     const interval = setInterval(fetchNotifications, 15000);

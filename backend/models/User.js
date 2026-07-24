@@ -53,7 +53,11 @@ const UserSchema = new mongoose.Schema({
         auth: { type: String, required: true }
       }
     }
-  ]
+  ],
+  fcmTokens: {
+    type: [String],
+    default: []
+  }
 }, {
   timestamps: true
 });

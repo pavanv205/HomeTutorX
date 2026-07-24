@@ -8,6 +8,7 @@ const errorHandler = require('./middleware/errorMiddleware');
 
 // Validate environment variables upfront on startup
 require('./config/env');
+require('./config/firebase');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -85,11 +86,14 @@ app.get('/api/health', async (req, res) => {
     const criticalVars = ['MONGODB_URI', 'JWT_SECRET', 'CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
     const missingVars = criticalVars.filter(key => !process.env[key] || process.env[key].trim() === '');
 
+    const { firebaseApp } = require('./config/firebase');
+
     res.status(200).json({
       success: true,
       data: {
         status: 'ok',
         database: dbStatus,
+        firebase: firebaseApp ? 'initialized' : 'missing',
         configStatus: missingVars.length === 0 ? 'valid' : `Missing: ${missingVars.join(', ')}`
       }
     });

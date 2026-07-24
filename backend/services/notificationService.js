@@ -35,6 +35,47 @@ const createNotification = async (recipientId, type, message) => {
       recipientUser = await User.findById(recipientId);
     }
 
+    // Trigger Native FCM Push Notifications if active device tokens exist
+    if (recipientUser && recipientUser.fcmTokens && recipientUser.fcmTokens.length > 0) {
+      const { sendFcmNotification } = require('./fcmService');
+      const cleanMessage = String(message)
+        .replace(/a new trial class/gi, 'a new class')
+        .replace(/a new trail class/gi, 'a new class')
+        .replace(/new trial class/gi, 'new class')
+        .replace(/new trail class/gi, 'new class')
+        .replace(/trial class request/gi, 'class request')
+        .replace(/trail class request/gi, 'class request')
+        .replace(/trial/gi, 'class')
+        .replace(/trail/gi, 'class');
+
+      const redirectUrl = recipientUser.role === 'Tutor' 
+        ? '/tutor/dashboard' 
+        : recipientUser.role === 'Student' 
+        ? '/student/dashboard' 
+        : '/admin/dashboard';
+
+      sendFcmNotification(
+        recipientUser.fcmTokens,
+        'HomeTutorX Alert',
+        cleanMessage,
+        { url: redirectUrl }
+      ).then(async (expiredTokens) => {
+        if (expiredTokens && expiredTokens.length > 0) {
+          console.log(`[FCM SERVICE] Pruning ${expiredTokens.length} expired FCM tokens from user: ${recipientId}`);
+          if (isOffline) {
+            recipientUser.fcmTokens = recipientUser.fcmTokens.filter(t => !expiredTokens.includes(t));
+          } else {
+            const User = require('../models/User');
+            await User.findByIdAndUpdate(recipientId, {
+              $pull: { fcmTokens: { $in: expiredTokens } }
+            });
+          }
+        }
+      }).catch(err => {
+        console.error('[FCM SERVICE] Background token pruning failed:', err.message);
+      });
+    }
+
     // Trigger Web Push lock screen notifications if active subscriptions exist
     if (recipientUser && recipientUser.pushSubscriptions && recipientUser.pushSubscriptions.length > 0) {
       // Determine redirection URL based on user role
