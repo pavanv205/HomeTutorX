@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 69. Seamless Silhouette Notification Icon Integration
+- **Silhouette Asset Migration**: Replaced the custom square notification image with your native [ic_launcher_foreground.webp](file:///d:/desktop/HomeTutorX/android/app/src/main/res/drawable/ic_notification.webp) asset (which is the transparent graduation cap logo itself). This permits Android's OS to automatically mask and draw the exact outline of your HomeTutorX graduation cap icon directly in the status bar and notifications banner.
+
+---
+
 ### 68. Real-Time Dynamic Tutors Leads and Views Counters
 - **Leads Counter Optimization**: Updated the tutor directory controller [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js) to dynamically calculate the `leadsCount` on fetch from actual, real-time booking requests in the database.
 - **Views Counter Owner Filter**: Enhanced `getTutorById` in [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js) to skip incrementing the profile views counter when the viewer is the tutor themselves. This keeps the dashboard views count authentic and focused only on external visitors.

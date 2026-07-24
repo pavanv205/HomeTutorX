@@ -372,8 +372,6 @@ exports.getTutors = async (req, res, next) => {
     if (maxPrice) {
       filters.hourlyRate = { $lte: Number(maxPrice) };
     }
-
-    const isOffline = mongoose.connection.readyState !== 1;
     const page = parseInt(req.query.page, 10);
     const limit = parseInt(req.query.limit, 10) || 10;
 
