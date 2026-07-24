@@ -30,7 +30,6 @@ async function sendFcmNotification(tokens, title, body, data = {}) {
       android: {
         notification: {
           sound: 'default',
-          clickAction: 'FCM_PLUGIN_ACTIVITY',
           channelId: 'hometutorx-alerts', // Routes notifications to the high importance heads-up channel
           icon: 'ic_notification',
           color: '#0F172A'

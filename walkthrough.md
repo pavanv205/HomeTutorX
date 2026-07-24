@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 66. Resolved Tutor Profile Subjects/Classes Duplication Issue
+- **Backend Array Normalization**: Implemented a global parsing and deduplication helper `parseIfJson` inside [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js) and wired it into `updateTutor`. This automatically flattens, deserializes, and deduplicates all incoming arrays (like `subjects` and `classes`) during profile updates.
+- **Frontend Array Normalization**: Updated [TutorDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/TutorDashboard.jsx) to run `parseArrayField` immediately when setting the tutor profile details in local state. This ensures checkbox toggle calculations always match array items exactly.
+- **UI Double-Insurance**: Updated [arrayHelper.js](file:///d:/desktop/HomeTutorX/src/utils/arrayHelper.js) to automatically deduplicate array items returned by `parseArrayField`. This cleans up existing legacy records on render instantly.
+
+---
+
 ### 65. Customized Dedicated Notification Icon Image Asset (`ic_notification.png`)
 - **Asset Registration**: Copied the custom PNG image from the user's Downloads folder directly into the native [android/app/src/main/res/drawable/ic_notification.png](file:///d:/desktop/HomeTutorX/android/app/src/main/res/drawable/ic_notification.png) directory.
 - **System Config Update**: Updated [AndroidManifest.xml](file:///d:/desktop/HomeTutorX/android/app/src/main/AndroidManifest.xml) and [capacitor.config.ts](file:///d:/desktop/HomeTutorX/capacitor.config.ts) to replace `ic_launcher` with `ic_notification` for both push and local notification smallIcon properties.
