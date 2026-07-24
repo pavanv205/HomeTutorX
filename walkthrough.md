@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 63. Custom Notification Icon Configuration (Matching HomeTutorX App Logo)
+- **Firebase Default Notification Icon**: Declared metadata tags inside [AndroidManifest.xml](file:///d:/desktop/HomeTutorX/android/app/src/main/AndroidManifest.xml) linking default incoming push notifications to `@mipmap/ic_launcher` (the HomeTutorX logo).
+- **Capacitor Local Notifications Config**: Updated [capacitor.config.ts](file:///d:/desktop/HomeTutorX/capacitor.config.ts) to define default `smallIcon: 'ic_launcher'` and custom tint `iconColor: '#0F172A'` matching the dark theme of the app.
+
+---
+
 ### 62. Resolved Vercel 500 Serverless Crashes (Root Packaging & Node 22 Upgrades)
 - **Root Packaging Integration**: Added `firebase-admin` directly inside the root [package.json](file:///d:/desktop/HomeTutorX/package.json) dependencies. Since Vercel builds from the repository root, this ensures the Firebase SDK is successfully installed and compiled into the deployed serverless functions.
 - **Node.js 22 Runtime Configuration**: Added the `"engines": { "node": "22.x" }` configurations to both the root [package.json](file:///d:/desktop/HomeTutorX/package.json) and [package.json](file:///d:/desktop/HomeTutorX/backend/package.json). This upgrades Vercel's serverless builder execution environment from Node 18/20 to Node 22, fulfilling `firebase-admin`'s requirements.

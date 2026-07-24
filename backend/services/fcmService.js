@@ -31,7 +31,9 @@ async function sendFcmNotification(tokens, title, body, data = {}) {
         notification: {
           sound: 'default',
           clickAction: 'FCM_PLUGIN_ACTIVITY',
-          channelId: 'hometutorx-alerts' // Routes notifications to the high importance heads-up channel
+          channelId: 'hometutorx-alerts', // Routes notifications to the high importance heads-up channel
+          icon: 'ic_launcher',
+          color: '#0F172A'
         }
       },
       apns: {
