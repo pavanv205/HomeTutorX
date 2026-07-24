@@ -16,7 +16,7 @@ const config: CapacitorConfig = {
       presentationOptions: ['badge', 'sound', 'alert']
     },
     LocalNotifications: {
-      smallIcon: 'ic_launcher',
+      smallIcon: 'ic_notification',
       iconColor: '#0F172A'
     }
   }

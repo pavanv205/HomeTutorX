@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 64. Full-Color Large Notification Icon Integration
+- **Local Notification Large Icon**: Updated [nativeNotificationHelper.js](file:///d:/desktop/HomeTutorX/src/utils/nativeNotificationHelper.js) to schedule local notifications with `largeIcon: 'ic_launcher'` and `smallIcon: 'ic_launcher'`. This loads the full-color HomeTutorX logo on the side of the notification block in the drawer.
+- **Background Push Large Icon**: Updated [fcmService.js](file:///d:/desktop/HomeTutorX/backend/services/fcmService.js) to include `icon: 'ic_launcher'` and `color: '#0F172A'` inside the Android notification options payload block for background push alerts.
+
+---
+
 ### 63. Custom Notification Icon Configuration (Matching HomeTutorX App Logo)
 - **Firebase Default Notification Icon**: Declared metadata tags inside [AndroidManifest.xml](file:///d:/desktop/HomeTutorX/android/app/src/main/AndroidManifest.xml) linking default incoming push notifications to `@mipmap/ic_launcher` (the HomeTutorX logo).
 - **Capacitor Local Notifications Config**: Updated [capacitor.config.ts](file:///d:/desktop/HomeTutorX/capacitor.config.ts) to define default `smallIcon: 'ic_launcher'` and custom tint `iconColor: '#0F172A'` matching the dark theme of the app.

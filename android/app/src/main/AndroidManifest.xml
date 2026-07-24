@@ -33,10 +33,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
-        <!-- Set default notification icon to app launcher logo -->
+        <!-- Set default notification icon to custom logo -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/ic_launcher" />
+            android:resource="@drawable/ic_notification" />
     </application>
 
     <!-- Permissions -->
