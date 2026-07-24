@@ -40,9 +40,28 @@ exports.getNotifications = async (req, res, next) => {
       list = await Notification.find({ recipient: req.user._id }).sort({ createdAt: -1 });
     }
 
+    // Clean up any historical "trial" or "trail" phrasing dynamically on read
+    const cleanList = list.map(n => {
+      const obj = typeof n.toObject === 'function' ? n.toObject() : { ...n };
+      if (obj.message) {
+        obj.message = obj.message
+          .replace(/a new trial class/gi, 'a new class')
+          .replace(/a new trail class/gi, 'a new class')
+          .replace(/new trial class/gi, 'new class')
+          .replace(/new trail class/gi, 'new class')
+          .replace(/trial class request/gi, 'class request')
+          .replace(/trail class request/gi, 'class request')
+          .replace(/trial request/gi, 'class request')
+          .replace(/trail request/gi, 'class request')
+          .replace(/trial/gi, 'class')
+          .replace(/trail/gi, 'class');
+      }
+      return obj;
+    });
+
     res.status(200).json({
       success: true,
-      data: list
+      data: cleanList
     });
   } catch (err) {
     next(err);

@@ -5,6 +5,7 @@ import api from '../services/api';
 import SEO from '../components/common/SEO';
 import Button from '../components/common/Button';
 import { FaGraduationCap, FaPhone, FaMapMarkerAlt, FaUser, FaHistory, FaTimes, FaTrash } from 'react-icons/fa';
+import { parseArrayField } from '../utils/arrayHelper';
 
 const StudentDashboard = () => {
   const { user, logout } = useAuth();
@@ -187,10 +188,10 @@ const StudentDashboard = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <h4 className="text-sm font-bold text-slate-850 dark:text-slate-100">
-                              {booking.subject}
+                              {parseArrayField(booking.subject).join(', ')}
                             </h4>
                             <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-0.5">
-                              Grade {booking.gradeClass} • {booking.preferredMode}
+                              Grade {parseArrayField(booking.gradeClass).join(', ')} • {booking.preferredMode}
                             </p>
                           </div>
                            {booking.status === 'Deleted' || booking.status === 'Completed' ? (

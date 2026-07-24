@@ -100,7 +100,7 @@ const RegisterStudent = () => {
 
       // 3. Initialize Razorpay Options
       const options = {
-        key: 'rzp_test_hometutorxkey', // Fallback key
+        key: import.meta.env.VITE_RAZORPAY_KEY || orderData.key || 'rzp_live_TAwDF3o7rjkreE',
         amount: orderData.amount, // ₹29.00 in paise
         currency: orderData.currency,
         name: 'HomeTutorX',
@@ -154,25 +154,9 @@ const RegisterStudent = () => {
         }
       };
 
-      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_hometutorxkey';
-      if (razorpayKey === 'rzp_test_hometutorxkey' || isMock) {
-        const simulateSuccess = window.confirm(
-          "HomeTutorX Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹29 for this student registration?"
-        );
-        if (simulateSuccess) {
-          const mockPaymentId = `pay_mock_${Math.random().toString(36).substring(2, 11)}`;
-          options.handler({ 
-            razorpay_payment_id: mockPaymentId,
-            razorpay_order_id: orderData.id,
-            razorpay_signature: 'mock_signature'
-          });
-        } else {
-          options.modal.ondismiss();
-        }
-      } else {
-        const rzp1 = new window.Razorpay({ ...options, key: razorpayKey });
-        rzp1.open();
-      }
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_live_TAwDF3o7rjkreE';
+      const rzp1 = new window.Razorpay({ ...options, key: razorpayKey });
+      rzp1.open();
     } catch (error) {
       console.error(error);
       setErrorMsg(error.message || 'Registration failed. Please try again.');

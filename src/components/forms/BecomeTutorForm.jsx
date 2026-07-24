@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FaUser, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaBook, FaUpload, FaSearch, FaCreditCard, FaExclamationTriangle, FaCheck } from 'react-icons/fa';
+import { Geolocation } from '@capacitor/geolocation';
 import { SUBJECTS, CLASSES, STATES, STATE_CITIES } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
@@ -171,33 +172,82 @@ const BecomeTutorForm = () => {
     return [...matches, ...nonMatches];
   }, [watchedState, citySearchQuery]);
 
-  const handleFetchLiveLocation = () => {
+  const handleFetchLiveLocation = async () => {
     const confirmLocation = window.confirm("Use only at your home location. Do you want to continue?");
     if (!confirmLocation) {
-      return;
-    }
-
-    if (!navigator.geolocation) {
-      setLocError('Geolocation is not supported by your browser.');
       return;
     }
 
     setLocLoading(true);
     setLocError('');
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setValue('lat', position.coords.latitude, { shouldValidate: true });
-        setValue('lng', position.coords.longitude, { shouldValidate: true });
+    // 1. Try Native Capacitor Geolocation (Android FusedLocationProviderClient)
+    try {
+      const coordinates = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 30000
+      });
+      if (coordinates && coordinates.coords) {
+        setValue('lat', coordinates.coords.latitude, { shouldValidate: true });
+        setValue('lng', coordinates.coords.longitude, { shouldValidate: true });
         setLocLoading(false);
-      },
-      (error) => {
-        console.error('Error fetching geolocation:', error);
-        setLocError('Location permission denied or timed out.');
+        return;
+      }
+    } catch (nativeErr) {
+      console.log('Native Capacitor Geolocation failed in form, trying web/fallback...', nativeErr);
+    }
+
+    // 2. Try Web HTML5 navigator.geolocation
+    if (navigator.geolocation) {
+      try {
+        const webPos = await new Promise((resolve) => {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve(pos),
+            () => resolve(null),
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
+          );
+        });
+        if (webPos && webPos.coords) {
+          setValue('lat', webPos.coords.latitude, { shouldValidate: true });
+          setValue('lng', webPos.coords.longitude, { shouldValidate: true });
+          setLocLoading(false);
+          return;
+        }
+      } catch (e) {
+        console.error('Web geolocation error:', e);
+      }
+    }
+
+    // 3. Fallback to IP Location APIs
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      const data = await res.json();
+      if (data && data.latitude && data.longitude) {
+        setValue('lat', data.latitude, { shouldValidate: true });
+        setValue('lng', data.longitude, { shouldValidate: true });
         setLocLoading(false);
-      },
-      { enableHighAccuracy: true, timeout: 6000 }
-    );
+        return;
+      }
+    } catch (e) {
+      console.error('Primary IP location failed:', e);
+    }
+
+    try {
+      const res = await fetch('https://ip-api.com/json/');
+      const data = await res.json();
+      if (data && data.lat && data.lon) {
+        setValue('lat', data.lat, { shouldValidate: true });
+        setValue('lng', data.lon, { shouldValidate: true });
+        setLocLoading(false);
+        return;
+      }
+    } catch (e) {
+      console.error('Secondary IP location failed:', e);
+    }
+
+    setLocError('Location permission denied or timed out. Please check location settings.');
+    setLocLoading(false);
   };
 
   const handleNext = async () => {
@@ -383,7 +433,7 @@ const BecomeTutorForm = () => {
 
       // Initialize Razorpay Options
       const options = {
-        key: 'rzp_test_hometutorxkey', // Fallback key
+        key: import.meta.env.VITE_RAZORPAY_KEY || orderData.key || 'rzp_live_TAwDF3o7rjkreE',
         amount: orderData.amount, // ₹29.00 in paise
         currency: orderData.currency,
         name: 'HomeTutorX',
@@ -449,25 +499,9 @@ const BecomeTutorForm = () => {
         }
       };
 
-      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_test_hometutorxkey';
-      if (razorpayKey === 'rzp_test_hometutorxkey' || isMock) {
-        const simulateSuccess = window.confirm(
-          "HomeTutorX Demo: Razorpay sandbox key is not configured.\n\nWould you like to simulate a successful Razorpay payment of ₹29 for this registration?"
-        );
-        if (simulateSuccess) {
-          const mockPaymentId = `pay_mock_${Math.random().toString(36).substring(2, 11)}`;
-          options.handler({ 
-            razorpay_payment_id: mockPaymentId,
-            razorpay_order_id: orderData.id,
-            razorpay_signature: 'mock_signature'
-          });
-        } else {
-          options.modal.ondismiss();
-        }
-      } else {
-        const rzp1 = new window.Razorpay({ ...options, key: razorpayKey });
-        rzp1.open();
-      }
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_live_TAwDF3o7rjkreE';
+      const rzp1 = new window.Razorpay({ ...options, key: razorpayKey });
+      rzp1.open();
     } catch (error) {
       console.error(error);
       setSubmitError(error.message || 'Registration failed. Please try again.');

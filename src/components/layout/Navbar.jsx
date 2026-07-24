@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaGraduationCap, FaBars, FaTimes, FaBell, FaRegBell } from 'react-icons/fa';
 import { NAV_LINKS } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { requestNotificationPermission, showLocalNotification } from '../../utils/nativeNotificationHelper';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,13 +16,40 @@ const Navbar = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { isAuthenticated, user, role, logout } = useAuth();
   const [notifications, setNotifications] = useState([]);
+  const navigate = useNavigate();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const fetchNotifications = async () => {
     try {
       const res = await api.get('/notifications');
       if (res.data && res.data.success) {
-        setNotifications(res.data.data || []);
+        const newList = res.data.data || [];
+        
+        // Only trigger native alerts for new incoming unread notifications after initial load
+        if (notifications.length > 0) {
+          const oldUnreadIds = new Set(notifications.filter(n => !n.isRead).map(n => n._id));
+          const brandNewUnread = newList.filter(n => !n.isRead && !oldUnreadIds.has(n._id));
+          
+          if (brandNewUnread.length > 0) {
+            brandNewUnread.forEach(n => {
+              // Convert hex Mongo ID to numeric ID for Capacitor LocalNotifications scheduling requirement
+              const numId = parseInt(n._id.substring(n._id.length - 8), 16) || Math.floor(Math.random() * 1000000);
+              const cleanMessage = String(n.message)
+                .replace(/a new trial class/gi, 'a new class')
+                .replace(/a new trail class/gi, 'a new class')
+                .replace(/new trial class/gi, 'new class')
+                .replace(/new trail class/gi, 'new class')
+                .replace(/trial class request/gi, 'class request')
+                .replace(/trail class request/gi, 'class request')
+                .replace(/trial/gi, 'class')
+                .replace(/trail/gi, 'class');
+
+              showLocalNotification('HomeTutorX', cleanMessage, numId);
+            });
+          }
+        }
+
+        setNotifications(newList);
       }
     } catch (err) {
       console.error('Failed to fetch notifications:', err);
@@ -47,10 +77,37 @@ const Navbar = () => {
     return () => clearInterval(interval);
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      // Check and request native notification permissions on mount
+      requestNotificationPermission();
+
+      // Setup Native Notification Action Click Listener
+      const clickListener = LocalNotifications.addListener(
+        'localNotificationActionPerformed',
+        (notificationAction) => {
+          console.log('[NATIVE NOTIFICATIONS] Action click performed:', notificationAction);
+          // Redirect to appropriate dashboard on click
+          if (role === 'Tutor' || (user && user.role === 'Tutor')) {
+            navigate('/tutor/dashboard');
+          } else if (role === 'Student' || (user && user.role === 'Student')) {
+            navigate('/student/dashboard');
+          } else if (role === 'Admin' || (user && user.role === 'Admin')) {
+            navigate('/admin/dashboard');
+          }
+        }
+      );
+
+      return () => {
+        clickListener.remove();
+      };
+    }
+  }, [isAuthenticated, role, user, navigate]);
+
   const handleMarkAsRead = async (id) => {
     try {
       await api.put(`/notifications/${id}/read`);
-      setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n));
+      setNotifications(prev => prev.filter(n => n._id !== id));
     } catch (err) {
       console.error('Failed to mark notification as read:', err);
     }
@@ -59,7 +116,7 @@ const Navbar = () => {
   const handleMarkAllAsRead = async () => {
     try {
       await api.put('/notifications/read-all');
-      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+      setNotifications([]);
     } catch (err) {
       console.error('Failed to mark all as read:', err);
     }
@@ -126,8 +183,15 @@ const Navbar = () => {
                   <div
                     key={n._id}
                     onClick={() => {
-                      if (!n.isRead) handleMarkAsRead(n._id);
+                      handleMarkAsRead(n._id);
                       setIsNotificationsOpen(false);
+                      if (role === 'Tutor' || (user && user.role === 'Tutor')) {
+                        navigate('/tutor/dashboard');
+                      } else if (role === 'Student' || (user && user.role === 'Student')) {
+                        navigate('/student/dashboard');
+                      } else if (role === 'Admin' || (user && user.role === 'Admin')) {
+                        navigate('/admin/dashboard');
+                      }
                     }}
                     className={`flex gap-3 px-5 py-3.5 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 cursor-pointer transition-colors ${
                       !n.isRead ? 'bg-slate-50/40 dark:bg-slate-800/10' : ''
@@ -146,7 +210,19 @@ const Navbar = () => {
                       <p className={`text-xs leading-relaxed text-left ${
                         !n.isRead ? 'text-slate-800 dark:text-slate-100 font-bold' : 'text-slate-500 dark:text-slate-400 font-medium'
                       }`}>
-                        {n.message}
+                        {n.message
+                          ? String(n.message)
+                              .replace(/a new trial class/gi, 'a new class')
+                              .replace(/a new trail class/gi, 'a new class')
+                              .replace(/new trial class/gi, 'new class')
+                              .replace(/new trail class/gi, 'new class')
+                              .replace(/trial class request/gi, 'class request')
+                              .replace(/trail class request/gi, 'class request')
+                              .replace(/trial request/gi, 'class request')
+                              .replace(/trail request/gi, 'class request')
+                              .replace(/trial/gi, 'class')
+                              .replace(/trail/gi, 'class')
+                          : ''}
                       </p>
                       <p className="text-[9px] text-slate-400 dark:text-slate-505 text-left font-semibold">
                         {formatTimeAgo(n.createdAt)}
@@ -163,14 +239,18 @@ const Navbar = () => {
   );
 
   useEffect(() => {
+    let currentScrolled = false;
     const handleScroll = () => {
-      if (window.scrollY > 20) {
+      const scrollY = window.scrollY;
+      if (!currentScrolled && scrollY > 40) {
+        currentScrolled = true;
         setIsScrolled(true);
-      } else {
+      } else if (currentScrolled && scrollY < 10) {
+        currentScrolled = false;
         setIsScrolled(false);
       }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -181,7 +261,7 @@ const Navbar = () => {
         setIsOpen(false);
       }
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -195,10 +275,10 @@ const Navbar = () => {
   return (
     <>
       <header
-        className={`sticky top-0 z-40 w-full transition-[padding,background-color,border-color,box-shadow] duration-300 ${
+        className={`sticky top-0 z-40 w-full py-3.5 transition-[background-color,border-color,box-shadow] duration-300 ${
           isScrolled
-            ? 'glass shadow-md shadow-slate-100/10 dark:shadow-none py-3 border-b border-slate-100/80 dark:border-slate-800/80'
-            : 'bg-transparent py-5 border-b border-transparent'
+            ? 'bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-md shadow-sm border-b border-slate-200/80 dark:border-slate-800/80'
+            : 'bg-slate-50/80 dark:bg-[#0B0F19]/80 backdrop-blur-md border-b border-transparent'
         }`}
       >
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FaSearch, FaFilter, FaTimes, FaUndo, FaMap, FaList, FaLocationArrow } from 'react-icons/fa';
+import { Geolocation } from '@capacitor/geolocation';
 import SEO from '../components/common/SEO';
 import { SUBJECTS, CLASSES, MODES, STATES, STATE_CITIES } from '../constants';
 import { tutorService } from '../services/tutorService';
@@ -52,7 +53,7 @@ const FindTutors = () => {
   const modeVal = searchParams.get('mode') || 'All';
   const stateVal = searchParams.get('state') || 'All';
   const divisionVal = searchParams.get('division') || 'All';
-  const maxPriceVal = searchParams.get('price') || '500';
+  const maxPriceVal = searchParams.get('price') || '';
 
   const filteredStates = React.useMemo(() => {
     return STATES.filter(s =>
@@ -160,30 +161,85 @@ const FindTutors = () => {
     };
   }, [searchVal, subjectVal, classVal, modeVal, stateVal, divisionVal, maxPriceVal, userCoords]);
 
-  const handleGetLocation = () => {
-    if (!navigator.geolocation) {
-      setGeoError('Geolocation is not supported by your browser.');
-      return;
-    }
-
+  const handleGetLocation = async () => {
     setGeoLoading(true);
     setGeoError(null);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
+    // 1. Try Native Capacitor Geolocation (Android FusedLocationProviderClient)
+    try {
+      const coordinates = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 30000
+      });
+      if (coordinates && coordinates.coords) {
         setUserCoords({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
+          lat: coordinates.coords.latitude,
+          lng: coordinates.coords.longitude
         });
         setGeoLoading(false);
-      },
-      (error) => {
-        console.error('Error fetching geolocation:', error);
-        setGeoError('Unable to retrieve location. Please allow location access.');
+        return;
+      }
+    } catch (nativeErr) {
+      console.log('Native Capacitor Geolocation failed, trying web/fallback...', nativeErr);
+    }
+
+    // 2. Try Web HTML5 navigator.geolocation
+    if (navigator.geolocation) {
+      try {
+        const webPos = await new Promise((resolve) => {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve(pos),
+            () => resolve(null),
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
+          );
+        });
+        if (webPos && webPos.coords) {
+          setUserCoords({
+            lat: webPos.coords.latitude,
+            lng: webPos.coords.longitude
+          });
+          setGeoLoading(false);
+          return;
+        }
+      } catch (e) {
+        console.error('Web geolocation error:', e);
+      }
+    }
+
+    // 3. Fallback to IP Location APIs
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      const data = await res.json();
+      if (data && data.latitude && data.longitude) {
+        setUserCoords({
+          lat: data.latitude,
+          lng: data.longitude
+        });
         setGeoLoading(false);
-      },
-      { enableHighAccuracy: true, timeout: 8000 }
-    );
+        return;
+      }
+    } catch (e) {
+      console.error('Primary IP location failed:', e);
+    }
+
+    try {
+      const res = await fetch('https://ip-api.com/json/');
+      const data = await res.json();
+      if (data && data.lat && data.lon) {
+        setUserCoords({
+          lat: data.lat,
+          lng: data.lon
+        });
+        setGeoLoading(false);
+        return;
+      }
+    } catch (e) {
+      console.error('Secondary IP location failed:', e);
+    }
+
+    setGeoError('Unable to retrieve location. Please check device location settings.');
+    setGeoLoading(false);
   };
 
   const updateParam = (key, value) => {

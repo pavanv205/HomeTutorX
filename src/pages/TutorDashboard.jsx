@@ -5,6 +5,7 @@ import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
 import { SUBJECTS, CLASSES } from '../constants';
 import { FaLock, FaEnvelope, FaPhone, FaUser, FaCheck, FaTimes } from 'react-icons/fa';
+import { parseArrayField } from '../utils/arrayHelper';
 
 const ColorfulGiftIcon = ({ className = "h-6 w-6" }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -780,10 +781,10 @@ const TutorDashboard = () => {
                             {/* Requirement Details */}
                             <div className="space-y-2 text-xs font-semibold text-slate-650 dark:text-slate-350">
                               <div>
-                                <span>Subject: <strong className="text-slate-800 dark:text-slate-200">{booking.subject}</strong></span>
+                                <span>Subject: <strong className="text-slate-800 dark:text-slate-200">{parseArrayField(booking.subject).join(', ')}</strong></span>
                               </div>
                               <div>
-                                <span>Class: <strong className="text-slate-800 dark:text-slate-200">{booking.gradeClass}</strong></span>
+                                <span>Class: <strong className="text-slate-800 dark:text-slate-200">{parseArrayField(booking.gradeClass).join(', ')}</strong></span>
                               </div>
                               <div>
                                 <span>Mode: <strong className="text-slate-800 dark:text-slate-200">{booking.preferredMode}</strong></span>

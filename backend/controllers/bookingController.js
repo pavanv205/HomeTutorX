@@ -57,13 +57,13 @@ exports.createBooking = async (req, res, next) => {
         if (tutorObj) {
           tutorObj.leadsCount = (tutorObj.leadsCount || 0) + 1;
           await dbFallback.updateTutor(tutorObj._id, { leadsCount: tutorObj.leadsCount });
-          const { createNotification } = require('../services/notificationService');
-          await createNotification(tutorObj.userId, 'RequestSent', `You have received a new trial class request from ${studentName} for ${subject}.`);
+           const { createNotification } = require('../services/notificationService');
+          await createNotification(tutorObj.userId, 'RequestSent', `You have received a new class request from ${studentName} for ${subject}.`);
         }
       }
       return res.status(201).json({
         success: true,
-        message: 'Trial class request received successfully! We will reach out shortly.',
+        message: 'Class request received successfully! We will reach out shortly.',
         bookingId: bookingId
       });
     }
@@ -113,13 +113,13 @@ exports.createBooking = async (req, res, next) => {
       const tutor = await Tutor.findById(bookingData.assignedTutor);
       if (tutor && tutor.userId) {
         const { createNotification } = require('../services/notificationService');
-        await createNotification(tutor.userId, 'RequestSent', `You have received a new trial class request from ${studentName} for ${subject}.`);
+        await createNotification(tutor.userId, 'RequestSent', `You have received a new class request from ${studentName} for ${subject}.`);
       }
     }
 
     res.status(201).json({
       success: true,
-      message: 'Trial class request received successfully! We will reach out shortly.',
+      message: 'Class request received successfully! We will reach out shortly.',
       bookingId: booking._id
     });
   } catch (err) {
@@ -282,7 +282,7 @@ exports.updateBooking = async (req, res, next) => {
           const tutorObj = tutorsList.find(t => String(t._id) === String(booking.assignedTutor));
           const tutorName = tutorObj ? tutorObj.fullName : 'Your Tutor';
           const { createNotification } = require('../services/notificationService');
-          await createNotification(studentUser._id, 'RequestAccepted', `Your trial request for ${booking.subject} has been accepted by ${tutorName}.`);
+          await createNotification(studentUser._id, 'RequestAccepted', `Your class request for ${booking.subject} has been accepted by ${tutorName}.`);
         }
       }
       return res.status(200).json({
@@ -346,7 +346,7 @@ exports.updateBooking = async (req, res, next) => {
         const tutor = await Tutor.findById(booking.assignedTutor);
         const tutorName = tutor ? tutor.fullName : 'Your Tutor';
         const { createNotification } = require('../services/notificationService');
-        await createNotification(studentUser._id, 'RequestAccepted', `Your trial request for ${booking.subject} has been accepted by ${tutorName}.`);
+        await createNotification(studentUser._id, 'RequestAccepted', `Your class request for ${booking.subject} has been accepted by ${tutorName}.`);
       }
     }
 

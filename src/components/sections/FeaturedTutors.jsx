@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaBriefcase, FaGraduationCap, FaMapMarkerAlt, FaUser, FaCalendarAlt } from 'react-icons/fa';
+import { FaGraduationCap, FaMapMarkerAlt, FaUser, FaCalendarAlt } from 'react-icons/fa';
 import { tutorService } from '../../services/tutorService';
 import { useBookingModal } from '../../context/BookingModalContext';
 import { TutorCardSkeleton } from '../common/Skeleton';
@@ -69,19 +69,25 @@ export const TutorCard = ({ tutor }) => {
               {name}
             </h4>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
-              <FaGraduationCap className="text-slate-400 text-sm" />
+              <FaGraduationCap className="text-slate-404 text-sm" />
               <span className="truncate max-w-[150px]">{qualification}</span>
             </p>
 
 
           </div>
+          {tutor.isVerified && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EAF8E6] dark:bg-emerald-950/20 text-[#00875A] dark:text-emerald-400 font-extrabold text-[11px] border border-[#D5F2CD] dark:border-emerald-900/30 shadow-sm shrink-0 mt-0.5">
+              Verified
+              <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <rect width="16" height="16" rx="4" fill="#3CD070" />
+                <path d="M5 8.5L7 10.5L11 5.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              </svg>
+            </span>
+          )}
         </div>
 
         {/* Experience & City */}
         <div className="mt-5 flex flex-wrap gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
-          <span className="flex items-center gap-1">
-            <FaBriefcase className="text-slate-404 text-sm" /> {experience} Yrs Exp
-          </span>
           <span className="flex items-center gap-1 flex-1">
             <FaMapMarkerAlt className="text-slate-400 text-sm shrink-0" /> 
             <span className="line-clamp-2" title={fullAddress}>{fullAddress}</span>

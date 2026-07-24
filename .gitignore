@@ -40,3 +40,8 @@ backend/uploads/
 *.jks
 keystore.properties
 local.properties
+
+# Firebase Admin Private Keys
+backend/firebase-service-account.json.json
+backend/firebase-service-account*.json
+

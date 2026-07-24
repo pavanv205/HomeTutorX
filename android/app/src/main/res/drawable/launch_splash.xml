@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <!-- Black background -->
+        <color android:color="#000000"/>
+    </item>
+    <item>
+        <!-- Center the splash logo at its native 512x512 size without stretching -->
+        <bitmap
+            android:src="@drawable/splash_logo"
+            android:gravity="center"/>
+    </item>
+</layer-list>

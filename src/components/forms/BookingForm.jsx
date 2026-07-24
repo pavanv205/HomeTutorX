@@ -9,6 +9,7 @@ import { bookingService } from '../../services/bookingService';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
 import { getAvatarStyle } from '../../utils/avatarHelper';
+import { parseArrayField } from '../../utils/arrayHelper';
 
 const CelebrationIcon = () => (
   <div className="relative h-20 w-20 mx-auto mb-6 flex items-center justify-center select-none pointer-events-none">
@@ -156,8 +157,8 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
           studentEmail: user?.email || '',
           email: user?.email || '',
           phone: user?.phone || '1234567890',
-          gradeClass: tutor && tutor.classes && tutor.classes.length > 0 ? tutor.classes[0] : '10th',
-          subject: tutor && tutor.subjects && tutor.subjects.length > 0 ? tutor.subjects[0] : 'Mathematics',
+          gradeClass: tutor && tutor.classes ? parseArrayField(tutor.classes).join(', ') : '10th',
+          subject: tutor && tutor.subjects ? parseArrayField(tutor.subjects).join(', ') : 'Mathematics',
           preferredSlot: 'Anytime',
           mode: tutor && tutor.modes && tutor.modes.length > 0 ? tutor.modes[0] : 'Online',
           message: 'Instant booking from tutor profile',

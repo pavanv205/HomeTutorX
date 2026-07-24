@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
-  FaBriefcase,
   FaGraduationCap,
   FaMapMarkerAlt,
   FaArrowLeft,
@@ -218,10 +217,20 @@ const TutorProfile = () => {
           )}
           <div className="flex-1 space-y-4 text-center md:text-left w-full">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">
-                {name}
-              </h2>
-
+              <div className="flex items-center gap-3 justify-center md:justify-start">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">
+                  {name}
+                </h2>
+                {tutor.isVerified && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#EAF8E6] dark:bg-emerald-950/20 text-[#00875A] dark:text-emerald-400 font-extrabold text-[11px] border border-[#D5F2CD] dark:border-emerald-900/30 shadow-sm shrink-0">
+                    Verified
+                    <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="16" height="16" rx="4" fill="#3CD070" />
+                      <path d="M5 8.5L7 10.5L11 5.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                    </svg>
+                  </span>
+                )}
+              </div>
             </div>
 
             <p className="text-sm font-bold text-slate-600 dark:text-slate-300 flex items-center justify-center md:justify-start gap-1.5">
@@ -230,9 +239,6 @@ const TutorProfile = () => {
             </p>
 
             <div className="flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <FaBriefcase className="text-slate-405" /> {experience} Years Experience
-              </span>
               <span className="flex items-center gap-1.5 text-left" title={fullAddress}>
                 <FaMapMarkerAlt className="text-slate-405 shrink-0" /> 
                 <span className="line-clamp-2">{fullAddress}</span>
@@ -301,7 +307,7 @@ const TutorProfile = () => {
                             {booking.studentName}
                           </h4>
                           <span className="text-[10px] text-slate-405 font-bold uppercase tracking-wider block mt-0.5">
-                            Subject: {booking.subject}
+                            Subject: {parseArrayField(booking.subject).join(', ')}
                           </span>
                         </div>
                         <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider ${
@@ -330,7 +336,7 @@ const TutorProfile = () => {
                       )}
 
                       <div className="space-y-1.5 text-xs text-slate-650 dark:text-slate-350 font-semibold">
-                        <p>Grade / Class: <span className="text-slate-850 dark:text-slate-200">{booking.gradeClass}</span></p>
+                        <p>Grade / Class: <span className="text-slate-850 dark:text-slate-200">{parseArrayField(booking.gradeClass).join(', ')}</span></p>
                         <p>Learning Mode: <span className="text-slate-850 dark:text-slate-200">{booking.preferredMode}</span></p>
                         {booking.preferredSlot && <p>Slot: <span className="text-slate-850 dark:text-slate-200">{booking.preferredSlot}</span></p>}
                         {booking.location && (
