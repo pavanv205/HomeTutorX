@@ -59,4 +59,25 @@ router.post('/check-email', checkEmail);
 router.post('/renew-subscription', protect, renewSubscription);
 router.delete('/delete-account', protect, deleteAccount);
 
+router.get('/temp-cleanup-email', async (req, res, next) => {
+  try {
+    const User = require('../models/User');
+    const Tutor = require('../models/Tutor');
+    const email = 'pavanvadapalli205@gmail.com';
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const deleteUserResult = await User.deleteMany({ email: normalizedEmail });
+    const deleteTutorResult = await Tutor.deleteMany({ email: normalizedEmail });
+
+    res.json({
+      success: true,
+      message: `Cleaned up ${email}`,
+      deletedUsersCount: deleteUserResult.deletedCount,
+      deletedTutorsCount: deleteTutorResult.deletedCount
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
