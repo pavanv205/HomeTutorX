@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 80. Dropped Duplicate email_1 Index on Users Collection
+- **Index Optimization**: Dropped the legacy MongoDB index `email_1` on the `users` collection to allow a single email address to be registered for both Student and Tutor roles independently, aligned with the database schema design guidelines.
+
+---
+
 ### 79. Reverted Hero Title Highlight Color to Blue
 - **Highlighted Text Updates**: Reverted the color of the text *"Home & Online"* inside the hero section [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) back to its original blue styling (`text-blue-600 dark:text-blue-400`).
 
