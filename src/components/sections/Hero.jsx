@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaSearch, FaUserPlus, FaUserGraduate, FaChalkboardTeacher } from 'react-icons/fa';
+import { FaSearch, FaUserPlus } from 'react-icons/fa';
 import Button from '../common/Button';
-import heroImage from '../../assets/hero.png';
+import homeimg from '../../assets/homeimg.png';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -106,45 +106,15 @@ const Hero = () => {
             className="lg:col-span-5 relative"
           >
             {/* Main Image Container */}
-            <div className="relative mx-auto max-w-[500px] rounded-3xl overflow-hidden aspect-[3/2] bg-gradient-to-tr from-primary to-indigo-500 p-1.5 shadow-2xl">
+            <div className="relative mx-auto max-w-[420px] rounded-3xl overflow-hidden aspect-[4/5] bg-gradient-to-tr from-primary to-indigo-500 p-1.5 shadow-2xl">
               <img
-                src={heroImage}
-                alt="Student learning with a tutor"
+                src={homeimg}
+                alt="HomeTutorX Study Space"
                 className="w-full h-full object-cover rounded-[1.25rem] brightness-95"
               />
               {/* Overlay styling for modern aesthetics */}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent rounded-[1.25rem] z-10" />
             </div>
-
-            {/* Float Metric Card 1 */}
-            <motion.div
-              initial={{ x: -30, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.8, type: 'spring' }}
-              className="absolute top-1/4 -left-6 z-20 glass border border-slate-100 dark:border-slate-800 rounded-2xl p-4 shadow-xl flex items-center gap-3"
-            >
-              <div className="h-10 w-10 bg-primary text-white rounded-lg flex items-center justify-center">
-                <FaUserGraduate className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Happy Students</p>
-              </div>
-            </motion.div>
-
-            {/* Float Metric Card 2 */}
-            <motion.div
-              initial={{ x: 30, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 1, type: 'spring' }}
-              className="absolute bottom-12 -right-6 z-20 glass border border-slate-100 dark:border-slate-800 rounded-2xl p-4 shadow-xl flex items-center gap-3"
-            >
-              <div className="h-10 w-10 bg-amber-500 text-slate-900 rounded-lg flex items-center justify-center">
-                <FaChalkboardTeacher className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Expert Tutors</p>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </div>
