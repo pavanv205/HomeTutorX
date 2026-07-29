@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 73. Shifted Hero Highlight to Exact Brand Metallic Gold Color
+- **Metallic Gold Highlights**: Replaced Tailwind's amber-500 color on the highlighted phrase *"Home & Online"* inside [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) with the exact brand metallic gold color `#d4af37` used in the HomeTutorX logo.
+
+---
+
 ### 72. Hero Title Highlight Color Shift to Gold
 - **Highlighted Text Updates**: Replaced Tailwind's default blue color palette (`text-blue-600 dark:text-blue-400`) on the highlighted phrase *"Home & Online"* with gold/amber tones (`text-amber-500 dark:text-amber-400`) inside [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx).
 
