@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 82. Changed Hero Section Image to new.png
+- **Hero Image Upgrade**: Replaced the custom landing page banner image in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) with the downloaded `new.png` asset asset from downloads and cleaned up the old `home.png` file.
+
+---
+
 ### 81. Changed Tutor Registration Fee from ₹29 to ₹1
 - **Dynamic Pricing Setup**: Updated backend [paymentController.js](file:///d:/desktop/HomeTutorX/backend/controllers/paymentController.js) to dynamically support payment orders based on client request bodies.
 - **Frontend Fee Updates**: Modified [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to initiate orders with `{ amount: 1 }` and updated UI text labels from ₹29 to ₹1.
