@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 79. Reverted Hero Title Highlight Color to Blue
+- **Highlighted Text Updates**: Reverted the color of the text *"Home & Online"* inside the hero section [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) back to its original blue styling (`text-blue-600 dark:text-blue-400`).
+
+---
+
 ### 78. Removed Landing Page Stats Banner
 - **Stats Bar Cleanup**: Completely removed the dark stats banner (displaying *98% Grade Improvement, 12,000+ Hours Taught, etc.*) from [Home.jsx](file:///d:/desktop/HomeTutorX/src/pages/Home.jsx) to declutter the homepage flow.
 
