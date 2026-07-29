@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 70. Landing Page Hero Image Update & Overlay Badge Removal
+- **Hero Image Replacement**: Imported your custom image asset `home.png` from the Downloads folder into [home.png](file:///d:/desktop/HomeTutorX/src/assets/home.png). Replaced the default Unsplash placeholder image with this asset inside the Hero layout component [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx).
+- **Badge Cleanups**: Completely removed the floating overlay badges ("HAPPY STUDENTS" and "EXPERT TUTORS") from [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) to match the visual preferences.
+
+---
+
 ### 69. Seamless Silhouette Notification Icon Integration
 - **Silhouette Asset Migration**: Replaced the custom square notification image with your native [ic_launcher_foreground.webp](file:///d:/desktop/HomeTutorX/android/app/src/main/res/drawable/ic_notification.webp) asset (which is the transparent graduation cap logo itself). This permits Android's OS to automatically mask and draw the exact outline of your HomeTutorX graduation cap icon directly in the status bar and notifications banner.
 
