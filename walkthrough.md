@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 70. Homepage Hero Section Media and Overlay Card Customizations
+- **Custom Hero Media Asset**: Copied `D:\homeimg.png` into [src/assets/homeimg.png](file:///d:/desktop/HomeTutorX/src/assets/homeimg.png) and updated the homepage [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) component to import and display this custom asset in place of the generic Unsplash image.
+- **Removed Floating Overlays**: Removed the floating "Happy Students" and "Expert Tutors" metric overlays from the visual layout in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) to match the new minimalist layout requirements.
+
+---
+
 ### 69. Seamless Silhouette Notification Icon Integration
 - **Silhouette Asset Migration**: Replaced the custom square notification image with your native [ic_launcher_foreground.webp](file:///d:/desktop/HomeTutorX/android/app/src/main/res/drawable/ic_notification.webp) asset (which is the transparent graduation cap logo itself). This permits Android's OS to automatically mask and draw the exact outline of your HomeTutorX graduation cap icon directly in the status bar and notifications banner.
 

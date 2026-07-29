@@ -106,14 +106,14 @@ const Hero = () => {
             className="lg:col-span-5 relative"
           >
             {/* Main Image Container */}
-            <div className="relative mx-auto max-w-[420px] rounded-3xl overflow-hidden aspect-[4/5] bg-gradient-to-tr from-primary to-indigo-500 p-1.5 shadow-2xl">
+            <div className="relative mx-auto max-w-[500px] rounded-3xl overflow-hidden aspect-[3/2] bg-gradient-to-tr from-primary to-indigo-500 p-1.5 shadow-2xl">
               <img
                 src={homeimg}
                 alt="HomeTutorX Study Space"
                 className="w-full h-full object-cover rounded-[1.25rem] brightness-95"
               />
               {/* Overlay styling for modern aesthetics */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent rounded-[1.25rem] z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent rounded-[1.25rem] z-10 pointer-events-none" />
             </div>
           </motion.div>
         </div>
