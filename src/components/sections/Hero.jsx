@@ -106,7 +106,7 @@ const Hero = () => {
             className="lg:col-span-5 relative"
           >
             {/* Main Image Container */}
-            <div className="relative mx-auto max-w-[500px] w-full rounded-3xl overflow-hidden shadow-2xl">
+            <div className="relative mx-auto max-w-[500px] w-full">
               <img
                 src={homeImg}
                 alt="Student learning with a tutor"
