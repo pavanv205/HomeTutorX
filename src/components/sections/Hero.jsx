@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaSearch, FaUserPlus } from 'react-icons/fa';
 import Button from '../common/Button';
-import homeImg from '../../assets/new.png';
+import homeImg from '../../assets/chatgpt_hero.png';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -106,7 +106,7 @@ const Hero = () => {
             className="lg:col-span-5 relative"
           >
             {/* Main Image Container */}
-            <div className="relative mx-auto max-w-[500px] w-full">
+            <div className="relative mx-auto w-full">
               <img
                 src={homeImg}
                 alt="Student learning with a tutor"
