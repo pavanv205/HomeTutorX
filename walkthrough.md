@@ -448,6 +448,15 @@ npm run build
 
 ---
 
+### 74. Removed Section Subtitle Labels (Decluttering Landing Page Headers)
+- **Label Cleanups**: Removed the small uppercase, wide-tracked blue section subtitle tags from all landing page sections for a cleaner, more premium typographic flow:
+  - *"Available Disciplines"* in [SubjectsCarousel.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/SubjectsCarousel.jsx)
+  - *"Simple & Transparent"* in [HowItWorks.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/HowItWorks.jsx)
+  - *"Have Questions?"* in [Home.jsx](file:///d:/desktop/HomeTutorX/src/pages/Home.jsx)
+  - *"Top Rated Educators"* in [FeaturedTutors.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/FeaturedTutors.jsx)
+
+---
+
 ### 73. Shifted Hero Highlight to Exact Brand Metallic Gold Color
 - **Metallic Gold Highlights**: Replaced Tailwind's amber-500 color on the highlighted phrase *"Home & Online"* inside [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) with the exact brand metallic gold color `#d4af37` used in the HomeTutorX logo.
 
