@@ -54,12 +54,8 @@ const SubjectsCarousel = () => {
   return (
     <section className="py-20 bg-white dark:bg-[#0f172a] overflow-hidden">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="flex justify-between items-end mb-12">
           <div className="space-y-3 max-w-2xl">
-            <h2 className="text-xs font-bold text-primary dark:text-blue-500 uppercase tracking-widest">
-              Available Disciplines
-            </h2>
             <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight">
               Popular Subjects
             </h3>

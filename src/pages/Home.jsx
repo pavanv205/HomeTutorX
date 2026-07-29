@@ -63,9 +63,6 @@ const Home = () => {
       <section className="py-20 bg-slate-50 dark:bg-[#0B0F19] border-t border-slate-100/50 dark:border-slate-900/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-16 space-y-3">
-            <h2 className="text-xs font-bold text-primary dark:text-blue-500 uppercase tracking-widest">
-              Have Questions?
-            </h2>
             <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white">
               Frequently Asked Questions
             </h3>
