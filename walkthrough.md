@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 77. Category Icon Color Shift (Red to Slate-Black)
+- **Subject Category Color Tuning**: Re-aligned the *Mathematics* and *Economics & Commerce* category badge background color inside [index.js](file:///d:/desktop/HomeTutorX/src/constants/index.js) from `"bg-red-600"` to `"bg-slate-900"` to render as premium black circles.
+
+---
+
 ### 76. Shifted Step 1 Icon Color from Blue to Black/Slate
 - **Step 1 Color Tuning**: Modified the color classes of Step 1 (`Search & Choose`) inside [HowItWorks.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/HowItWorks.jsx) to replace the default blue color classes with a premium neutral slate configuration (`bg-slate-200 text-slate-900 border-slate-300`).
 
