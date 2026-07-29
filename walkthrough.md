@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 71. Hero Image Layout Adjustment
+- **Border and Overlay Removal**: Removed the decorative blue/indigo gradient background border, inner padding, and dark bottom overlay from the hero image wrapper inside [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx).
+- **Aspect Ratio Adjustments**: Replaced the fixed tall `aspect-[4/5]` cropping rule and `object-cover` styles on the image with `w-full h-auto` to preserve the graphic's native aspect ratio. This displays the full text and assets within the `home.png` graphic without cropping, filling gaps on mobile screens cleanly.
+
+---
+
 ### 70. Landing Page Hero Image Update & Overlay Badge Removal
 - **Hero Image Replacement**: Imported your custom image asset `home.png` from the Downloads folder into [home.png](file:///d:/desktop/HomeTutorX/src/assets/home.png). Replaced the default Unsplash placeholder image with this asset inside the Hero layout component [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx).
 - **Badge Cleanups**: Completely removed the floating overlay badges ("HAPPY STUDENTS" and "EXPERT TUTORS") from [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) to match the visual preferences.
