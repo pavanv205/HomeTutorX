@@ -25,30 +25,6 @@ const Home = () => {
       {/* Hero Section */}
       <Hero />
 
-      {/* Stats Bar */}
-      <section className="py-8 bg-slate-900 text-white dark:bg-[#070b13] border-y border-slate-800">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <p className="text-3xl font-extrabold text-primary dark:text-blue-500">98%</p>
-              <p className="text-xs text-slate-400 font-semibold uppercase mt-1">Grade Improvement</p>
-            </div>
-            <div>
-              <p className="text-3xl font-extrabold text-amber-500">12,000+</p>
-              <p className="text-xs text-slate-400 font-semibold uppercase mt-1">Hours Taught</p>
-            </div>
-            <div>
-              <p className="text-3xl font-extrabold text-primary dark:text-blue-500">150+</p>
-              <p className="text-xs text-slate-400 font-semibold uppercase mt-1">Subjects Covered</p>
-            </div>
-            <div>
-              <p className="text-3xl font-extrabold text-amber-500">4.9/5</p>
-              <p className="text-xs text-slate-400 font-semibold uppercase mt-1">Average Rating</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Subjects Categories Slider */}
       <SubjectsCarousel />
 
