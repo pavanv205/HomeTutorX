@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 72. Hero Title Highlight Color Shift to Gold
+- **Highlighted Text Updates**: Replaced Tailwind's default blue color palette (`text-blue-600 dark:text-blue-400`) on the highlighted phrase *"Home & Online"* with gold/amber tones (`text-amber-500 dark:text-amber-400`) inside [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx).
+
+---
+
 ### 71. Hero Image Layout Adjustment
 - **Border and Overlay Removal**: Removed the decorative blue/indigo gradient background border, inner padding, and dark bottom overlay from the hero image wrapper inside [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx).
 - **Aspect Ratio Adjustments**: Replaced the fixed tall `aspect-[4/5]` cropping rule and `object-cover` styles on the image with `w-full h-auto` to preserve the graphic's native aspect ratio. This displays the full text and assets within the `home.png` graphic without cropping, filling gaps on mobile screens cleanly.
