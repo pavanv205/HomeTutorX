@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 78. Removed Landing Page Stats Banner
+- **Stats Bar Cleanup**: Completely removed the dark stats banner (displaying *98% Grade Improvement, 12,000+ Hours Taught, etc.*) from [Home.jsx](file:///d:/desktop/HomeTutorX/src/pages/Home.jsx) to declutter the homepage flow.
+
+---
+
 ### 77. Category Icon Color Shift (Red to Slate-Black)
 - **Subject Category Color Tuning**: Re-aligned the *Mathematics* and *Economics & Commerce* category badge background color inside [index.js](file:///d:/desktop/HomeTutorX/src/constants/index.js) from `"bg-red-600"` to `"bg-slate-900"` to render as premium black circles.
 
