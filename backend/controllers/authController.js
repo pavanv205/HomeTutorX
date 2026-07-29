@@ -341,7 +341,7 @@ exports.registerTutor = async (req, res, next) => {
       console.error(`[REGISTRATION USER ERROR] Failed to create User document | Email: ${email} | Error: ${userErr.message}`);
       return res.status(500).json({
         success: false,
-        message: `Database save failed: User registration failed.`
+        message: `Database save failed: User registration failed. Details: ${userErr.message}`
       });
     }
 
@@ -393,7 +393,7 @@ exports.registerTutor = async (req, res, next) => {
       
       return res.status(500).json({
         success: false,
-        message: `Database save failed: Tutor profile creation failed.`
+        message: `Database save failed: Tutor profile creation failed. Details: ${tutorErr.message}`
       });
     }
 
