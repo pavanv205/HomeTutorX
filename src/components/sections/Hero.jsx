@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaSearch, FaUserPlus, FaUserGraduate, FaChalkboardTeacher } from 'react-icons/fa';
 import Button from '../common/Button';
+import heroImage from '../../assets/hero.png';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -105,9 +106,9 @@ const Hero = () => {
             className="lg:col-span-5 relative"
           >
             {/* Main Image Container */}
-            <div className="relative mx-auto max-w-[420px] rounded-3xl overflow-hidden aspect-[4/5] bg-gradient-to-tr from-primary to-indigo-500 p-1.5 shadow-2xl">
+            <div className="relative mx-auto max-w-[500px] rounded-3xl overflow-hidden aspect-[3/2] bg-gradient-to-tr from-primary to-indigo-500 p-1.5 shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&h=750&q=80"
+                src={heroImage}
                 alt="Student learning with a tutor"
                 className="w-full h-full object-cover rounded-[1.25rem] brightness-95"
               />
