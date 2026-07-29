@@ -7106,7 +7106,7 @@ export const SUBJECT_CATEGORIES = [
     name: "Mathematics",
     count: "45+ Tutors",
     icon: "FaCalculator",
-    color: "bg-red-600"
+    color: "bg-slate-900"
   },
   {
     name: "Physics",
@@ -7142,7 +7142,7 @@ export const SUBJECT_CATEGORIES = [
     name: "Economics & Commerce",
     count: "18+ Tutors",
     icon: "FaChartBar",
-    color: "bg-red-600"
+    color: "bg-slate-900"
   }
 ];
 
