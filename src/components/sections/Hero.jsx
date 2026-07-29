@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaSearch, FaUserPlus } from 'react-icons/fa';
 import Button from '../common/Button';
-import homeImg from '../../assets/home.png';
+import homeImg from '../../assets/new.png';
 
 const Hero = () => {
   const navigate = useNavigate();
