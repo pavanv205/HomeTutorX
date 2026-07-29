@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 75. Category Icon Color Shift (Blue to Red)
+- **Subject Category Color Tuning**: Updated the `SUBJECT_CATEGORIES` list definitions inside [index.js](file:///d:/desktop/HomeTutorX/src/constants/index.js) to change the background class from `"bg-blue-600"` to `"bg-red-600"` for the *Mathematics* and *Economics & Commerce* category badge blocks.
+
+---
+
 ### 74. Removed Section Subtitle Labels (Decluttering Landing Page Headers)
 - **Label Cleanups**: Removed the small uppercase, wide-tracked blue section subtitle tags from all landing page sections for a cleaner, more premium typographic flow:
   - *"Available Disciplines"* in [SubjectsCarousel.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/SubjectsCarousel.jsx)
