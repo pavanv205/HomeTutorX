@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 81. Changed Tutor Registration Fee from ₹29 to ₹1
+- **Dynamic Pricing Setup**: Updated backend [paymentController.js](file:///d:/desktop/HomeTutorX/backend/controllers/paymentController.js) to dynamically support payment orders based on client request bodies.
+- **Frontend Fee Updates**: Modified [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to initiate orders with `{ amount: 1 }` and updated UI text labels from ₹29 to ₹1.
+- **Database/Verification Updates**: Updated registration endpoint verification message responses in [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js) and genericized the fee meta-text on the admin panel [AdminDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/AdminDashboard.jsx).
+
+---
+
 ### 80. Dropped Duplicate email_1 Index on Users Collection
 - **Index Optimization**: Dropped the legacy MongoDB index `email_1` on the `users` collection to allow a single email address to be registered for both Student and Tutor roles independently, aligned with the database schema design guidelines.
 
