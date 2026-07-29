@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 84. Updated Hero Section Image to chatgpt_hero.png
+- **Full-Width Screen Cover**: Replaced the custom landing page banner image in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) with the downloaded `chatgpt_hero.png` asset and removed `max-w-[500px]` width restrictions so the image stretches full-width to cover the viewport on all screens. Cleaned up the old `new.png` file.
+
+---
+
 ### 83. Adjusted Hero Image Container Wrapper Formatting
 - **Wrapper Fine-Tuning**: Removed duplicate `rounded-3xl shadow-2xl overflow-hidden` wrapper styles from the parent container in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) to allow `new.png`'s native high-resolution soft shadow, curved edges, and bottom element layout to display without clipping or border padding gaps.
 
