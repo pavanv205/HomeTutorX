@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 83. Adjusted Hero Image Container Wrapper Formatting
+- **Wrapper Fine-Tuning**: Removed duplicate `rounded-3xl shadow-2xl overflow-hidden` wrapper styles from the parent container in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) to allow `new.png`'s native high-resolution soft shadow, curved edges, and bottom element layout to display without clipping or border padding gaps.
+
+---
+
 ### 82. Changed Hero Section Image to new.png
 - **Hero Image Upgrade**: Replaced the custom landing page banner image in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) with the downloaded `new.png` asset asset from downloads and cleaned up the old `home.png` file.
 
