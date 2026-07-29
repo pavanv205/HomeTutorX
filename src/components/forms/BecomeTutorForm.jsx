@@ -424,7 +424,7 @@ const BecomeTutorForm = () => {
       }
 
       // Create Razorpay Order on the server
-      const orderRes = await api.post('/payments/create-order');
+      const orderRes = await api.post('/payments/create-order', { amount: 1 });
       if (!orderRes.data || !orderRes.data.success) {
         throw new Error(orderRes.data?.message || 'Failed to initialize order with payment gateway.');
       }
@@ -434,7 +434,7 @@ const BecomeTutorForm = () => {
       // Initialize Razorpay Options
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY || orderData.key || 'rzp_live_TAwDF3o7rjkreE',
-        amount: orderData.amount, // ₹29.00 in paise
+        amount: orderData.amount, // ₹1.00 in paise
         currency: orderData.currency,
         name: 'HomeTutorX',
         description: '6-Month Tutor Subscription Plan',
@@ -493,7 +493,7 @@ const BecomeTutorForm = () => {
         },
         modal: {
           ondismiss: function() {
-            setSubmitError('Payment was cancelled. You must complete the ₹29 payment to submit your application.');
+            setSubmitError('Payment was cancelled. You must complete the ₹1 payment to submit your application.');
             setLoading(false);
           }
         }
@@ -1328,7 +1328,7 @@ const BecomeTutorForm = () => {
                   </div>
                    <div className="text-right">
                     <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                    <span className="text-base font-extrabold text-slate-950 dark:text-white">₹29</span>
+                    <span className="text-base font-extrabold text-slate-950 dark:text-white">₹1</span>
                   </div>
                 </div>
               </div>
@@ -1348,7 +1348,7 @@ const BecomeTutorForm = () => {
                 <div>
                   <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Tutor Subscription Plan</h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">
-                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹29</strong> for a 6-month tutor subscription plan.
+                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹1</strong> for a 6-month tutor subscription plan.
                   </p>
                 </div>
               </div>

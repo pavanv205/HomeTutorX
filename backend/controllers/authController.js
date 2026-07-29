@@ -112,7 +112,7 @@ exports.registerTutor = async (req, res, next) => {
     if (!actualPaymentId || data.paymentStatus !== 'Paid') {
       return res.status(400).json({
         success: false,
-        message: 'Payment verification failed. Tutor profile registration requires a successful ₹29 tutor subscription plan payment.'
+        message: 'Payment verification failed. Tutor profile registration requires a successful ₹1 tutor subscription plan payment.'
       });
     }
 

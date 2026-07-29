@@ -32,7 +32,8 @@ const getRazorpayInstance = () => {
  */
 exports.createOrder = async (req, res, next) => {
   try {
-    const amount = 29 * 100; // ₹29.00 in paise
+    const requestedAmount = req.body?.amount;
+    const amount = (requestedAmount !== undefined && requestedAmount !== null) ? Number(requestedAmount) * 100 : 29 * 100;
     const client = getRazorpayInstance();
 
     if (!client) {
