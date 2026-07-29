@@ -59,18 +59,4 @@ router.post('/check-email', checkEmail);
 router.post('/renew-subscription', protect, renewSubscription);
 router.delete('/delete-account', protect, deleteAccount);
 
-router.get('/temp-drop-index', async (req, res, next) => {
-  try {
-    const User = require('../models/User');
-    const result = await User.collection.dropIndex('email_1');
-    res.json({
-      success: true,
-      message: 'Dropped email_1 index successfully',
-      result
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
 module.exports = router;
