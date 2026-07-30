@@ -295,6 +295,7 @@ const BecomeTutorForm = () => {
       
       // 1. Reject invalid temporary files
       if (filename.includes('.trashed-') || filename.startsWith('.trashed-')) {
+        window.alert('Invalid file type: temporary trashed files are not allowed');
         setResumeError('Invalid file type: temporary trashed files are not allowed');
         setResumeFile(null);
         setCompressedPreviewUrl(null);
@@ -302,21 +303,28 @@ const BecomeTutorForm = () => {
         return;
       }
       
-      // 2. Validate types
-      const allowedExts = ['.jpg', '.jpeg', '.png', '.webp'];
+      // 2. Validate types (images + pdfs)
+      const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
       const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
-      const isAllowedType = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type);
+      const isAllowedType = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'].includes(file.type);
       
-        // Validate file type
-        if (!isAllowedType && !hasAllowedExt) {
-          setResumeError('Only image files (JPEG, PNG, WEBP) are allowed');
-          setResumeFile(null);
-          setCompressedPreviewUrl(null);
-          setOriginalSize(null);
-          return;
-        }
-        // Proceed with compression for any size (no 2MB restriction)
-        setResumeError('');
+      // Validate file type
+      if (!isAllowedType && !hasAllowedExt) {
+        window.alert('Only image files (JPEG, PNG, WEBP) or PDFs are allowed');
+        setResumeError('Only image files (JPEG, PNG, WEBP) or PDFs are allowed');
+        setResumeFile(null);
+        setCompressedPreviewUrl(null);
+        setOriginalSize(null);
+        return;
+      }
+
+      setResumeError('');
+
+      const imageMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      const isImage = imageMimeTypes.includes(file.type) || 
+                      ['.jpg', '.jpeg', '.png', '.webp'].some(ext => filename.endsWith(ext));
+
+      if (isImage) {
         try {
           setCompressionLoading(true);
           const result = await compressImage(file, 350 * 1024);
@@ -332,7 +340,12 @@ const BecomeTutorForm = () => {
         } finally {
           setCompressionLoading(false);
         }
-        return;
+      } else {
+        // It's a PDF – no compression needed
+        setResumeFile(file);
+        setCompressedPreviewUrl(null);
+        setOriginalSize(null);
+      }
     }
   };
 
@@ -344,6 +357,7 @@ const BecomeTutorForm = () => {
 
     // 1. Reject invalid temporary files
     if (filename.includes('.trashed-') || filename.startsWith('.trashed-')) {
+      window.alert('Invalid file type: temporary trashed files are not allowed');
       setCertificateError('Invalid file type: temporary trashed files are not allowed');
       setCertificateFile(null);
       setCertificatePreviewUrl(null);
@@ -351,12 +365,13 @@ const BecomeTutorForm = () => {
       return;
     }
 
-    // 2. Validate allowed extensions & MIME types
-    const allowedExts = ['.jpg', '.jpeg', '.png', '.pdf'];
+    // 2. Validate allowed extensions & MIME types (images + pdfs)
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.pdf', '.webp'];
     const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
-    const isAllowedType = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'].includes(file.type);
+    const isAllowedType = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'].includes(file.type);
 
     if (!isAllowedType && !hasAllowedExt) {
+      window.alert('Only image files (JPEG, PNG, WEBP) or PDFs are allowed');
       setCertificateError('Only image files (JPEG, PNG, WEBP) or PDFs are allowed');
       setCertificateFile(null);
       setCertificatePreviewUrl(null);
@@ -1152,13 +1167,13 @@ const BecomeTutorForm = () => {
             {/* Profile Photo Upload */}
             <div>
               <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-wide">
-                Upload Profile Photo (Optional) (IMAGE)
+                Upload Profile Photo (Optional) (PDF OR IMAGE)
               </label>
               <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-all duration-200">
                 <input
                   type="file"
                   id="resume"
-                  accept="image/*"
+                  accept="image/*,application/pdf"
                   onChange={handleFileChange}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
@@ -1169,7 +1184,7 @@ const BecomeTutorForm = () => {
                   <div className="text-sm">
                     <span className="font-semibold text-slate-950 dark:text-white hover:underline">Click to upload</span> or drag and drop
                   </div>
-                  <p className="text-xs text-slate-400">Image file (JPEG, PNG, WEBP)</p>
+                  <p className="text-xs text-slate-400">PDF or Image file (JPEG, PNG, WEBP)</p>
                 </div>
               </div>
               {compressionLoading && (
@@ -1182,9 +1197,13 @@ const BecomeTutorForm = () => {
                 <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-250/20 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5">
                     {/* Visual Image Preview */}
-                    {compressedPreviewUrl && (
+                    {compressedPreviewUrl ? (
                       <div className="relative h-14 w-14 rounded-xl overflow-hidden border border-slate-250/30 shadow-sm shrink-0 bg-slate-105 dark:bg-slate-850 flex items-center justify-center z-0">
                         <img src={compressedPreviewUrl} alt="Profile preview" className="h-full w-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="h-11 w-11 bg-primary/10 dark:bg-blue-500/10 text-primary dark:text-blue-455 rounded-xl flex items-center justify-center font-bold text-xs shrink-0">
+                        {resumeFile.name.split('.').pop().toUpperCase()}
                       </div>
                     )}
                     <div>
