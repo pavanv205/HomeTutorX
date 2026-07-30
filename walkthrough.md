@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 87. Resolved Step Transition Race Conditions in Tutor Form
+- **Transition Loading Guards**: Updated `handleNext` step navigation function in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to immediately ignore execution if `loading` state is active, and wrapped the entire validation workflow in a try-catch-finally block that sets `loading` to `true` during check-email API calls and field validations.
+- **Button Interaction Locks**: Added `loading={loading}` to the "Next Step" button and `disabled={loading}` to the "Back" button, preventing double-clicks or rapid inputs from triggering concurrent validations and double-incrementing the form's stepper state.
+
+---
+
 ### 86. Reduced Vertical Spacing Spacing below Hero Image on Mobile
 - **Section Padding Adjustments**: Changed the bottom padding of the hero section in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) to `pb-0` on mobile, and reduced the top padding of the subjects carousel section in [SubjectsCarousel.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/SubjectsCarousel.jsx) to `pt-10` on mobile, compressing the large white vertical gap between sections.
 
