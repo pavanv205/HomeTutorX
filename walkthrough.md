@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 85. Updated Hero Image to chatgpt_hero_v2.png and Added Full-Bleed Mobile Layout
+- **Full-Bleed Layout Cover**: Replaced the custom landing page banner image in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) with the downloaded `chatgpt_hero_v2.png` asset and applied full-bleed responsive margin styling (`-mx-4 sm:-mx-6 lg:mx-0`) to the right columns, allowing the image to stretch completely to the screen edges on mobile devices and cover the side gaps. Removed the old `chatgpt_hero.png` file.
+
+---
+
 ### 84. Updated Hero Section Image to chatgpt_hero.png
 - **Full-Width Screen Cover**: Replaced the custom landing page banner image in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) with the downloaded `chatgpt_hero.png` asset and removed `max-w-[500px]` width restrictions so the image stretches full-width to cover the viewport on all screens. Cleaned up the old `new.png` file.
 
