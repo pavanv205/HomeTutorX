@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaSearch, FaUserPlus } from 'react-icons/fa';
 import Button from '../common/Button';
-import homeImg from '../../assets/chatgpt_hero.png';
+import homeImg from '../../assets/chatgpt_hero_v2.png';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const Hero = () => {
       transition: {
         type: 'spring',
         stiffness: 100,
-        damping: 10,
+        damping: 15,
       },
     },
   };
@@ -103,7 +103,7 @@ const Hero = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="lg:col-span-5 relative"
+            className="lg:col-span-5 relative -mx-4 sm:-mx-6 lg:mx-0"
           >
             {/* Main Image Container */}
             <div className="relative mx-auto w-full">
