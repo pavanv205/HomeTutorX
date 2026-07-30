@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 88. Enabled PDF Uploads and Added Format Alerts in Tutor Form
+- **Profile Photo PDF Support**: Modified the profile photo upload handler and UI in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to support PDF formats, setting file data directly without compression, and displaying a clean document extension icon box if a PDF preview is loaded.
+- **Unsupported Format Alerts**: Added native `window.alert()` warning popups to both the Profile Photo and Educational Certificate upload inputs, alerting the user immediately if they select a file format outside of the permitted types (JPEG, JPG, PNG, WEBP, PDF).
+
+---
+
 ### 87. Resolved Step Transition Race Conditions in Tutor Form
 - **Transition Loading Guards**: Updated `handleNext` step navigation function in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to immediately ignore execution if `loading` state is active, and wrapped the entire validation workflow in a try-catch-finally block that sets `loading` to `true` during check-email API calls and field validations.
 - **Button Interaction Locks**: Added `loading={loading}` to the "Next Step" button and `disabled={loading}` to the "Back" button, preventing double-clicks or rapid inputs from triggering concurrent validations and double-incrementing the form's stepper state.
