@@ -251,33 +251,36 @@ const BecomeTutorForm = () => {
   };
 
   const handleNext = async () => {
-    // Validate fields belonging to the current step
-    let fieldsToValidate = [];
-    if (currentStep === 0) {
-      fieldsToValidate = ['name', 'email', 'password', 'gender', 'age', 'phone', 'streetAddress', 'state', 'city', 'bio'];
-    } else if (currentStep === 1) {
-      fieldsToValidate = ['degree', 'subjects', 'classes', 'teachingMode', 'hourlyRate', 'monthlyRate'];
-    }
+    if (loading) return;
+    try {
+      setLoading(true);
+      setSubmitError('');
 
-    const isStepValid = await trigger(fieldsToValidate);
-    if (isStepValid) {
+      // Validate fields belonging to the current step
+      let fieldsToValidate = [];
       if (currentStep === 0) {
-        try {
-          setLoading(true);
-          setSubmitError('');
+        fieldsToValidate = ['name', 'email', 'password', 'gender', 'age', 'phone', 'streetAddress', 'state', 'city', 'bio'];
+      } else if (currentStep === 1) {
+        fieldsToValidate = ['degree', 'subjects', 'classes', 'teachingMode', 'hourlyRate', 'monthlyRate'];
+      }
+
+      const isStepValid = await trigger(fieldsToValidate);
+      if (isStepValid) {
+        if (currentStep === 0) {
           const emailVal = getValues('email');
           const res = await api.post('/auth/check-email', { email: emailVal, role: 'Tutor' });
           if (res.data && res.data.success && res.data.exists) {
             setError('email', { type: 'manual', message: 'Email already registered' });
+            setLoading(false);
             return;
           }
-        } catch (err) {
-          console.error('Email check failed:', err);
-        } finally {
-          setLoading(false);
         }
+        setCurrentStep((prev) => prev + 1);
       }
-      setCurrentStep((prev) => prev + 1);
+    } catch (err) {
+      console.error('Next step transition failed:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1369,6 +1372,7 @@ const BecomeTutorForm = () => {
             type="button"
             variant="outline"
             onClick={handleBack}
+            disabled={loading}
             className={`${currentStep === 0 ? 'invisible' : ''}`}
           >
             Back
@@ -1379,6 +1383,7 @@ const BecomeTutorForm = () => {
               type="button"
               variant="primary"
               onClick={handleNext}
+              loading={loading}
               className="!bg-slate-950 !hover:bg-slate-900 !text-white dark:!bg-slate-200 dark:!hover:bg-slate-100 dark:!text-slate-950 !shadow-none"
             >
               Next Step
