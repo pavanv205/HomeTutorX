@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 90. Updated App Configuration to ₹29 and 6 Months Subscription
+- **Configuration Update**: Modified tutor registration fee setting inside [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) back to `29` (₹29) and the subscription period to `6` months.
+
+---
+
 ### 89. Configured Dynamic Application Settings Served from Backend API
 - **Dynamic Config API Endpoint**: Created a backend configuration module [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) and routes [configRoutes.js](file:///d:/desktop/HomeTutorX/backend/routes/configRoutes.js) mounted under `/api/config/settings` to serve registration fees and subscription months.
 - **Client Dynamic Fetching**: Modified [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx), and [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx) to load verification/registration fees and subscription periods dynamically from the server endpoint on mount, making sure updates to pricing/period reflect instantly without forcing client rebuilds.
