@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 86. Reduced Vertical Spacing Spacing below Hero Image on Mobile
+- **Section Padding Adjustments**: Changed the bottom padding of the hero section in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) to `pb-0` on mobile, and reduced the top padding of the subjects carousel section in [SubjectsCarousel.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/SubjectsCarousel.jsx) to `pt-10` on mobile, compressing the large white vertical gap between sections.
+
+---
+
 ### 85. Updated Hero Image to chatgpt_hero_v2.png and Added Full-Bleed Mobile Layout
 - **Full-Bleed Layout Cover**: Replaced the custom landing page banner image in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx) with the downloaded `chatgpt_hero_v2.png` asset and applied full-bleed responsive margin styling (`-mx-4 sm:-mx-6 lg:mx-0`) to the right columns, allowing the image to stretch completely to the screen edges on mobile devices and cover the side gaps. Removed the old `chatgpt_hero.png` file.
 
