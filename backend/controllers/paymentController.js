@@ -1,4 +1,5 @@
 const Razorpay = require('razorpay');
+const appSettings = require('../config/appSettings');
 
 let razorpayInstance = null;
 
@@ -26,14 +27,16 @@ const getRazorpayInstance = () => {
 };
 
 /**
- * @desc    Create a new Razorpay Order for ₹29
+ * @desc    Create a new Razorpay Order dynamically
  * @route   POST /api/payments/create-order
  * @access  Public
  */
 exports.createOrder = async (req, res, next) => {
   try {
     const requestedAmount = req.body?.amount;
-    const amount = (requestedAmount !== undefined && requestedAmount !== null) ? Number(requestedAmount) * 100 : 29 * 100;
+    const amount = (requestedAmount !== undefined && requestedAmount !== null) 
+      ? Number(requestedAmount) * 100 
+      : appSettings.tutorRegistrationFee * 100;
     const client = getRazorpayInstance();
 
     if (!client) {

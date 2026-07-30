@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Tutor = require('../models/Tutor');
+const appSettings = require('../config/appSettings');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -267,7 +268,7 @@ exports.registerTutor = async (req, res, next) => {
         tutorProfile: tutorId,
         paymentStatus: 'Paid',
         paymentId: data.paymentId,
-        subscriptionExpiresAt: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString(),
+        subscriptionExpiresAt: new Date(Date.now() + (appSettings.tutorSubscriptionMonths * 30) * 24 * 60 * 60 * 1000).toISOString(),
         createdAt: new Date().toISOString()
       };
       
@@ -334,7 +335,7 @@ exports.registerTutor = async (req, res, next) => {
         role: 'Tutor',
         paymentStatus: 'Paid',
         paymentId: data.paymentId,
-        subscriptionExpiresAt: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000)
+        subscriptionExpiresAt: new Date(Date.now() + (appSettings.tutorSubscriptionMonths * 30) * 24 * 60 * 60 * 1000)
       });
       devLog(`[DATABASE SAVE] Created User document, ID: ${user._id}`);
     } catch (userErr) {

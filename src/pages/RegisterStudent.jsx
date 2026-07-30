@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaPhone, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowRight, FaArrowLeft, FaCheck, FaExclamationTriangle, FaCreditCard } from 'react-icons/fa';
@@ -9,6 +9,7 @@ import api from '../services/api';
 
 const RegisterStudent = () => {
   const [step, setStep] = useState(1);
+  const [verificationFee, setVerificationFee] = useState(29); // dynamic fallback
   
   // Form fields
   const [firstName, setFirstName] = useState('');
@@ -26,6 +27,20 @@ const RegisterStudent = () => {
   
   const { registerStudent } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/config/settings');
+        if (res.data && res.data.success) {
+          setVerificationFee(res.data.studentVerificationFee);
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic settings:', err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   // Validate step 1
   const handleNextStep = () => {
@@ -91,7 +106,7 @@ const RegisterStudent = () => {
       }
 
       // 2. Create Razorpay Order on the server
-      const orderRes = await api.post('/payments/create-order');
+      const orderRes = await api.post('/payments/create-order', { amount: verificationFee });
       if (!orderRes.data || !orderRes.data.success) {
         throw new Error(orderRes.data?.message || 'Failed to initialize order with payment gateway.');
       }
@@ -101,7 +116,7 @@ const RegisterStudent = () => {
       // 3. Initialize Razorpay Options
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY || orderData.key || 'rzp_live_TAwDF3o7rjkreE',
-        amount: orderData.amount, // ₹29.00 in paise
+        amount: orderData.amount, // dynamic in paise
         currency: orderData.currency,
         name: 'HomeTutorX',
         description: 'Student Registration Fee',
@@ -113,7 +128,7 @@ const RegisterStudent = () => {
             const razorpayOrderId = response.razorpay_order_id || orderData.id;
             const razorpaySignature = response.razorpay_signature || 'mock_signature';
 
-            console.log('Student Payment Successful. Payment ID:', razorpayPaymentId);
+            console.log('Payment Successful. Payment ID:', razorpayPaymentId);
 
             await registerStudent({
               name: firstName,
@@ -127,7 +142,7 @@ const RegisterStudent = () => {
               razorpay_signature: razorpaySignature
             });
 
-            setSuccessMsg('Registration successful! Welcome to HomeTutorX.');
+            setSuccessMsg('Registration successful! Redirecting to student dashboard...');
             setTimeout(() => {
               navigate('/student/dashboard');
             }, 1500);
@@ -148,7 +163,7 @@ const RegisterStudent = () => {
         },
         modal: {
           ondismiss: function() {
-            setErrorMsg('Payment was cancelled. You must complete the ₹29 payment to create your account.');
+            setErrorMsg(`Payment was cancelled. You must complete the ₹${verificationFee} payment to create your account.`);
             setLoading(false);
           }
         }
@@ -372,7 +387,7 @@ const RegisterStudent = () => {
                       </div>
                       <div className="text-right">
                         <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                        <span className="text-base font-extrabold text-slate-950 dark:text-white">₹29</span>
+                        <span className="text-base font-extrabold text-slate-950 dark:text-white">₹{verificationFee}</span>
                       </div>
                     </div>
                   </div>
@@ -392,7 +407,7 @@ const RegisterStudent = () => {
                     <div>
                       <h4 className="text-[11px] font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Verification Application Fee</h4>
                       <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
-                        HomeTutorX charges a one-time profile verification fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold">₹29</strong>.
+                        HomeTutorX charges a one-time profile verification fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold">₹{verificationFee}</strong>.
                       </p>
                     </div>
                   </div>

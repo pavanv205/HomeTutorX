@@ -58,6 +58,8 @@ const BecomeTutorForm = () => {
   const { registerTutor: registerTutorAuth } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [regFee, setRegFee] = useState(29); // dynamic fallback
+  const [subMonths, setSubMonths] = useState(6); // dynamic fallback
   const [successMsg, setSuccessMsg] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
   const [resumeError, setResumeError] = useState('');
@@ -71,6 +73,21 @@ const BecomeTutorForm = () => {
   const [compressedPreviewUrl, setCompressedPreviewUrl] = useState(null);
   const [originalSize, setOriginalSize] = useState(null);
   const [compressionLoading, setCompressionLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/config/settings');
+        if (res.data && res.data.success) {
+          setRegFee(res.data.tutorRegistrationFee);
+          setSubMonths(res.data.tutorSubscriptionMonths);
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic settings:', err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const {
     register,
@@ -442,7 +459,7 @@ const BecomeTutorForm = () => {
       }
 
       // Create Razorpay Order on the server
-      const orderRes = await api.post('/payments/create-order', { amount: 1 });
+      const orderRes = await api.post('/payments/create-order', { amount: regFee });
       if (!orderRes.data || !orderRes.data.success) {
         throw new Error(orderRes.data?.message || 'Failed to initialize order with payment gateway.');
       }
@@ -452,10 +469,10 @@ const BecomeTutorForm = () => {
       // Initialize Razorpay Options
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY || orderData.key || 'rzp_live_TAwDF3o7rjkreE',
-        amount: orderData.amount, // ₹1.00 in paise
+        amount: orderData.amount, // dynamic in paise
         currency: orderData.currency,
         name: 'HomeTutorX',
-        description: '6-Month Tutor Subscription Plan',
+        description: `${subMonths}-Month Tutor Subscription Plan`,
         order_id: isMock ? undefined : orderData.id,
         handler: async function (response) {
           try {
@@ -1350,7 +1367,7 @@ const BecomeTutorForm = () => {
                   </div>
                    <div className="text-right">
                     <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                    <span className="text-base font-extrabold text-slate-950 dark:text-white">₹1</span>
+                    <span className="text-base font-extrabold text-slate-950 dark:text-white">₹{regFee}</span>
                   </div>
                 </div>
               </div>
@@ -1370,7 +1387,7 @@ const BecomeTutorForm = () => {
                 <div>
                   <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Tutor Subscription Plan</h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">
-                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹1</strong> for a 6-month tutor subscription plan.
+                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹{regFee}</strong> for a {subMonths}-month tutor subscription plan.
                   </p>
                 </div>
               </div>

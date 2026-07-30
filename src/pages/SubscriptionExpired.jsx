@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaLock, FaExclamationTriangle, FaCheck, FaSignOutAlt } from 'react-icons/fa';
@@ -10,9 +10,26 @@ import api from '../services/api';
 const SubscriptionExpired = () => {
   const { user, renewSubscription, logout, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [regFee, setRegFee] = useState(29);
+  const [subMonths, setSubMonths] = useState(6);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/config/settings');
+        if (res.data && res.data.success) {
+          setRegFee(res.data.tutorRegistrationFee);
+          setSubMonths(res.data.tutorSubscriptionMonths);
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic settings:', err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   // Redirect if not logged in
   if (!isAuthenticated) {
@@ -161,7 +178,7 @@ const SubscriptionExpired = () => {
               Subscription Expired
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-sm mx-auto">
-              Your 6-month HomeTutorX subscription expired on <strong className="text-rose-600 dark:text-rose-400">{formattedExpiry}</strong>.
+              Your {subMonths}-month HomeTutorX subscription expired on <strong className="text-rose-600 dark:text-rose-400">{formattedExpiry}</strong>.
             </p>
           </div>
 
@@ -196,13 +213,13 @@ const SubscriptionExpired = () => {
                 <div className="h-2.5 w-2.5 rounded-full bg-slate-950 dark:bg-slate-100" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">6-Month Renewal</h4>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{subMonths}-Month Renewal</h4>
                 <p className="text-xs text-slate-400 font-semibold mt-0.5">Full tutor & student connections</p>
               </div>
             </div>
             <div className="text-right">
               <span className="text-xs text-slate-400 font-semibold block">Renewal Fee</span>
-              <span className="text-lg font-extrabold text-slate-950 dark:text-white">₹29</span>
+              <span className="text-lg font-extrabold text-slate-950 dark:text-white">₹{regFee}</span>
             </div>
           </div>
 
