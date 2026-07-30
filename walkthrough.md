@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 89. Configured Dynamic Application Settings Served from Backend API
+- **Dynamic Config API Endpoint**: Created a backend configuration module [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) and routes [configRoutes.js](file:///d:/desktop/HomeTutorX/backend/routes/configRoutes.js) mounted under `/api/config/settings` to serve registration fees and subscription months.
+- **Client Dynamic Fetching**: Modified [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx), and [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx) to load verification/registration fees and subscription periods dynamically from the server endpoint on mount, making sure updates to pricing/period reflect instantly without forcing client rebuilds.
+- **Calculated Dynamic Payments**: Updated Razorpay order initialization and subscription expiration calculations in [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js) and [paymentController.js](file:///d:/desktop/HomeTutorX/backend/controllers/paymentController.js) to reference settings configuration values dynamically.
+
+---
+
 ### 88. Enabled PDF Uploads and Added Format Alerts in Tutor Form
 - **Profile Photo PDF Support**: Modified the profile photo upload handler and UI in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to support PDF formats, setting file data directly without compression, and displaying a clean document extension icon box if a PDF preview is loaded.
 - **Unsupported Format Alerts**: Added native `window.alert()` warning popups to both the Profile Photo and Educational Certificate upload inputs, alerting the user immediately if they select a file format outside of the permitted types (JPEG, JPG, PNG, WEBP, PDF).
