@@ -31,7 +31,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative overflow-hidden pt-8 pb-16 md:pt-16 md:pb-24 lg:pt-20 lg:pb-32 bg-slate-50 dark:bg-[#0B0F19]">
+    <section className="relative overflow-hidden pt-8 pb-0 md:pt-16 md:pb-24 lg:pt-20 lg:pb-32 bg-slate-50 dark:bg-[#0B0F19]">
       {/* Background blobs for visual appeal */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl -z-10 -mr-40 -mt-20 dark:bg-blue-500/5" />
       <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-amber-500/10 rounded-full blur-3xl -z-10 -ml-20 -mb-20 dark:bg-amber-500/5" />
