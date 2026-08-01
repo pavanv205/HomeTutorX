@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 91. Removed Trust Banner from Hero Section
+- **UI Clean-up**: Removed the simple trust banner sub-labels (`✓ 100% Verified Profiles` and `✓ Personal Support`) from the landing page hero section in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx).
+
+---
+
 ### 90. Updated App Configuration to ₹29 and 6 Months Subscription
 - **Configuration Update**: Modified tutor registration fee setting inside [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) back to `29` (₹29) and the subscription period to `6` months.
 
