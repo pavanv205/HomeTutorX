@@ -88,14 +88,7 @@ const Hero = () => {
               </Button>
             </motion.div>
 
-            {/* Simple Trust Banner */}
-            <motion.div
-              variants={itemVariants}
-              className="pt-6 flex flex-wrap justify-center lg:justify-start items-center gap-6 text-xs text-slate-400 font-semibold uppercase tracking-wider"
-            >
-              <span className="flex items-center gap-1.5">✓ 100% Verified Profiles</span>
-              <span className="flex items-center gap-1.5">✓ Personal Support</span>
-            </motion.div>
+
           </motion.div>
 
           {/* Hero Right Media / Illustrative Panel */}
