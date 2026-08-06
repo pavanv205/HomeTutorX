@@ -125,6 +125,22 @@ exports.registerTutor = async (req, res, next) => {
       });
     }
 
+    // Validate name format and length
+    const trimmedName = name.trim();
+    if (trimmedName.length < 3 || trimmedName.length > 20) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name must be between 3 and 20 characters.'
+      });
+    }
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(trimmedName)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name can only contain letters and spaces (no periods or commas).'
+      });
+    }
+
     // Validate email format
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (!emailRegex.test(email)) {
@@ -459,6 +475,22 @@ exports.registerStudent = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: 'Please provide name, email, password, and phone number.'
+      });
+    }
+
+    // Validate name format and length
+    const trimmedName = name.trim();
+    if (trimmedName.length < 3 || trimmedName.length > 20) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name must be between 3 and 20 characters.'
+      });
+    }
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(trimmedName)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name can only contain letters and spaces (no periods or commas).'
       });
     }
 

@@ -44,8 +44,18 @@ const RegisterStudent = () => {
 
   // Validate step 1
   const handleNextStep = () => {
-    if (!firstName.trim()) {
+    const trimmedName = firstName.trim();
+    if (!trimmedName) {
       setErrorMsg('Please enter your first name.');
+      return;
+    }
+    if (trimmedName.length > 20) {
+      setErrorMsg('Name cannot exceed 20 characters.');
+      return;
+    }
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(trimmedName)) {
+      setErrorMsg('Name can only contain letters and spaces (no periods or commas).');
       return;
     }
     if (!phone.trim()) {
