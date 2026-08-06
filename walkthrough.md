@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 92. Added Format and Character Length Validation to Registration Names
+- **Enforced Character Rules**: Added validation rules to reject periods, commas, and special symbols on user names, accepting only spaces and alphabetic letters.
+- **Enforced Maximum Length**: Limited name inputs to a maximum of 20 characters for both student and tutor registrations.
+- **Client and Server Coverage**: Applied these restrictions in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx), and securely on the backend in [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js).
+
+---
+
 ### 91. Removed Trust Banner from Hero Section
 - **UI Clean-up**: Removed the simple trust banner sub-labels (`✓ 100% Verified Profiles` and `✓ Personal Support`) from the landing page hero section in [Hero.jsx](file:///d:/desktop/HomeTutorX/src/components/sections/Hero.jsx).
 
