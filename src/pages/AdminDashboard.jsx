@@ -841,17 +841,18 @@ const AdminDashboard = () => {
                                     {referrer.referredInSelectedMonth}
                                   </td>
                                   <td className="py-3.5 text-center font-bold text-slate-800 dark:text-slate-100">
-                                    {referrer.totalReferred}
+                                    {referrer.totalReferred >= 1 ? referrer.totalReferred : ''}
                                   </td>
                                   <td className="py-3.5 pr-2 text-right">
-                                    <Button
-                                      variant="outline"
-                                      size="xs"
-                                      disabled={referrer.totalReferred === 0}
-                                      onClick={() => setSelectedReferrer(referrer)}
-                                    >
-                                      View Joins
-                                    </Button>
+                                    {referrer.totalReferred >= 1 && (
+                                      <Button
+                                        variant="outline"
+                                        size="xs"
+                                        onClick={() => setSelectedReferrer(referrer)}
+                                      >
+                                        View Joins
+                                      </Button>
+                                    )}
                                   </td>
                                 </tr>
                               ))
