@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 96. Added State, Age, Preferred Teaching Mode, and Live Location to Tutor Edit Profile
+- **Expanded Profile Editing Fields**: Added State, Age, and Preferred Teaching Mode input fields directly into the tutor profile edit section inside [TutorDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/TutorDashboard.jsx).
+- **Live Location Sync**: Added the "Use Live Location" button and its warning tooltip/alert messages, allowing tutors to update their geographical coordinates using mobile GPS or fallbacks directly from their dashboard.
+
+---
+
 ### 95. Increased Registration Name Maximum Character Limit to 25
 - **New Character Limit**: Increased the maximum character count restriction on user names from 20 to 25.
 - **Client & Server Integration**: Updated constraints in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx), and on the backend inside [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js).
