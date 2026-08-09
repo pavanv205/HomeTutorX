@@ -4,8 +4,9 @@ import api from '../services/api';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
 import { SUBJECTS, CLASSES } from '../constants';
-import { FaLock, FaEnvelope, FaPhone, FaUser, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaLock, FaEnvelope, FaPhone, FaUser, FaCheck, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 import { parseArrayField } from '../utils/arrayHelper';
+import { Geolocation } from '@capacitor/geolocation';
 
 const ColorfulGiftIcon = ({ className = "h-6 w-6" }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -89,6 +90,8 @@ const TutorDashboard = () => {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [photoError, setPhotoError] = useState('');
   const [compressing, setCompressing] = useState(false);
+  const [locLoading, setLocLoading] = useState(false);
+  const [locError, setLocError] = useState('');
 
   useEffect(() => {
     return () => {
@@ -311,6 +314,85 @@ const TutorDashboard = () => {
       ...prev,
       photo: ''
     }));
+  };
+
+  const handleFetchLiveLocation = async () => {
+    const confirmLocation = window.confirm("Use only at your home location. Do you want to continue?");
+    if (!confirmLocation) {
+      return;
+    }
+
+    setLocLoading(true);
+    setLocError('');
+
+    const setCoords = (latitude, longitude) => {
+      setTutorProfile(prev => ({
+        ...prev,
+        lat: latitude,
+        lng: longitude
+      }));
+      setLocLoading(false);
+    };
+
+    // 1. Try Native Capacitor Geolocation
+    try {
+      const coordinates = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 30000
+      });
+      if (coordinates && coordinates.coords) {
+        setCoords(coordinates.coords.latitude, coordinates.coords.longitude);
+        return;
+      }
+    } catch (nativeErr) {
+      console.log('Native Capacitor Geolocation failed in dashboard, trying web/fallback...', nativeErr);
+    }
+
+    // 2. Try Web HTML5 navigator.geolocation
+    if (navigator.geolocation) {
+      try {
+        const webPos = await new Promise((resolve) => {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve(pos),
+            () => resolve(null),
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
+          );
+        });
+        if (webPos && webPos.coords) {
+          setCoords(webPos.coords.latitude, webPos.coords.longitude);
+          return;
+        }
+      } catch (e) {
+        console.error('Web geolocation error:', e);
+      }
+    }
+
+    // 3. Fallback to IP Location APIs
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      const data = await res.json();
+      if (data && data.latitude && data.longitude) {
+        setCoords(data.latitude, data.longitude);
+        return;
+      }
+    } catch (e) {
+      console.error('Primary IP location failed:', e);
+    }
+
+    try {
+      const res = await fetch('https://ip-api.com/json/');
+      const data = await res.json();
+      if (data && data.lat && data.lon) {
+        setCoords(data.lat, data.lon);
+        return;
+      }
+    } catch (e) {
+      console.error('Secondary IP location failed:', e);
+    }
+
+    setLocError('Location permission denied or timed out. Please check location settings.');
+    setLocLoading(false);
   };
 
   // Save Profile
@@ -631,7 +713,7 @@ const TutorDashboard = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-505 mb-1.5 uppercase tracking-wide">Preferred Division</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-55 mb-1.5 uppercase tracking-wide">Preferred Division</label>
                       <input
                         type="text"
                         name="city"
@@ -650,6 +732,90 @@ const TutorDashboard = () => {
                         className="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl py-3 px-4 text-sm focus:outline-none"
                       />
                     </div>
+                  </div>
+
+                  {/* State, Age, Preferred Teaching Mode */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">State</label>
+                      <input
+                        type="text"
+                        name="state"
+                        value={tutorProfile.state || ''}
+                        onChange={handleProfileChange}
+                        className="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl py-3 px-4 text-sm focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">Age</label>
+                      <input
+                        type="number"
+                        name="age"
+                        value={tutorProfile.age || ''}
+                        onChange={handleProfileChange}
+                        className="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl py-3 px-4 text-sm focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">Preferred Teaching Mode</label>
+                      <select
+                        name="teachingMode"
+                        value={tutorProfile.teachingMode || 'Online'}
+                        onChange={handleProfileChange}
+                        className="w-full bg-slate-50 dark:bg-slate-800 border rounded-xl py-3 px-4 text-sm focus:outline-none cursor-pointer"
+                      >
+                        <option value="Online">Online</option>
+                        <option value="Offline">Offline</option>
+                        <option value="Both">Both (Online & Offline)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Live Location Option */}
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 pt-1">
+                    <div className="relative group flex items-center">
+                      <button
+                        type="button"
+                        onClick={handleFetchLiveLocation}
+                        disabled={locLoading}
+                        className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold border cursor-pointer transition-all duration-200 ${
+                          (tutorProfile.lat && tutorProfile.lng)
+                            ? 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-450 dark:border-emerald-900/50'
+                            : 'bg-slate-50 text-slate-700 border-slate-205 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
+                        }`}
+                      >
+                        {locLoading ? (
+                          <span>Fetching Location...</span>
+                        ) : (tutorProfile.lat && tutorProfile.lng) ? (
+                          <span>Live Location Linked <FaCheck className="h-3.5 w-3.5 text-emerald-500 inline ml-1" /></span>
+                        ) : (
+                          <>
+                            <span>Use Live Location</span>
+                            <span className="loader scale-pin"></span>
+                          </>
+                        )}
+                      </button>
+
+                      {/* Styled Tooltip Popup on Hover */}
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 hidden group-hover:flex flex-col items-center pointer-events-none z-10">
+                        <div className="bg-slate-900 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg shadow-lg text-center leading-normal dark:bg-slate-800 border border-slate-700">
+                          Use only at your home location
+                        </div>
+                        <div className="w-2 h-2 bg-slate-900 dark:bg-slate-800 transform rotate-45 -mt-1 shadow-md"></div>
+                      </div>
+                    </div>
+
+                    {/* Persistent Amber Warning Text */}
+                    <span className="text-[11px] text-amber-600 dark:text-amber-455 font-bold bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-900/30 px-3 py-2 rounded-xl flex items-center gap-1.5">
+                      <FaExclamationTriangle className="h-4 w-4 shrink-0 text-amber-505" /> Use only at your home location.
+                    </span>
+
+                    {locError && <span className="text-xs text-rose-500 font-semibold">{locError}</span>}
+                    {tutorProfile.lat && tutorProfile.lng && (
+                      <span className="text-[10px] text-slate-400 font-bold dark:text-slate-550">
+                        Latitude: {Number(tutorProfile.lat).toFixed(4)}, Longitude: {Number(tutorProfile.lng).toFixed(4)}
+                      </span>
+                    )}
                   </div>
 
                   {/* Bio */}
