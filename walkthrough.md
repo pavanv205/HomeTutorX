@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 94. Conditional Referrer Name Visibility in Admin Referrals Directory
+- **Conditional Visibility Logic**: Modified the referrer name and avatar list rendering in [AdminDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/AdminDashboard.jsx) under the Referrals directory. If a tutor has referred at least 1 join, their name is displayed. If their referred joins are 0, the name is hidden (rendered as an empty string) and their personalized avatar is replaced with a neutral fallback dash (`—`).
+
+---
+
 ### 93. Shuffled Tutor Profile Results in Tutor Search Directory
 - **Randomized Sorting**: Added a Fisher-Yates shuffle array helper in the tutor controller [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js).
 - **All Fetch Channels Shuffled**: Shuffled queried matching tutor documents for both non-paginated queries, paginated queries, and offline fallback mode queries. This ensures tutors are returned in a random order on every page refresh/load, making profile listings dynamic and highly interactive.
