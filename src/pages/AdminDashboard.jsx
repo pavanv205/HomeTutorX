@@ -819,15 +819,21 @@ const AdminDashboard = () => {
                                 <tr key={referrer.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40">
                                   <td className="py-3.5 pl-2">
                                     <div className="flex items-center gap-3">
-                                      {referrer.photo && !referrer.photo.includes('photo-1535713875002-d1d0cf377fde') ? (
+                                      {referrer.totalReferred >= 1 && referrer.photo && !referrer.photo.includes('photo-1535713875002-d1d0cf377fde') ? (
                                         <img src={referrer.photo} alt={referrer.name} className="h-8 w-8 rounded-full object-cover border" />
-                                      ) : (
+                                      ) : referrer.totalReferred >= 1 ? (
                                         <div className={`h-8 w-8 rounded-full font-extrabold flex items-center justify-center text-xs shrink-0 ${getAvatarStyle(referrer.name)}`}>
                                           {(referrer.name || 'T').trim().charAt(0).toUpperCase()}
                                         </div>
+                                      ) : (
+                                        <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-xs shrink-0 font-bold">
+                                          —
+                                        </div>
                                       )}
                                       <div>
-                                        <p className="font-bold text-slate-850 dark:text-slate-200">{referrer.name}</p>
+                                        <p className="font-bold text-slate-850 dark:text-slate-200">
+                                          {referrer.totalReferred >= 1 ? referrer.name : ''}
+                                        </p>
                                         <p className="text-[9px] text-slate-400">{referrer.email} • {referrer.mobile}</p>
                                       </div>
                                     </div>
@@ -841,18 +847,17 @@ const AdminDashboard = () => {
                                     {referrer.referredInSelectedMonth}
                                   </td>
                                   <td className="py-3.5 text-center font-bold text-slate-800 dark:text-slate-100">
-                                    {referrer.totalReferred >= 1 ? referrer.totalReferred : ''}
+                                    {referrer.totalReferred}
                                   </td>
                                   <td className="py-3.5 pr-2 text-right">
-                                    {referrer.totalReferred >= 1 && (
-                                      <Button
-                                        variant="outline"
-                                        size="xs"
-                                        onClick={() => setSelectedReferrer(referrer)}
-                                      >
-                                        View Joins
-                                      </Button>
-                                    )}
+                                    <Button
+                                      variant="outline"
+                                      size="xs"
+                                      disabled={referrer.totalReferred === 0}
+                                      onClick={() => setSelectedReferrer(referrer)}
+                                    >
+                                      View Joins
+                                    </Button>
                                   </td>
                                 </tr>
                               ))

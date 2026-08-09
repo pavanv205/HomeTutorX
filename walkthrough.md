@@ -448,11 +448,6 @@ npm run build
 
 ---
 
-### 94. Hidden Zero Joins and View Joins Button in Referrals Table
-- **Dynamic Referral Data Rendering**: Updated the Referrer Directory table in [AdminDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/AdminDashboard.jsx) to hide the total joins counter (displays empty instead of `0`) and hide the "View Joins" button if the referrer has `0` total referred signups, making the referral list cleaner and highlighting active referrers.
-
----
-
 ### 93. Shuffled Tutor Profile Results in Tutor Search Directory
 - **Randomized Sorting**: Added a Fisher-Yates shuffle array helper in the tutor controller [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js).
 - **All Fetch Channels Shuffled**: Shuffled queried matching tutor documents for both non-paginated queries, paginated queries, and offline fallback mode queries. This ensures tutors are returned in a random order on every page refresh/load, making profile listings dynamic and highly interactive.
