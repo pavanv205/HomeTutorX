@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 93. Shuffled Tutor Profile Results in Tutor Search Directory
+- **Randomized Sorting**: Added a Fisher-Yates shuffle array helper in the tutor controller [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js).
+- **All Fetch Channels Shuffled**: Shuffled queried matching tutor documents for both non-paginated queries, paginated queries, and offline fallback mode queries. This ensures tutors are returned in a random order on every page refresh/load, making profile listings dynamic and highly interactive.
+
+---
+
 ### 92. Added Format and Character Length Validation to Registration Names
 - **Enforced Character Rules**: Added validation rules to reject periods, commas, and special symbols on user names, accepting only spaces and alphabetic letters.
 - **Enforced Maximum Length**: Limited name inputs to a maximum of 20 characters for both student and tutor registrations.
