@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 97. Added Sanskrit to Available Subjects Options
+- **Constants Array Update**: Added `"Sanskrit"` to the global `SUBJECTS` list in [index.js](file:///d:/desktop/HomeTutorX/src/constants/index.js#L9-L22). This automatically exposes Sanskrit as a selectable subject for tutor registrations, tutor dashboard profile edit panels, search filter panels, and student request booking forms.
+
+---
+
 ### 96. Added State, Age, Preferred Teaching Mode, and Live Location to Tutor Edit Profile
 - **Expanded Profile Editing Fields**: Added State, Age, and Preferred Teaching Mode input fields directly into the tutor profile edit section inside [TutorDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/TutorDashboard.jsx).
 - **Live Location Sync**: Added the "Use Live Location" button and its warning tooltip/alert messages, allowing tutors to update their geographical coordinates using mobile GPS or fallbacks directly from their dashboard.
