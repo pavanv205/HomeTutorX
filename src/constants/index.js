@@ -18,7 +18,8 @@ export const SUBJECTS = [
   "Economics",
   "Telugu",
   "Hindi",
-  "Competitive"
+  "Competitive",
+  "Sanskrit"
 ];
 
 export const CLASSES = [
