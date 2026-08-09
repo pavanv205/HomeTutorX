@@ -127,10 +127,10 @@ exports.registerTutor = async (req, res, next) => {
 
     // Validate name format and length
     const trimmedName = name.trim();
-    if (trimmedName.length < 3 || trimmedName.length > 20) {
+    if (trimmedName.length < 3 || trimmedName.length > 25) {
       return res.status(400).json({
         success: false,
-        message: 'Name must be between 3 and 20 characters.'
+        message: 'Name must be between 3 and 25 characters.'
       });
     }
     const nameRegex = /^[a-zA-Z\s]+$/;
@@ -480,10 +480,10 @@ exports.registerStudent = async (req, res, next) => {
 
     // Validate name format and length
     const trimmedName = name.trim();
-    if (trimmedName.length < 3 || trimmedName.length > 20) {
+    if (trimmedName.length < 3 || trimmedName.length > 25) {
       return res.status(400).json({
         success: false,
-        message: 'Name must be between 3 and 20 characters.'
+        message: 'Name must be between 3 and 25 characters.'
       });
     }
     const nameRegex = /^[a-zA-Z\s]+$/;

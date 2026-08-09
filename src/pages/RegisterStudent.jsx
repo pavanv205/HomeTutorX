@@ -49,8 +49,8 @@ const RegisterStudent = () => {
       setErrorMsg('Please enter your first name.');
       return;
     }
-    if (trimmedName.length > 20) {
-      setErrorMsg('Name cannot exceed 20 characters.');
+    if (trimmedName.length > 25) {
+      setErrorMsg('Name cannot exceed 25 characters.');
       return;
     }
     const nameRegex = /^[a-zA-Z\s]+$/;
