@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 95. Increased Registration Name Maximum Character Limit to 25
+- **New Character Limit**: Increased the maximum character count restriction on user names from 20 to 25.
+- **Client & Server Integration**: Updated constraints in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx), and on the backend inside [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js).
+
+---
+
 ### 94. Filtered Out Referrers with 0 Joins from Admin Referrals Directory
 - **Row-Level Filtering**: Updated the Referrer Directory table in [AdminDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/AdminDashboard.jsx). Added a filter condition `r.totalReferred >= 1` so that any tutor who has referred 0 joins is completely hidden from the directory table. Tutors will now only appear in the admin referrals directory once they have recruited at least 1 signup.
 
