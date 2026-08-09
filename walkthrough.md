@@ -448,8 +448,8 @@ npm run build
 
 ---
 
-### 94. Conditional Referrer Name Visibility in Admin Referrals Directory
-- **Conditional Visibility Logic**: Modified the referrer name and avatar list rendering in [AdminDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/AdminDashboard.jsx) under the Referrals directory. If a tutor has referred at least 1 join, their name is displayed. If their referred joins are 0, the name is hidden (rendered as an empty string) and their personalized avatar is replaced with a neutral fallback dash (`—`).
+### 94. Filtered Out Referrers with 0 Joins from Admin Referrals Directory
+- **Row-Level Filtering**: Updated the Referrer Directory table in [AdminDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/AdminDashboard.jsx). Added a filter condition `r.totalReferred >= 1` so that any tutor who has referred 0 joins is completely hidden from the directory table. Tutors will now only appear in the admin referrals directory once they have recruited at least 1 signup.
 
 ---
 
