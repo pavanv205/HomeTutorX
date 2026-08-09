@@ -5,6 +5,16 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Helper to shuffle an array randomly (Fisher-Yates)
+const shuffleArray = (array) => {
+  if (!Array.isArray(array)) return array;
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
 // Helper to determine if the request is from an admin
 const checkIsAdmin = async (req) => {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
@@ -304,6 +314,7 @@ exports.getTutors = async (req, res, next) => {
       const tutorsListFiltered = showAll ? tutorsList : tutorsList.filter(t => t.isVerified);
       
       const filtered = applyFallbackFilters(tutorsListFiltered, req.query);
+      shuffleArray(filtered);
       
       const page = parseInt(req.query.page, 10);
       const limit = parseInt(req.query.limit, 10) || 10;
@@ -377,13 +388,10 @@ exports.getTutors = async (req, res, next) => {
 
     if (!isNaN(page) && page >= 1) {
       const skip = (page - 1) * limit;
-      const total = await Tutor.countDocuments(filters);
-      console.log('[GET TUTORS] Total matching docs:', total);
-      const tutors = await Tutor.find(filters)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean();
+      const allTutors = await Tutor.find(filters).lean();
+      shuffleArray(allTutors);
+      const total = allTutors.length;
+      const tutors = allTutors.slice(skip, skip + limit);
       await populateDynamicLeads(tutors, isOffline);
       console.log('[GET TUTORS] Returned page count:', tutors.length);
 
@@ -400,7 +408,8 @@ exports.getTutors = async (req, res, next) => {
       });
     }
 
-    const tutors = await Tutor.find(filters).sort({ createdAt: -1 }).limit(100).lean();
+    const tutors = await Tutor.find(filters).limit(100).lean();
+    shuffleArray(tutors);
     await populateDynamicLeads(tutors, isOffline);
     console.log('[GET TUTORS] Returned docs count (no pagination):', tutors.length);
     res.json(tutors);
