@@ -803,7 +803,8 @@ const AdminDashboard = () => {
                         <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60 text-xs text-slate-700 dark:text-slate-350">
                           {referralData.referrersList.filter(r => {
                             const query = referralSearch.toLowerCase();
-                            return r.name.toLowerCase().includes(query) || r.ownReferralCode.toLowerCase().includes(query);
+                            const matchesSearch = r.name.toLowerCase().includes(query) || r.ownReferralCode.toLowerCase().includes(query);
+                            return matchesSearch && r.totalReferred >= 1;
                           }).length === 0 ? (
                             <tr>
                               <td colSpan="5" className="py-8 text-center text-slate-400 font-medium">No referrers matched your query.</td>
@@ -812,28 +813,23 @@ const AdminDashboard = () => {
                             referralData.referrersList
                               .filter(r => {
                                 const query = referralSearch.toLowerCase();
-                                return r.name.toLowerCase().includes(query) || r.ownReferralCode.toLowerCase().includes(query);
+                                const matchesSearch = r.name.toLowerCase().includes(query) || r.ownReferralCode.toLowerCase().includes(query);
+                                return matchesSearch && r.totalReferred >= 1;
                               })
                               .sort((a, b) => b.totalReferred - a.totalReferred)
                               .map(referrer => (
                                 <tr key={referrer.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40">
                                   <td className="py-3.5 pl-2">
                                     <div className="flex items-center gap-3">
-                                      {referrer.totalReferred >= 1 && referrer.photo && !referrer.photo.includes('photo-1535713875002-d1d0cf377fde') ? (
+                                      {referrer.photo && !referrer.photo.includes('photo-1535713875002-d1d0cf377fde') ? (
                                         <img src={referrer.photo} alt={referrer.name} className="h-8 w-8 rounded-full object-cover border" />
-                                      ) : referrer.totalReferred >= 1 ? (
+                                      ) : (
                                         <div className={`h-8 w-8 rounded-full font-extrabold flex items-center justify-center text-xs shrink-0 ${getAvatarStyle(referrer.name)}`}>
                                           {(referrer.name || 'T').trim().charAt(0).toUpperCase()}
                                         </div>
-                                      ) : (
-                                        <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-xs shrink-0 font-bold">
-                                          —
-                                        </div>
                                       )}
                                       <div>
-                                        <p className="font-bold text-slate-850 dark:text-slate-200">
-                                          {referrer.totalReferred >= 1 ? referrer.name : ''}
-                                        </p>
+                                        <p className="font-bold text-slate-850 dark:text-slate-200">{referrer.name}</p>
                                         <p className="text-[9px] text-slate-400">{referrer.email} • {referrer.mobile}</p>
                                       </div>
                                     </div>
