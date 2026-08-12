@@ -698,6 +698,74 @@ exports.login = async (req, res, next) => {
         
         console.log(`[ADMIN OTP LOGIN SUCCESS] ${primaryEmail} successfully authenticated via real-time OTP`);
         const token = generateToken(user._id);
+
+        let userRole = 'Admin';
+        let tutorProfileId = undefined;
+
+        if (role === 'Tutor') {
+          userRole = 'Tutor';
+          if (isOffline) {
+            const dbFallback = require('../utils/dbFallback');
+            const tutorsList = await dbFallback.getTutors();
+            let tutor = tutorsList.find(t => String(t.userId) === String(user._id));
+            if (!tutor) {
+              tutor = {
+                _id: '6a3956421c7fc8576e26c6ae',
+                userId: user._id,
+                fullName: user.name || 'HomeTutorX Admin',
+                email: user.email,
+                mobile: user.phone || '9885064713',
+                qualification: 'Degree',
+                experience: 0,
+                subjects: ['Mathematics'],
+                classes: ['Class 6-10'],
+                teachingMode: 'Both',
+                hourlyRate: 300,
+                monthlyRate: 5000,
+                streetAddress: 'Admin Office',
+                city: 'Visakhapatnam',
+                state: 'Andhra Pradesh',
+                pincode: '530001',
+                isVerified: true,
+                paymentStatus: 'Paid',
+                createdAt: new Date().toISOString()
+              };
+              tutorsList.push(tutor);
+            }
+            tutorProfileId = tutor._id;
+            user.tutorProfile = tutor._id;
+          } else {
+            const Tutor = require('../models/Tutor');
+            let tutor = await Tutor.findOne({ userId: user._id });
+            if (!tutor) {
+              tutor = await Tutor.create({
+                userId: user._id,
+                fullName: user.name || 'HomeTutorX Admin',
+                email: user.email,
+                mobile: user.phone || '9885064713',
+                qualification: 'Degree',
+                experience: 0,
+                subjects: ['Mathematics'],
+                classes: ['Class 6-10'],
+                teachingMode: 'Both',
+                hourlyRate: 300,
+                monthlyRate: 5000,
+                streetAddress: 'Admin Office',
+                city: 'Visakhapatnam',
+                state: 'Andhra Pradesh',
+                pincode: '530001',
+                isVerified: true,
+                paymentStatus: 'Paid'
+              });
+            }
+            tutorProfileId = tutor._id;
+            if (!user.tutorProfile || user.tutorProfile.toString() !== tutor._id.toString()) {
+              user.tutorProfile = tutor._id;
+              await user.save();
+            }
+          }
+        }
+        
         return res.status(200).json({
           success: true,
           data: {
@@ -706,8 +774,9 @@ exports.login = async (req, res, next) => {
               id: user._id,
               name: user.name,
               email: user.email,
-              role: user.role,
-              phone: user.phone
+              role: userRole,
+              phone: user.phone,
+              tutorProfile: tutorProfileId
             }
           }
         });
