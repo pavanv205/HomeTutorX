@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 102. Removed Admin Login Option from Public Dropdown and Tab Menus
+- **Dropdown Cleared**: Removed the "Admin Login" links from both the desktop and mobile dropdown navigation menus in [Navbar.jsx](file:///d:/desktop/HomeTutorX/src/components/layout/Navbar.jsx#L421-L553).
+- **Conditional Tab Choice**: Updated [Login.jsx](file:///d:/desktop/HomeTutorX/src/pages/Login.jsx#L313-L325) to omit the Admin Login choice button from the tab panel during standard logins, ensuring it only appears if the user is explicitly directed via an admin role query parameters (maintaining full access for administrative redirects).
+
+---
+
 ### 101. Excluded Admin Tutor Profile from Admin Dashboard Listing
 - **Directory Exclusions**: Updated [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js#L314-L359) to filter out the admin email addresses (`supporthometutorx@gmail.com` and `suporthometutorx@gmail.com`) from both the database query and offline fallback lists. This ensures the admin's auto-generated tutor profile is not listed in the verified or unverified tutor directories.
 
