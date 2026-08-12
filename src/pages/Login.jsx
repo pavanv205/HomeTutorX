@@ -313,21 +313,10 @@ const Login = () => {
                   Student Login
                 </button>
               )}
-              {(!hasRoleQuery || activeTab === 'Admin') && (
+              {activeTab === 'Admin' && (
                 <button
-                  onClick={() => {
-                    setActiveTab('Admin');
-                    setErrorMsg('');
-                    setIsOtpStep(false);
-                    setPassword('');
-                    setSuccessMsg('');
-                  }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold rounded-xl transition-all duration-200 ${
-                    activeTab === 'Admin'
-                      ? 'bg-white text-slate-950 shadow-md dark:bg-slate-900 dark:text-white'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-                  } ${hasRoleQuery ? 'w-full flex-none cursor-default' : ''}`}
-                  disabled={hasRoleQuery}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 text-xs font-bold rounded-xl bg-white text-slate-950 shadow-md dark:bg-slate-900 dark:text-white w-full flex-none cursor-default"
+                  disabled={true}
                 >
                   <FaUserShield className="h-4 w-4" />
                   Admin Login

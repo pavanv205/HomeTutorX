@@ -421,12 +421,6 @@ const Navbar = () => {
                         >
                           Tutor Login
                         </Link>
-                        <Link
-                          to="/login?role=admin"
-                          className="block py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60"
-                        >
-                          Admin Login
-                        </Link>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -544,13 +538,6 @@ const Navbar = () => {
                       className="text-lg font-bold text-slate-950 dark:text-slate-200 hover:text-slate-800 dark:hover:text-white transition-colors"
                     >
                       Tutor Login
-                    </Link>
-                    <Link
-                      to="/login?role=admin"
-                      onClick={() => setIsOpen(false)}
-                      className="text-lg font-bold text-slate-950 dark:text-slate-200 hover:text-slate-800 dark:hover:text-white transition-colors"
-                    >
-                      Admin Login
                     </Link>
                   </>
                 )}
