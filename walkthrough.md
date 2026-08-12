@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 101. Excluded Admin Tutor Profile from Admin Dashboard Listing
+- **Directory Exclusions**: Updated [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js#L314-L359) to filter out the admin email addresses (`supporthometutorx@gmail.com` and `suporthometutorx@gmail.com`) from both the database query and offline fallback lists. This ensures the admin's auto-generated tutor profile is not listed in the verified or unverified tutor directories.
+
+---
+
 ### 100. Enabled Admin Credentials to Authenticate on Tutor Login Tab
 - **Cross-Role Authentication**: Updated the authentication route inside [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js#L698-L766). If a login request is made using admin credentials (`supporthometutorx@gmail.com` / `suporthometutorx@gmail.com` with password `tutor@321`) on the Tutor login tab, the system processes the request using the same admin 2FA OTP security verification.
 - **Tutor Profile Association**: Upon successful OTP validation, a tutor profile document is automatically created/fetched and linked to the admin user. The authenticated session payload returns a `'Tutor'` role, redirecting the user straight to the Tutor Dashboard.
