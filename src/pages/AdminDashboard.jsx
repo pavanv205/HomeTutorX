@@ -124,7 +124,7 @@ const ColorfulGiftIcon = ({ className = "h-6 w-6" }) => (
 );
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Tutors', 'Referrals'
+  const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Verified Tutors', 'Unverified Tutors', 'Referrals'
   const [stats, setStats] = useState({
     tutors: { total: 0, verified: 0, pending: 0, active: 0 },
     students: { total: 0 },
@@ -358,8 +358,8 @@ const AdminDashboard = () => {
           )}
 
           {/* Navigation Tabs */}
-          <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6">
-            {['Overview', 'Tutors', 'Referrals'].map(tab => (
+          <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 overflow-x-auto scrollbar-none">
+            {['Overview', 'Verified Tutors', 'Unverified Tutors', 'Referrals'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -387,7 +387,7 @@ const AdminDashboard = () => {
                   {/* Stats Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                     <div 
-                      onClick={() => setActiveTab('Tutors')}
+                      onClick={() => setActiveTab('Verified Tutors')}
                       className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all"
                     >
                       <div className="h-12 w-12 rounded-2xl bg-slate-950 border border-slate-900 shadow-md dark:bg-black dark:border-slate-950 flex items-center justify-center text-xl shrink-0 relative overflow-visible">
@@ -407,10 +407,10 @@ const AdminDashboard = () => {
                     </div>
                     
                     <div 
-                      onClick={() => setActiveTab('Tutors')}
+                      onClick={() => setActiveTab('Verified Tutors')}
                       className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all"
                     >
-                      <div className="h-12 w-12 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0">
+                      <div className="h-12 w-12 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-455 flex items-center justify-center text-xl shrink-0">
                         <FaUserCheck />
                       </div>
                       <div>
@@ -418,9 +418,9 @@ const AdminDashboard = () => {
                         <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{stats.tutors?.verified || 0}</h4>
                       </div>
                     </div>
-
+ 
                     <div 
-                      onClick={() => setActiveTab('Tutors')}
+                      onClick={() => setActiveTab('Verified Tutors')}
                       className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all"
                     >
                       <div className="h-12 w-12 rounded-2xl bg-amber-100 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400 flex items-center justify-center text-xl shrink-0">
@@ -607,10 +607,10 @@ const AdminDashboard = () => {
                 </div>
               )}
 
-              {/* TAB 2: TUTORS MANAGEMENT */}
-              {activeTab === 'Tutors' && (
-                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm overflow-hidden">
-                  <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100 mb-5">Tutor Accounts Directory</h3>
+              {/* TAB 2: VERIFIED TUTORS */}
+              {activeTab === 'Verified Tutors' && (
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm overflow-hidden animate-fadeIn">
+                  <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100 mb-5">Verified Tutor Accounts Directory</h3>
                   
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -624,12 +624,12 @@ const AdminDashboard = () => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60 text-xs text-slate-700 dark:text-slate-350">
-                        {tutors.length === 0 ? (
+                        {tutors.filter(t => t.isVerified).length === 0 ? (
                           <tr>
-                            <td colSpan="5" className="py-8 text-center text-slate-400 font-medium">No registered tutors yet.</td>
+                            <td colSpan="5" className="py-8 text-center text-slate-400 font-medium">No verified tutors yet.</td>
                           </tr>
                         ) : (
-                          tutors.map(tutor => (
+                          tutors.filter(t => t.isVerified).map(tutor => (
                             <tr key={tutor._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40">
                               <td className="py-3.5 pl-2">
                                 <div className="flex items-center gap-3">
@@ -710,9 +710,114 @@ const AdminDashboard = () => {
                     </table>
                   </div>
                 </div>
-                )}
+              )}
 
-              {/* TAB 3: REFERRALS ANALYTICS */}
+              {/* TAB 3: UNVERIFIED TUTORS */}
+              {activeTab === 'Unverified Tutors' && (
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm overflow-hidden animate-fadeIn">
+                  <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100 mb-5">Unverified Tutor Accounts Directory</h3>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
+                          <th className="pb-3 pl-2">Name</th>
+                          <th className="pb-3">Subject & Experience</th>
+                          <th className="pb-3">Location</th>
+                          <th className="pb-3">Verification</th>
+                          <th className="pb-3 pr-2 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60 text-xs text-slate-700 dark:text-slate-350">
+                        {tutors.filter(t => !t.isVerified).length === 0 ? (
+                          <tr>
+                            <td colSpan="5" className="py-8 text-center text-slate-400 font-medium">No unverified tutors yet.</td>
+                          </tr>
+                        ) : (
+                          tutors.filter(t => !t.isVerified).map(tutor => (
+                            <tr key={tutor._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40">
+                              <td className="py-3.5 pl-2">
+                                <div className="flex items-center gap-3">
+                                  {tutor.photo && !tutor.photo.includes('photo-1535713875002-d1d0cf377fde') ? (
+                                    <img src={tutor.photo} alt={tutor.fullName} className="h-8 w-8 rounded-full object-cover border" />
+                                  ) : (
+                                    <div className={`h-8 w-8 rounded-full font-extrabold flex items-center justify-center text-xs shrink-0 ${getAvatarStyle(tutor.fullName)}`}>
+                                      {(tutor.fullName || 'T').trim().charAt(0).toUpperCase()}
+                                    </div>
+                                  )}
+                                  <div>
+                                    <p className="font-bold text-slate-850 dark:text-slate-200">{tutor.fullName}</p>
+                                    <p className="text-[9px] text-slate-400">
+                                      {tutor.email} • {tutor.mobile}
+                                      {tutor.referralCode && ` • Referral: ${tutor.referralCode}`}
+                                      {tutor.paymentId && ` • Paid (ID: ${tutor.paymentId})`}
+                                      {tutor.certificateUrl && (
+                                        <>
+                                          {' • '}
+                                          <a 
+                                            href={tutor.certificateUrl} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="text-primary dark:text-blue-400 hover:underline font-bold"
+                                          >
+                                            📄 Certificate
+                                          </a>
+                                        </>
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-3.5">
+                                <p className="font-semibold text-slate-800 dark:text-slate-350">{tutor.qualification}</p>
+                                <p className="text-[9px] text-slate-400">{parseArrayField(tutor.subjects).slice(0, 3).join(', ')} • {tutor.experience} Yrs Exp</p>
+                              </td>
+                              <td className="py-3.5">
+                                <p>{tutor.city || 'N/A'}</p>
+                                <p className="text-[9px] text-slate-400">{tutor.state}</p>
+                              </td>
+                              <td className="py-3.5">
+                                <div className="flex flex-col items-start gap-1">
+                                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[9px] font-bold ${
+                                    tutor.isVerified 
+                                      ? 'bg-emerald-50 text-emerald-600 border border-emerald-250 dark:bg-emerald-950/20' 
+                                      : 'bg-amber-50 text-amber-600 border border-amber-250 dark:bg-amber-950/20'
+                                  }`}>
+                                    Status: {tutor.isVerified ? 'Verified ✅' : 'Pending'}
+                                  </span>
+                                  <span className="text-[9px] text-slate-500 dark:text-slate-400 font-semibold">
+                                    Verified Date: {formatVerifiedDate(tutor.verifiedDate)}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="py-3.5 pr-2 text-right space-x-2">
+                                <Button
+                                  variant={tutor.isVerified ? 'outline' : 'primary'}
+                                  size="xs"
+                                  loading={actionLoading === tutor._id}
+                                  onClick={() => handleVerifyTutor(tutor._id, tutor.isVerified)}
+                                >
+                                  {tutor.isVerified ? 'Unverify' : 'Verify'}
+                                </Button>
+                                <button
+                                  onClick={() => handleDeleteTutor(tutor._id)}
+                                  disabled={actionLoading === tutor._id}
+                                  className="text-rose-500 hover:text-rose-700 disabled:opacity-50 inline-block font-extrabold focus:outline-none ml-2"
+                                  title="Delete Tutor Profile"
+                                >
+                                  Remove
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: REFERRALS ANALYTICS */}
               {activeTab === 'Referrals' && (
                 <div className="space-y-8">
                   {/* Summary Cards */}
