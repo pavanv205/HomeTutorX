@@ -314,7 +314,11 @@ exports.getTutors = async (req, res, next) => {
       const tutorsListFiltered = showAll ? tutorsList : tutorsList.filter(t => t.isVerified);
       
       const filtered = applyFallbackFilters(tutorsListFiltered, req.query);
-      shuffleArray(filtered);
+      if (req.query.adminView !== 'true') {
+        shuffleArray(filtered);
+      } else {
+        filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      }
       
       const page = parseInt(req.query.page, 10);
       const limit = parseInt(req.query.limit, 10) || 10;
@@ -388,8 +392,14 @@ exports.getTutors = async (req, res, next) => {
 
     if (!isNaN(page) && page >= 1) {
       const skip = (page - 1) * limit;
-      const allTutors = await Tutor.find(filters).lean();
-      shuffleArray(allTutors);
+      let query = Tutor.find(filters);
+      if (adminView === 'true') {
+        query = query.sort({ createdAt: -1 });
+      }
+      const allTutors = await query.lean();
+      if (adminView !== 'true') {
+        shuffleArray(allTutors);
+      }
       const total = allTutors.length;
       const tutors = allTutors.slice(skip, skip + limit);
       await populateDynamicLeads(tutors, isOffline);
@@ -408,8 +418,14 @@ exports.getTutors = async (req, res, next) => {
       });
     }
 
-    const tutors = await Tutor.find(filters).limit(100).lean();
-    shuffleArray(tutors);
+    let query = Tutor.find(filters).limit(100);
+    if (adminView === 'true') {
+      query = query.sort({ createdAt: -1 });
+    }
+    const tutors = await query.lean();
+    if (adminView !== 'true') {
+      shuffleArray(tutors);
+    }
     await populateDynamicLeads(tutors, isOffline);
     console.log('[GET TUTORS] Returned docs count (no pagination):', tutors.length);
     res.json(tutors);
