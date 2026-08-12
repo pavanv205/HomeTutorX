@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 100. Enabled Admin Credentials to Authenticate on Tutor Login Tab
+- **Cross-Role Authentication**: Updated the authentication route inside [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js#L698-L766). If a login request is made using admin credentials (`supporthometutorx@gmail.com` / `suporthometutorx@gmail.com` with password `tutor@321`) on the Tutor login tab, the system processes the request using the same admin 2FA OTP security verification.
+- **Tutor Profile Association**: Upon successful OTP validation, a tutor profile document is automatically created/fetched and linked to the admin user. The authenticated session payload returns a `'Tutor'` role, redirecting the user straight to the Tutor Dashboard.
+
+---
+
 ### 99. Disabled Tutor Shuffling for Admin View Queries
 - **Consistent Order**: Updated the GET `/tutors` endpoint logic in [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js#L387-L415) to bypass the randomized `shuffleArray` routine when `adminView` query parameter is `true`.
 - **Chronological Sorting**: Instead of shuffling, tutor listings for administrators are sorted chronologically by registration date (`createdAt: -1`) to ensure a consistent, predictable order.
