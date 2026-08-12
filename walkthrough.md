@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 98. Split Tutors Tab in Admin Dashboard into Verified and Unverified Tutors
+- **Tab Layout Separation**: Replaced the unified "Tutors" management option in [AdminDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/AdminDashboard.jsx) with two dedicated tabs: `"Verified Tutors"` and `"Unverified Tutors"`, positioned in correct sequential order (`Overview` -> `Verified Tutors` -> `Unverified Tutors` -> `Referrals`).
+- **Targeted Listing Filtering**: Dynamically filters the database results by status, listing verified accounts under "Verified Tutors" and pending approvals/unverified accounts under "Unverified Tutors".
+- **Dashboard Redirect Sync**: Updated the click handlers for the Overview statistics cards (Total Tutors, Verified Tutors, Active Tutors) to properly direct administrators to the new `"Verified Tutors"` directory.
+
+---
+
 ### 97. Added Sanskrit to Available Subjects Options
 - **Constants Array Update**: Added `"Sanskrit"` to the global `SUBJECTS` list in [index.js](file:///d:/desktop/HomeTutorX/src/constants/index.js#L9-L22). This automatically exposes Sanskrit as a selectable subject for tutor registrations, tutor dashboard profile edit panels, search filter panels, and student request booking forms.
 
