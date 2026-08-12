@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 99. Disabled Tutor Shuffling for Admin View Queries
+- **Consistent Order**: Updated the GET `/tutors` endpoint logic in [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js#L387-L415) to bypass the randomized `shuffleArray` routine when `adminView` query parameter is `true`.
+- **Chronological Sorting**: Instead of shuffling, tutor listings for administrators are sorted chronologically by registration date (`createdAt: -1`) to ensure a consistent, predictable order.
+
+---
+
 ### 98. Split Tutors Tab in Admin Dashboard into Verified and Unverified Tutors
 - **Tab Layout Separation**: Replaced the unified "Tutors" management option in [AdminDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/AdminDashboard.jsx) with two dedicated tabs: `"Verified Tutors"` and `"Unverified Tutors"`, positioned in correct sequential order (`Overview` -> `Verified Tutors` -> `Unverified Tutors` -> `Referrals`).
 - **Targeted Listing Filtering**: Dynamically filters the database results by status, listing verified accounts under "Verified Tutors" and pending approvals/unverified accounts under "Unverified Tutors".
