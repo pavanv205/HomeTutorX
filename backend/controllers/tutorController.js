@@ -311,7 +311,8 @@ exports.getTutors = async (req, res, next) => {
           showAll = true;
         }
       }
-      const tutorsListFiltered = showAll ? tutorsList : tutorsList.filter(t => t.isVerified);
+      const tutorsListFiltered = (showAll ? tutorsList : tutorsList.filter(t => t.isVerified))
+        .filter(t => t.email && t.email.toLowerCase() !== 'supporthometutorx@gmail.com' && t.email.toLowerCase() !== 'suporthometutorx@gmail.com');
       
       const filtered = applyFallbackFilters(tutorsListFiltered, req.query);
       if (req.query.adminView !== 'true') {
@@ -357,6 +358,7 @@ exports.getTutors = async (req, res, next) => {
     if (!showAll) {
       filters.isVerified = true;
     }
+    filters.email = { $nin: ['supporthometutorx@gmail.com', 'suporthometutorx@gmail.com'] };
 
     if (search) {
       const searchRegex = new RegExp(search, 'i');
