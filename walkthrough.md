@@ -448,6 +448,14 @@ npm run build
 
 ---
 
+### 106. Changed Registration Fee to ₹1 and Subscription Duration to 3 Months
+- **Config Constants Updated**: Updated [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) to set `tutorRegistrationFee: 1`, `studentVerificationFee: 1`, and `tutorSubscriptionMonths: 3`.
+- **Backend Expiration Computation**: Refactored the renew validation inside [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js) to compute subscription durations dynamically using the configuration parameter instead of a hardcoded value, and updated the successful renewal response message.
+- **Frontend Fallbacks and Labels**: Updated initial state defaults to ₹1 and `3` months in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx), and [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx), reverting labels from `"5 minuties"` back to month formats.
+- **Terms of Service**: Updated [TermsOfService.jsx](file:///d:/desktop/HomeTutorX/src/pages/TermsOfService.jsx) to reflect the new ₹1 fee and 3 months subscription validity period.
+
+---
+
 ### 105. Changed Registration and Verification Fees to ₹5
 - **Config Constants Updated**: Updated [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) to set `tutorRegistrationFee: 5` and `studentVerificationFee: 5`.
 - **Frontend State Defaults**: Updated initial state default fallbacks for registration fees in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx), and [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx) from `1` to `5` to align with the new setup.
