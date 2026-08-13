@@ -6,6 +6,27 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { getFileUrl } = require('../utils/uploadHelper');
 const crypto = require('crypto');
+const Razorpay = require('razorpay');
+
+let razorpayInstance = null;
+const getRazorpayInstance = () => {
+  if (razorpayInstance) return razorpayInstance;
+  const keyId = process.env.RAZORPAY_KEY_ID?.trim();
+  const keySecret = process.env.RAZORPAY_KEY_SECRET?.trim();
+  if (!keyId || !keySecret || keyId === 'rzp_test_hometutorxkey') {
+    return null;
+  }
+  try {
+    razorpayInstance = new Razorpay({
+      key_id: keyId,
+      key_secret: keySecret
+    });
+    return razorpayInstance;
+  } catch (error) {
+    console.error('[PAYMENT] Failed to initialize Razorpay SDK in authController:', error.message);
+    return null;
+  }
+};
 
 // Active OTP cache for supporthometutorx@gmail.com admin login
 let activeAdminOtp = null;
@@ -1075,6 +1096,26 @@ exports.renewSubscription = async (req, res, next) => {
     });
   } catch (err) {
     console.error(`[RENEW SYSTEM ERROR] Uncaught error in renewSubscription | Error: ${err.message}`);
+    
+    // Automatically refund the payment if Razorpay keys are configured and payment succeeded
+    const actualPaymentId = req.body?.razorpay_payment_id || req.body?.paymentId;
+    if (actualPaymentId && !actualPaymentId.startsWith('mock_')) {
+      const client = getRazorpayInstance();
+      if (client) {
+        console.log(`[PAYMENT AUTO-REFUND] Initiating refund for payment ID: ${actualPaymentId} due to backend renewal failure.`);
+        try {
+          await client.payments.refund(actualPaymentId, {
+            notes: {
+              reason: 'Backend database save failed during tutor renewal update'
+            }
+          });
+          console.log(`[PAYMENT AUTO-REFUND] Successfully auto-refunded payment ID: ${actualPaymentId}`);
+        } catch (refundErr) {
+          console.error('[PAYMENT AUTO-REFUND ERROR] Failed to refund payment:', refundErr.message);
+        }
+      }
+    }
+    
     next(err);
   }
 };
