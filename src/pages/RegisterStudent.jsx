@@ -107,81 +107,19 @@ const RegisterStudent = () => {
     setLoading(true);
 
     try {
-      // 1. Load Razorpay Script
-      const isLoaded = await loadRazorpayScript();
-      if (!isLoaded) {
-        setErrorMsg('Failed to load payment gateway. Please check your internet connection.');
-        setLoading(false);
-        return;
-      }
+      await registerStudent({
+        name: firstName,
+        phone,
+        email,
+        password,
+        paymentStatus: 'Paid',
+        paymentId: 'free_student_registration'
+      });
 
-      // 2. Create Razorpay Order on the server
-      const orderRes = await api.post('/payments/create-order', { amount: verificationFee });
-      if (!orderRes.data || !orderRes.data.success) {
-        throw new Error(orderRes.data?.message || 'Failed to initialize order with payment gateway.');
-      }
-      const orderData = orderRes.data.data;
-      const isMock = orderRes.data.isMock;
-
-      // 3. Initialize Razorpay Options
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY || orderData.key || 'rzp_live_TAwDF3o7rjkreE',
-        amount: orderData.amount, // dynamic in paise
-        currency: orderData.currency,
-        name: 'HomeTutorX',
-        description: 'Student Registration Fee',
-        order_id: isMock ? undefined : orderData.id,
-        handler: async function (response) {
-          try {
-            setLoading(true);
-            const razorpayPaymentId = response.razorpay_payment_id;
-            const razorpayOrderId = response.razorpay_order_id || orderData.id;
-            const razorpaySignature = response.razorpay_signature || 'mock_signature';
-
-            console.log('Payment Successful. Payment ID:', razorpayPaymentId);
-
-            await registerStudent({
-              name: firstName,
-              phone,
-              email,
-              password,
-              paymentStatus: 'Paid',
-              paymentId: razorpayPaymentId,
-              razorpay_order_id: razorpayOrderId,
-              razorpay_payment_id: razorpayPaymentId,
-              razorpay_signature: razorpaySignature
-            });
-
-            setSuccessMsg('Registration successful! Redirecting to student dashboard...');
-            setTimeout(() => {
-              navigate('/student/dashboard');
-            }, 1500);
-          } catch (error) {
-            console.error(error);
-            setErrorMsg(error.message || 'Registration failed. Please try again.');
-          } finally {
-            setLoading(false);
-          }
-        },
-        prefill: {
-          name: firstName,
-          email: email,
-          contact: phone
-        },
-        theme: {
-          color: '#3B82F6' // Primary theme blue
-        },
-        modal: {
-          ondismiss: function() {
-            setErrorMsg(`Payment was cancelled. You must complete the ₹${verificationFee} payment to create your account.`);
-            setLoading(false);
-          }
-        }
-      };
-
-      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_live_TAwDF3o7rjkreE';
-      const rzp1 = new window.Razorpay({ ...options, key: razorpayKey });
-      rzp1.open();
+      setSuccessMsg('Registration successful! Redirecting to student dashboard...');
+      setTimeout(() => {
+        navigate('/student/dashboard');
+      }, 1500);
     } catch (error) {
       console.error(error);
       setErrorMsg(error.message || 'Registration failed. Please try again.');
@@ -381,46 +319,7 @@ const RegisterStudent = () => {
                       </button>
                     </div>
                   </div>
-                  {/* Payment Method Option */}
-                  <div className="space-y-3 pt-2">
-                    <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
-                      Select Payment Method
-                    </label>
-                    <div className="border border-slate-950 bg-slate-950/5 dark:border-slate-100 dark:bg-slate-100/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
-                      <div className="flex items-center gap-3.5">
-                        <div className="h-5 w-5 rounded-full border-2 border-slate-950 dark:border-slate-100 flex items-center justify-center">
-                          <div className="h-2.5 w-2.5 rounded-full bg-slate-950 dark:bg-slate-100" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                        <span className="text-base font-extrabold text-slate-950 dark:text-white">₹{verificationFee}</span>
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Payment Verification Notice */}
-                  <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-4 flex items-center gap-4 mt-4">
-                    <div className="h-10 w-10 rounded-xl bg-slate-950 border border-slate-900 shadow-md flex items-center justify-center text-white relative overflow-hidden shrink-0">
-                      <svg width="0" height="0" className="absolute">
-                        <linearGradient id="card-gradient-student" x1="0%" y1="100%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#d4af37" />
-                          <stop offset="50%" stopColor="#f59e0b" />
-                          <stop offset="100%" stopColor="#fffbdf" />
-                        </linearGradient>
-                      </svg>
-                      <FaCreditCard style={{ fill: "url(#card-gradient-student)" }} className="h-5 w-5 filter drop-shadow-[0_1px_3px_rgba(212,175,55,0.4)]" />
-                    </div>
-                    <div>
-                      <h4 className="text-[11px] font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Verification Application Fee</h4>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-1 leading-normal">
-                        HomeTutorX charges a one-time profile verification fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold">₹{verificationFee}</strong>.
-                      </p>
-                    </div>
-                  </div>
 
                   <div className="flex gap-4 pt-4">
                     <button

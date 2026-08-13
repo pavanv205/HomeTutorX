@@ -494,26 +494,9 @@ exports.registerStudent = async (req, res, next) => {
       });
     }
 
-    const actualOrderId = razorpay_order_id;
-    const actualPaymentId = razorpay_payment_id || paymentId;
-    const actualSignature = razorpay_signature;
-    paymentId = actualPaymentId;
-
-    // Verify payment status
-    if (!actualPaymentId || paymentStatus !== 'Paid') {
-      return res.status(400).json({
-        success: false,
-        message: 'Payment verification failed. Student account registration requires a successful ₹29 registration fee payment.'
-      });
-    }
-
-    // Secure verification
-    if (!verifyRazorpaySignature(actualOrderId, actualPaymentId, actualSignature)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Payment verification failed. Cryptographic signature is invalid.'
-      });
-    }
+    // Student registration is free, bypass Razorpay verification
+    paymentStatus = 'Paid';
+    paymentId = 'free_student_registration';
 
     // Validate email format
     const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
