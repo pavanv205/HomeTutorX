@@ -448,6 +448,14 @@ npm run build
 
 ---
 
+### 108. Resolved Concurrent Registration Failures and Payments Stuck Issues
+- **Registration-then-Payment Flow**: Decoupled tutor payment checkout from form submission inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx). Tutors can now register instantly with `paymentStatus: 'Pending'`, uploading their files securely without pre-payment risks.
+- **Bypassed Payment Verification**: Removed strict Razorpay verification requirements from `registerTutor` inside [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js). The backend now saves tutor profiles with a default `'Pending'` status and null expiration.
+- **Auto-Redirection to Payment Checkout**: Updated [ProtectedRoute.jsx](file:///d:/desktop/HomeTutorX/src/components/common/ProtectedRoute.jsx) to redirect tutors with pending payments immediately to `/subscription-expired` to complete activation, guaranteeing zero lost transactions.
+- **Collision-free Referral Codes**: Updated [Tutor.js](file:///d:/desktop/HomeTutorX/backend/models/Tutor.js) and [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js) to derive unique referral codes directly from the document's Mongoose ObjectId (`HT` + last 6 chars of `_id`), resolving concurrent race condition failures.
+
+---
+
 ### 107. Made Student Registration Free
 - **Bypassed Payment Flow**: Refactored [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx) to immediately register the student upon form submission, bypassing the Razorpay script loading and payment handler screens. Removed the payment step UI fields and fee notices completely.
 - **Backend Controller Updates**: Removed Razorpay order/signature verification requirements for student registrations from the `registerStudent` endpoint in [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js#L494-L519), enabling instant profile creation.
