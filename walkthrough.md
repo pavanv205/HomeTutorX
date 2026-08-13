@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 109. Cleaned Up Tutor Charges Ranges and Listings Labels
+- **Removed Numeric Range Labels**: Deleted the range hints `(50 - 500)` and `(500 - 25000)` from the hourly rate and monthly charges labels and placeholders in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx).
+- **Removed Listings Subtext**: Removed the `"Showing verified profiles"` tag from the active tutor search header in [FindTutors.jsx](file:///d:/desktop/HomeTutorX/src/pages/FindTutors.jsx).
+
+---
+
 ### 108. Resolved Concurrent Registration Failures and Payments Stuck Issues
 - **Registration-then-Payment Flow**: Decoupled tutor payment checkout from form submission inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx). Tutors can now register instantly with `paymentStatus: 'Pending'`, uploading their files securely without pre-payment risks.
 - **Bypassed Payment Verification**: Removed strict Razorpay verification requirements from `registerTutor` inside [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js). The backend now saves tutor profiles with a default `'Pending'` status and null expiration.
