@@ -448,8 +448,8 @@ npm run build
 
 ---
 
-### 110. Removed Tutors Count Header Bar
-- **Removed Count Header**: Removed the entire header bar displaying `"Active Tutors Found"` from the listing grid header inside [FindTutors.jsx](file:///d:/desktop/HomeTutorX/src/pages/FindTutors.jsx).
+### 110. Removed Active Tutors Count Bar from Listing Page
+- **Removed Count Bar Header**: Deleted the entire listing status bar (which displayed `"{count} Active Tutors Found"`) at the top of the search results grid inside [FindTutors.jsx](file:///d:/desktop/HomeTutorX/src/pages/FindTutors.jsx).
 
 ---
 
