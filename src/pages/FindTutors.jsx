@@ -622,15 +622,11 @@ const FindTutors = () => {
             )}
           </div>
 
-          {/* Tutors Listing Main Grid */}
           <main className="lg:col-span-3">
             {!loading && !error && Array.isArray(tutors) && tutors.length > 0 && (
               <div className="mb-6 flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-205/60 dark:border-slate-800 rounded-2xl py-3.5 px-5 shadow-sm">
                 <span className="text-sm font-extrabold text-slate-850 dark:text-slate-200">
                   {tutors.length} {tutors.length === 1 ? 'Active Tutor' : 'Active Tutors'} Found
-                </span>
-                <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">
-                  Showing verified profiles
                 </span>
               </div>
             )}

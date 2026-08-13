@@ -1005,11 +1005,11 @@ const BecomeTutorForm = () => {
               {/* Hourly Rate */}
               <div>
                 <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
-                  Hourly Rate (₹) (50 - 500)
+                  Hourly Rate (₹)
                 </label>
                 <input
                   type="number"
-                  placeholder="Hourly rate (50 - 500)"
+                  placeholder="Hourly rate"
                   {...register('hourlyRate')}
                   className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                 />
@@ -1019,11 +1019,11 @@ const BecomeTutorForm = () => {
               {/* Monthly Rate */}
               <div>
                 <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
-                  Monthly Charges (₹) (500 - 25000)
+                  Monthly Charges (₹)
                 </label>
                 <input
                   type="number"
-                  placeholder="Monthly charges (500 - 25000)"
+                  placeholder="Monthly charges"
                   {...register('monthlyRate')}
                   className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
                 />
