@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 110. Removed Tutors Count Header Bar
+- **Removed Count Header**: Removed the entire header bar displaying `"Active Tutors Found"` from the listing grid header inside [FindTutors.jsx](file:///d:/desktop/HomeTutorX/src/pages/FindTutors.jsx).
+
+---
+
 ### 109. Removed Rate Hints and "Showing Verified Profiles" Label
 - **Removed Rate Range Hints**: Removed the hardcoded `(50 - 500)` and `(500 - 25000)` instructions from labels and input placeholders for hourly rate and monthly charges inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx).
 - **Relaxed Input Validation Limits**: Updated the React/Yup schema constraints inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to only check for non-negative rates (`min(0)`), allowing tutors to charge custom rates.
