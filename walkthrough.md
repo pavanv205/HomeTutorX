@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 103. Changed Registration Fee to ₹1 and Subscription Duration to 5 Minutes
+- **Config Constants Updated**: Updated [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) settings, setting `tutorRegistrationFee: 1`, `studentVerificationFee: 1`, and `tutorSubscriptionMonths: 5` (signifying a 5-minute subscription window).
+- **Backend Duration Calculation**: Modified [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js) so that when registering or renewing a subscription, if the subscription setting is 5, it is calculated as `5 * 60 * 1000` (5 minutes) instead of standard months.
+- **Frontend Text and States**: Updated [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx), [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx), and [TermsOfService.jsx](file:///d:/desktop/HomeTutorX/src/pages/TermsOfService.jsx) to display ₹1 and label the subscription plan duration as `"5min"`.
+
+---
+
 ### 102. Removed Admin Login Option from Public Dropdown and Tab Menus
 - **Dropdown Cleared**: Removed the "Admin Login" links from both the desktop and mobile dropdown navigation menus in [Navbar.jsx](file:///d:/desktop/HomeTutorX/src/components/layout/Navbar.jsx#L421-L553).
 - **Conditional Tab Choice**: Updated [Login.jsx](file:///d:/desktop/HomeTutorX/src/pages/Login.jsx#L313-L325) to omit the Admin Login choice button from the tab panel during standard logins, ensuring it only appears if the user is explicitly directed via an admin role query parameters (maintaining full access for administrative redirects).
