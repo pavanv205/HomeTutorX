@@ -9,7 +9,7 @@ import api from '../services/api';
 
 const RegisterStudent = () => {
   const [step, setStep] = useState(1);
-  const [verificationFee, setVerificationFee] = useState(29); // dynamic fallback
+  const [verificationFee, setVerificationFee] = useState(1); // dynamic fallback
   
   // Form fields
   const [firstName, setFirstName] = useState('');

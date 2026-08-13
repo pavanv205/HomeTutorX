@@ -62,8 +62,8 @@ const BecomeTutorForm = () => {
   const { registerTutor: registerTutorAuth } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [regFee, setRegFee] = useState(29); // dynamic fallback
-  const [subMonths, setSubMonths] = useState(6); // dynamic fallback
+  const [regFee, setRegFee] = useState(1); // dynamic fallback
+  const [subMonths, setSubMonths] = useState(5); // dynamic fallback
   const [successMsg, setSuccessMsg] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
   const [resumeError, setResumeError] = useState('');
@@ -476,7 +476,7 @@ const BecomeTutorForm = () => {
         amount: orderData.amount, // dynamic in paise
         currency: orderData.currency,
         name: 'HomeTutorX',
-        description: `${subMonths}-Month Tutor Subscription Plan`,
+        description: `${subMonths === '5min' || String(subMonths) === '5' ? '5-Minute' : `${subMonths}-Month`} Tutor Subscription Plan`,
         order_id: isMock ? undefined : orderData.id,
         handler: async function (response) {
           try {
@@ -1391,7 +1391,7 @@ const BecomeTutorForm = () => {
                 <div>
                   <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Tutor Subscription Plan</h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">
-                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹{regFee}</strong> for a {subMonths}-month tutor subscription plan.
+                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹{regFee}</strong> for a {subMonths === '5min' || String(subMonths) === '5' ? '5min' : `${subMonths}-month`} tutor subscription plan.
                   </p>
                 </div>
               </div>
