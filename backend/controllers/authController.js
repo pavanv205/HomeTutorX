@@ -1074,7 +1074,7 @@ exports.renewSubscription = async (req, res, next) => {
       });
     }
 
-    const newExpiresAt = new Date(Date.now() + (appSettings.tutorSubscriptionMonths === 5 ? 5 * 60 * 1000 : 180 * 24 * 60 * 60 * 1000));
+    const newExpiresAt = new Date(Date.now() + (appSettings.tutorSubscriptionMonths === 5 ? 5 * 60 * 1000 : appSettings.tutorSubscriptionMonths * 30 * 24 * 60 * 60 * 1000));
 
     let user;
     if (mongoose.connection.readyState !== 1) {
@@ -1104,7 +1104,7 @@ exports.renewSubscription = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Subscription successfully renewed for 5 minuties.',
+      message: `Subscription successfully renewed for ${appSettings.tutorSubscriptionMonths === 5 ? '5 minuties' : `${appSettings.tutorSubscriptionMonths} months`}.`,
       data: user
     });
   } catch (err) {

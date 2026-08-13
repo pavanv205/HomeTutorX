@@ -10,8 +10,8 @@ import api from '../services/api';
 const SubscriptionExpired = () => {
   const { user, renewSubscription, logout, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [regFee, setRegFee] = useState(5);
-  const [subMonths, setSubMonths] = useState(5);
+  const [regFee, setRegFee] = useState(1);
+  const [subMonths, setSubMonths] = useState(3);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const navigate = useNavigate();

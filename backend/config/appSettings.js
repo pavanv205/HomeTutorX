@@ -1,5 +1,5 @@
 module.exports = {
-  tutorRegistrationFee: 5, // Tutor registration fee in INR
-  tutorSubscriptionMonths: 5, // Tutor subscription duration (5 minutes)
-  studentVerificationFee: 5 // Student verification fee in INR
+  tutorRegistrationFee: 1, // Tutor registration fee in INR
+  tutorSubscriptionMonths: 3, // Tutor subscription duration (3 months)
+  studentVerificationFee: 1 // Student verification fee in INR
 };

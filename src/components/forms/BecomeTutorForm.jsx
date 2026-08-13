@@ -62,8 +62,8 @@ const BecomeTutorForm = () => {
   const { registerTutor: registerTutorAuth } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [regFee, setRegFee] = useState(5); // dynamic fallback
-  const [subMonths, setSubMonths] = useState(5); // dynamic fallback
+  const [regFee, setRegFee] = useState(1); // dynamic fallback
+  const [subMonths, setSubMonths] = useState(3); // dynamic fallback
   const [successMsg, setSuccessMsg] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
   const [resumeError, setResumeError] = useState('');
