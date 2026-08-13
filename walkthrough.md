@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 105. Changed Registration and Verification Fees to ₹5
+- **Config Constants Updated**: Updated [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) to set `tutorRegistrationFee: 5` and `studentVerificationFee: 5`.
+- **Frontend State Defaults**: Updated initial state default fallbacks for registration fees in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx), and [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx) from `1` to `5` to align with the new setup.
+- **Terms of Service**: Updated [TermsOfService.jsx](file:///d:/desktop/HomeTutorX/src/pages/TermsOfService.jsx) to reflect the new ₹5 tutor subscription and student verification fee details.
+
+---
+
 ### 104. Updated Subscription Period Display Text to '5 minuties'
 - **Frontend Text Alignments**: Updated the conditional display text labels in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx), and [TermsOfService.jsx](file:///d:/desktop/HomeTutorX/src/pages/TermsOfService.jsx) from `"5min"` / `"5-Minute"` to `"5 minuties"`.
 - **Backend Message Updates**: Modified [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js#L1107) to return a success message referencing `"5 minuties"` upon successful subscription renewal.
