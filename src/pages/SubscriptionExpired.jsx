@@ -178,7 +178,7 @@ const SubscriptionExpired = () => {
               Subscription Expired
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-sm mx-auto">
-              Your {subMonths === '5min' || String(subMonths) === '5' ? '5min' : `${subMonths}-month`} HomeTutorX subscription expired on <strong className="text-rose-600 dark:text-rose-400">{formattedExpiry}</strong>.
+              Your {subMonths === '5min' || String(subMonths) === '5' ? '5 minuties' : `${subMonths}-month`} HomeTutorX subscription expired on <strong className="text-rose-600 dark:text-rose-400">{formattedExpiry}</strong>.
             </p>
           </div>
 
@@ -213,7 +213,7 @@ const SubscriptionExpired = () => {
                 <div className="h-2.5 w-2.5 rounded-full bg-slate-950 dark:bg-slate-100" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{subMonths === '5min' || String(subMonths) === '5' ? '5min' : `${subMonths}-Month`} Renewal</h4>
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">{subMonths === '5min' || String(subMonths) === '5' ? '5 minuties' : `${subMonths}-Month`} Renewal</h4>
                 <p className="text-xs text-slate-400 font-semibold mt-0.5">Full tutor & student connections</p>
               </div>
             </div>

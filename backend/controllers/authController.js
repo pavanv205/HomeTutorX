@@ -1104,7 +1104,7 @@ exports.renewSubscription = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Subscription successfully renewed for 6 months.',
+      message: 'Subscription successfully renewed for 5 minuties.',
       data: user
     });
   } catch (err) {
