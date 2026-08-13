@@ -104,26 +104,9 @@ exports.registerTutor = async (req, res, next) => {
       });
     }
 
-    const actualOrderId = data.razorpay_order_id;
-    const actualPaymentId = data.razorpay_payment_id || data.paymentId;
-    const actualSignature = data.razorpay_signature;
-    data.paymentId = actualPaymentId;
-
-    // Verify payment status
-    if (!actualPaymentId || data.paymentStatus !== 'Paid') {
-      return res.status(400).json({
-        success: false,
-        message: 'Payment verification failed. Tutor profile registration requires a successful ₹1 tutor subscription plan payment.'
-      });
-    }
-
-    // Secure verification
-    if (!verifyRazorpaySignature(actualOrderId, actualPaymentId, actualSignature)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Payment verification failed. Cryptographic signature is invalid.'
-      });
-    }
+    // Tutor registration is free/pending initially (Register-then-Pay), payment checked at login/dashboard
+    data.paymentStatus = 'Pending';
+    data.paymentId = undefined;
 
     // Validate name format and length
     const trimmedName = name.trim();
@@ -282,9 +265,9 @@ exports.registerTutor = async (req, res, next) => {
         password: hashedPassword,
         role: 'Tutor',
         tutorProfile: tutorId,
-        paymentStatus: 'Paid',
-        paymentId: data.paymentId,
-        subscriptionExpiresAt: new Date(Date.now() + (appSettings.tutorSubscriptionMonths === 5 ? 5 * 60 * 1000 : appSettings.tutorSubscriptionMonths * 30 * 24 * 60 * 60 * 1000)).toISOString(),
+        paymentStatus: 'Pending',
+        paymentId: undefined,
+        subscriptionExpiresAt: undefined,
         createdAt: new Date().toISOString()
       };
       
@@ -349,9 +332,9 @@ exports.registerTutor = async (req, res, next) => {
         email,
         password,
         role: 'Tutor',
-        paymentStatus: 'Paid',
-        paymentId: data.paymentId,
-        subscriptionExpiresAt: new Date(Date.now() + (appSettings.tutorSubscriptionMonths === 5 ? 5 * 60 * 1000 : appSettings.tutorSubscriptionMonths * 30 * 24 * 60 * 60 * 1000))
+        paymentStatus: 'Pending',
+        paymentId: undefined,
+        subscriptionExpiresAt: undefined
       });
       devLog(`[DATABASE SAVE] Created User document, ID: ${user._id}`);
     } catch (userErr) {

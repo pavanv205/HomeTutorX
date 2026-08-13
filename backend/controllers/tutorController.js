@@ -512,12 +512,9 @@ exports.getTutorById = async (req, res, next) => {
     
     // Auto-generate ownReferralCode if missing
     if (!tutor.ownReferralCode) {
-      let generated = 'HT';
-      for (let i = 0; i < 6; i++) {
-        generated += Math.floor(Math.random() * 6) + 1;
-      }
+      const generated = 'HT' + tutor._id.toString().slice(-6).toUpperCase();
       if (mongoose.connection.readyState === 1) {
-        await Tutor.findByIdAndUpdate(req.params.id, { ownReferralCode: generated });
+        await Tutor.findByIdAndUpdate(tutor._id, { ownReferralCode: generated });
       }
       tutor.ownReferralCode = generated;
     }

@@ -55,19 +55,8 @@ TutorSchema.index({ hourlyRate: 1 });
 // Pre-save hook to generate a unique referral code if missing
 TutorSchema.pre('save', async function(next) {
   if (!this.ownReferralCode) {
-    let code;
-    let exists = true;
-    while (exists) {
-      code = 'HT';
-      for (let i = 0; i < 6; i++) {
-        code += Math.floor(Math.random() * 6) + 1;
-      }
-      const count = await this.constructor.countDocuments({ ownReferralCode: code });
-      if (count === 0) {
-        exists = false;
-      }
-    }
-    this.ownReferralCode = code;
+    const uniquePart = this._id.toString().slice(-6).toUpperCase();
+    this.ownReferralCode = 'HT' + uniquePart;
   }
   next();
 });
