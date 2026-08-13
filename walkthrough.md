@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 107. Made Student Registration Free
+- **Bypassed Payment Flow**: Refactored [RegisterStudent.jsx](file:///d:/desktop/HomeTutorX/src/pages/RegisterStudent.jsx) to immediately register the student upon form submission, bypassing the Razorpay script loading and payment handler screens. Removed the payment step UI fields and fee notices completely.
+- **Backend Controller Updates**: Removed Razorpay order/signature verification requirements for student registrations from the `registerStudent` endpoint in [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js#L494-L519), enabling instant profile creation.
+- **Terms of Service**: Updated [TermsOfService.jsx](file:///d:/desktop/HomeTutorX/src/pages/TermsOfService.jsx#L117) to declare student registration as completely free and instant.
+
+---
+
 ### 106. Changed Registration Fee to ₹1 and Subscription Duration to 3 Months
 - **Config Constants Updated**: Updated [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) to set `tutorRegistrationFee: 1`, `studentVerificationFee: 1`, and `tutorSubscriptionMonths: 3`.
 - **Backend Expiration Computation**: Refactored the renew validation inside [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js) to compute subscription durations dynamically using the configuration parameter instead of a hardcoded value, and updated the successful renewal response message.
