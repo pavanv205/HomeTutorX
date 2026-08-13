@@ -448,6 +448,12 @@ npm run build
 
 ---
 
+### 104. Updated Subscription Period Display Text to '5 minuties'
+- **Frontend Text Alignments**: Updated the conditional display text labels in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx), [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx), and [TermsOfService.jsx](file:///d:/desktop/HomeTutorX/src/pages/TermsOfService.jsx) from `"5min"` / `"5-Minute"` to `"5 minuties"`.
+- **Backend Message Updates**: Modified [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js#L1107) to return a success message referencing `"5 minuties"` upon successful subscription renewal.
+
+---
+
 ### 103. Changed Registration Fee to ₹1 and Subscription Duration to 5 Minutes
 - **Config Constants Updated**: Updated [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) settings, setting `tutorRegistrationFee: 1`, `studentVerificationFee: 1`, and `tutorSubscriptionMonths: 5` (signifying a 5-minute subscription window).
 - **Backend Duration Calculation**: Modified [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js) so that when registering or renewing a subscription, if the subscription setting is 5, it is calculated as `5 * 60 * 1000` (5 minutes) instead of standard months.
