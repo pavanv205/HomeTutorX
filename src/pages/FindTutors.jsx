@@ -622,6 +622,7 @@ const FindTutors = () => {
             )}
           </div>
 
+          {/* Tutors Listing Main Grid */}
           <main className="lg:col-span-3">
             {!loading && !error && Array.isArray(tutors) && tutors.length > 0 && (
               <div className="mb-6 flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-205/60 dark:border-slate-800 rounded-2xl py-3.5 px-5 shadow-sm">

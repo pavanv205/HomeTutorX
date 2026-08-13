@@ -448,9 +448,10 @@ npm run build
 
 ---
 
-### 109. Cleaned Up Tutor Charges Ranges and Listings Labels
-- **Removed Numeric Range Labels**: Deleted the range hints `(50 - 500)` and `(500 - 25000)` from the hourly rate and monthly charges labels and placeholders in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx).
-- **Removed Listings Subtext**: Removed the `"Showing verified profiles"` tag from the active tutor search header in [FindTutors.jsx](file:///d:/desktop/HomeTutorX/src/pages/FindTutors.jsx).
+### 109. Removed Rate Hints and "Showing Verified Profiles" Label
+- **Removed Rate Range Hints**: Removed the hardcoded `(50 - 500)` and `(500 - 25000)` instructions from labels and input placeholders for hourly rate and monthly charges inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx).
+- **Relaxed Input Validation Limits**: Updated the React/Yup schema constraints inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to only check for non-negative rates (`min(0)`), allowing tutors to charge custom rates.
+- **Removed Verified Label**: Removed the `"Showing verified profiles"` label from the search count bar inside [FindTutors.jsx](file:///d:/desktop/HomeTutorX/src/pages/FindTutors.jsx).
 
 ---
 

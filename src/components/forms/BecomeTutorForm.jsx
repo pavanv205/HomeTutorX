@@ -37,13 +37,11 @@ const validationSchema = yup.object().shape({
   hourlyRate: yup.number()
     .typeError('Hourly rate must be a number')
     .required('Hourly rate is required')
-    .min(50, 'Minimum hourly charge is 50')
-    .max(500, 'Maximum hourly charge is 500'),
+    .min(0, 'Minimum hourly charge is 0'),
   monthlyRate: yup.number()
     .typeError('Monthly charge must be a number')
     .required('Monthly charge is required')
-    .min(500, 'Minimum monthly charge is 500')
-    .max(25000, 'Maximum monthly charge is 25000'),
+    .min(0, 'Minimum monthly charge is 0'),
 
   // Step 4
   streetAddress: yup.string()
