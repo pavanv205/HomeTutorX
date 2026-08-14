@@ -103,7 +103,15 @@ export const compressPdfToImage = async (pdfFile, maxSizeBytes = 500 * 1024) => 
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
         script.onload = () => {
           if (window.pdfjsLib) {
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            try {
+              const workerBlob = new Blob(
+                [`importScripts('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');`],
+                { type: 'application/javascript' }
+              );
+              window.pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(workerBlob);
+            } catch (e) {
+              console.warn('PDF.js worker setup fallback:', e);
+            }
             res(window.pdfjsLib);
           } else {
             rej(new Error('PDF.js failed to initialize'));
@@ -117,7 +125,17 @@ export const compressPdfToImage = async (pdfFile, maxSizeBytes = 500 * 1024) => 
     loadScript()
       .then(async (pdfjsLib) => {
         const arrayBuffer = await pdfFile.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let pdf;
+        try {
+          const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+          pdf = await loadingTask.promise;
+        } catch (docErr) {
+          if (docErr && (docErr.name === 'PasswordException' || docErr.message?.toLowerCase().includes('password'))) {
+            return reject(new Error('PASSWORD_PROTECTED_PDF'));
+          }
+          return reject(docErr);
+        }
+
         const page = await pdf.getPage(1);
         const viewport = page.getViewport({ scale: 2.0 });
 

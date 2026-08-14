@@ -435,6 +435,14 @@ const BecomeTutorForm = () => {
           setCertificateOriginalSize(result.originalSize);
         } catch (pdfErr) {
           console.error('PDF compression to image failed:', pdfErr);
+          if (pdfErr?.message === 'PASSWORD_PROTECTED_PDF') {
+            window.alert('This PDF is password-protected (e.g. e-Aadhaar). Please upload an un-password-protected PDF or a image/screenshot (JPEG/PNG) of your document.');
+            setCertificateError('Password-protected PDFs cannot be uploaded. Please upload an un-password-protected PDF or image.');
+            setCertificateFile(null);
+            setCertificatePreviewUrl(null);
+            setCertificateOriginalSize(null);
+            return;
+          }
           if (file.size > 4 * 1024 * 1024) {
             window.alert('PDF file size is too large (max 4 MB). Please select a PDF smaller than 4 MB.');
             setCertificateError('PDF file size must be under 4 MB.');
