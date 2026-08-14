@@ -425,7 +425,15 @@ const BecomeTutorForm = () => {
         setCertificateCompressionLoading(false);
       }
     } else {
-      // It's a PDF – no compression needed
+      // It's a PDF – check 4 MB size limit
+      if (file.size > 4 * 1024 * 1024) {
+        window.alert('PDF file size is too large (max 4 MB). Please select a PDF smaller than 4 MB.');
+        setCertificateError('PDF file size must be under 4 MB.');
+        setCertificateFile(null);
+        setCertificatePreviewUrl(null);
+        setCertificateOriginalSize(null);
+        return;
+      }
       setCertificateFile(file);
       setCertificatePreviewUrl(null);
       setCertificateOriginalSize(null);
