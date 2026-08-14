@@ -550,6 +550,19 @@ exports.updateTutor = async (req, res, next) => {
 
     const data = req.body || {};
 
+    if (data.hourlyRate !== undefined && data.hourlyRate !== '') {
+      const numHourly = Number(data.hourlyRate);
+      if (isNaN(numHourly) || numHourly < 50 || numHourly > 500) {
+        return res.status(400).json({ success: false, message: 'Hourly rate must be between ₹50 and ₹500.' });
+      }
+    }
+    if (data.monthlyRate !== undefined && data.monthlyRate !== '') {
+      const numMonthly = Number(data.monthlyRate);
+      if (isNaN(numMonthly) || numMonthly < 500 || numMonthly > 15000) {
+        return res.status(400).json({ success: false, message: 'Monthly rate must be between ₹500 and ₹15000.' });
+      }
+    }
+
     // Clean and parse all array fields to prevent nested stringified arrays or duplicates
     const arrayFields = ['subjects', 'classes', 'preferredLocations', 'availableTimings', 'languages', 'previousInstitutions'];
     arrayFields.forEach(field => {

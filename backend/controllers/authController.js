@@ -221,8 +221,11 @@ exports.registerTutor = async (req, res, next) => {
 
     const numHourly = Number(data.hourlyRate);
     const numMonthly = Number(data.monthlyRate);
-    if (isNaN(numHourly) || numHourly < 0 || isNaN(numMonthly) || numMonthly < 0) {
-      return res.status(400).json({ success: false, message: 'Rates must be valid non-negative numbers' });
+    if (isNaN(numHourly) || numHourly < 50 || numHourly > 500) {
+      return res.status(400).json({ success: false, message: 'Hourly rate must be between ₹50 and ₹500.' });
+    }
+    if (isNaN(numMonthly) || numMonthly < 500 || numMonthly > 15000) {
+      return res.status(400).json({ success: false, message: 'Monthly charges must be between ₹500 and ₹15000.' });
     }
 
     // 3. Log Uploaded File Details

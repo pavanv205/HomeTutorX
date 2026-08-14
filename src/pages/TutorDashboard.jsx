@@ -400,6 +400,20 @@ const TutorDashboard = () => {
     e.preventDefault();
     setSaving(true);
     setMessage({ text: '', type: '' });
+
+    const hourly = Number(tutorProfile.hourlyRate);
+    const monthly = Number(tutorProfile.monthlyRate);
+    if (isNaN(hourly) || hourly < 50 || hourly > 500) {
+      setMessage({ text: 'Hourly rate must be between ₹50 and ₹500.', type: 'error' });
+      setSaving(false);
+      return;
+    }
+    if (isNaN(monthly) || monthly < 500 || monthly > 15000) {
+      setMessage({ text: 'Monthly rate must be between ₹500 and ₹15000.', type: 'error' });
+      setSaving(false);
+      return;
+    }
+
     try {
       let res;
       if (photoFile) {

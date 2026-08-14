@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 112. Updated Rates Validation: Max Hourly Rate to ₹500 and Max Monthly Rate to ₹15000
+- **Frontend Registration Validation**: Re-enabled Yup validation constraints in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to enforce `min(50).max(500)` for hourly rate, and `min(500).max(15000)` for monthly charges.
+- **Frontend Profile Management Validation**: Injected validation checks in `handleSaveProfile` in [TutorDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/TutorDashboard.jsx) to prevent tutors from setting profile updates beyond ₹500/hour or ₹15000/month.
+- **Backend Enforcements**: Modified tutor registration in [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js) and profile update in [tutorController.js](file:///d:/desktop/HomeTutorX/backend/controllers/tutorController.js) to reject requests exceeding the ₹500 hourly or ₹15000 monthly bounds.
+
+---
+
 ### 111. Restored Registration Payment Checkout Flow with Automated Failed-Submission Refunds
 - **Restored Form Submit Checkout**: Reverted [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) back to the pre-payment workflow. Clicking "Submit Application" triggers the Razorpay popup dynamically, completing payment *before* details are sent to the server.
 - **Enabled Cryptographic Verification**: Restored signature checking inside the tutor registration handler in [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js). Tutors are created with `paymentStatus: 'Paid'` and their subscription is instantly activated.
