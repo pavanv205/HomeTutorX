@@ -86,3 +86,73 @@ export const compressImage = (file, maxSizeBytes = 500 * 1024) => {
     reader.onerror = () => reject(new Error('Failed to read image file'));
   });
 };
+
+/**
+ * Converts page 1 of a PDF file to a high-resolution canvas and compresses it to a JPEG image file under maxSizeBytes (default 500 KB).
+ * 
+ * @param {File} pdfFile - The uploaded PDF file.
+ * @param {number} maxSizeBytes - Target maximum size in bytes (default 500 KB).
+ * @returns {Promise<{file: File, previewUrl: string, originalSize: number, compressedSize: number}>}
+ */
+export const compressPdfToImage = async (pdfFile, maxSizeBytes = 500 * 1024) => {
+  return new Promise((resolve, reject) => {
+    const loadScript = () => {
+      if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+      return new Promise((res, rej) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        script.onload = () => {
+          if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            res(window.pdfjsLib);
+          } else {
+            rej(new Error('PDF.js failed to initialize'));
+          }
+        };
+        script.onerror = () => rej(new Error('Failed to load PDF processor from CDN'));
+        document.body.appendChild(script);
+      });
+    };
+
+    loadScript()
+      .then(async (pdfjsLib) => {
+        const arrayBuffer = await pdfFile.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 2.0 });
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context, viewport }).promise;
+
+        canvas.toBlob(
+          async (blob) => {
+            if (!blob) {
+              reject(new Error('PDF rendering failed'));
+              return;
+            }
+            const imageName = pdfFile.name.replace(/\.pdf$/i, '.jpg');
+            const imageFile = new File([blob], imageName, { type: 'image/jpeg' });
+
+            try {
+              const compressedResult = await compressImage(imageFile, maxSizeBytes);
+              resolve({
+                file: compressedResult.file,
+                previewUrl: compressedResult.previewUrl,
+                originalSize: pdfFile.size,
+                compressedSize: compressedResult.compressedSize
+              });
+            } catch (err) {
+              reject(err);
+            }
+          },
+          'image/jpeg',
+          0.85
+        );
+      })
+      .catch(reject);
+  });
+};

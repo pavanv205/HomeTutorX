@@ -8,7 +8,7 @@ import { SUBJECTS, CLASSES, STATES, STATE_CITIES } from '../../constants';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
 import api from '../../services/api';
-import { compressImage } from '../../utils/imageCompression';
+import { compressImage, compressPdfToImage } from '../../utils/imageCompression';
 
 // Global schema for full validation
 const validationSchema = yup.object().shape({
@@ -425,18 +425,35 @@ const BecomeTutorForm = () => {
         setCertificateCompressionLoading(false);
       }
     } else {
-      // It's a PDF – check 4 MB size limit
-      if (file.size > 4 * 1024 * 1024) {
-        window.alert('PDF file size is too large (max 4 MB). Please select a PDF smaller than 4 MB.');
-        setCertificateError('PDF file size must be under 4 MB.');
-        setCertificateFile(null);
+      // It's a PDF – compress to JPEG under 500KB if larger than 500KB
+      if (file.size > 500 * 1024) {
+        try {
+          setCertificateCompressionLoading(true);
+          const result = await compressPdfToImage(file, 500 * 1024);
+          setCertificateFile(result.file);
+          setCertificatePreviewUrl(result.previewUrl);
+          setCertificateOriginalSize(result.originalSize);
+        } catch (pdfErr) {
+          console.error('PDF compression to image failed:', pdfErr);
+          if (file.size > 4 * 1024 * 1024) {
+            window.alert('PDF file size is too large (max 4 MB). Please select a PDF smaller than 4 MB.');
+            setCertificateError('PDF file size must be under 4 MB.');
+            setCertificateFile(null);
+            setCertificatePreviewUrl(null);
+            setCertificateOriginalSize(null);
+            return;
+          }
+          setCertificateFile(file);
+          setCertificatePreviewUrl(null);
+          setCertificateOriginalSize(file.size);
+        } finally {
+          setCertificateCompressionLoading(false);
+        }
+      } else {
+        setCertificateFile(file);
         setCertificatePreviewUrl(null);
         setCertificateOriginalSize(null);
-        return;
       }
-      setCertificateFile(file);
-      setCertificatePreviewUrl(null);
-      setCertificateOriginalSize(null);
     }
   };
 
