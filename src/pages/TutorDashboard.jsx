@@ -1018,7 +1018,6 @@ const TutorDashboard = () => {
                     </div>
                   )}
                 </div>
-/div>
               )}
 
               {/* TAB 4: SETTINGS */}
