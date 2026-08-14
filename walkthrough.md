@@ -448,6 +448,11 @@ npm run build
 
 ---
 
+### 113. Removed Referral Code Input Field from Tutor Registration
+- **Removed Form Field**: Deleted the `Referral Code (Optional)` text input container completely from step 3 (Profile & Payment) inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx).
+
+---
+
 ### 112. Updated Rates Validation: Max Hourly Rate to ₹500 and Max Monthly Rate to ₹15000
 - **Frontend Registration Validation**: Re-enabled Yup validation constraints in [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) to enforce `min(50).max(500)` for hourly rate, and `min(500).max(15000)` for monthly charges.
 - **Frontend Profile Management Validation**: Injected validation checks in `handleSaveProfile` in [TutorDashboard.jsx](file:///d:/desktop/HomeTutorX/src/pages/TutorDashboard.jsx) to prevent tutors from setting profile updates beyond ₹500/hour or ₹15000/month.

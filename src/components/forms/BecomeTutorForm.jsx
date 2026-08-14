@@ -1121,19 +1121,7 @@ const BecomeTutorForm = () => {
                 {errors.pincode && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.pincode.message}</p>}
               </div>
 
-              {/* Referral Code */}
-              <div>
-                <label className="block text-xs font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wide">
-                  Referral Code (Optional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter referral code if any"
-                  {...register('referralCode')}
-                  className="w-full bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
-                />
-                {errors.referralCode && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.referralCode.message}</p>}
-              </div>
+
             </div>
 
             {/* Live Location Option */}
