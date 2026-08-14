@@ -452,27 +452,93 @@ const BecomeTutorForm = () => {
         return;
       }
 
-      const formData = new FormData();
-      // Append primitive fields
-      for (const key of Object.keys(data)) {
-        const val = data[key];
-        if (Array.isArray(val)) {
-          formData.append(key, JSON.stringify(val));
-        } else {
-          formData.append(key, val ?? '');
-        }
-      }
-      if (resumeFile) {
-        formData.append('resume', resumeFile);
-      }
-      if (certificateFile) {
-        formData.append('certificate', certificateFile);
+      // Load Razorpay Script
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        setSubmitError('Failed to load payment gateway. Please check your internet connection.');
+        setLoading(false);
+        return;
       }
 
-      const regResponse = await registerTutorAuth(formData);
-      if (regResponse) {
-        setSuccessMsg('Application Submitted! We have created your tutor account. Redirecting you to subscription activation...');
+      // Create Razorpay Order on the server
+      const orderRes = await api.post('/payments/create-order', { amount: regFee });
+      if (!orderRes.data || !orderRes.data.success) {
+        throw new Error(orderRes.data?.message || 'Failed to initialize order with payment gateway.');
       }
+      const orderData = orderRes.data.data;
+      const isMock = orderRes.data.isMock;
+
+      // Initialize Razorpay Options
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY || orderData.key || 'rzp_live_TAwDF3o7rjkreE',
+        amount: orderData.amount, // dynamic in paise
+        currency: orderData.currency,
+        name: 'HomeTutorX',
+        description: `${subMonths === '5min' || String(subMonths) === '5' ? '5 minuties' : `${subMonths}-Month`} Tutor Subscription Plan`,
+        order_id: isMock ? undefined : orderData.id,
+        handler: async function (response) {
+          try {
+            setLoading(true);
+            const razorpayPaymentId = response.razorpay_payment_id;
+            const razorpayOrderId = response.razorpay_order_id || orderData.id;
+            const razorpaySignature = response.razorpay_signature || 'mock_signature';
+
+            console.log('Payment Successful. Payment ID:', razorpayPaymentId);
+
+            const formData = new FormData();
+            // Append primitive fields
+            for (const key of Object.keys(data)) {
+              const val = data[key];
+              if (Array.isArray(val)) {
+                formData.append(key, JSON.stringify(val));
+              } else {
+                formData.append(key, val ?? '');
+              }
+            }
+            if (resumeFile) {
+              formData.append('resume', resumeFile);
+            }
+            if (certificateFile) {
+              formData.append('certificate', certificateFile);
+            }
+            
+            // Append payment fields
+            formData.append('paymentStatus', 'Paid');
+            formData.append('paymentId', razorpayPaymentId);
+            formData.append('razorpay_order_id', razorpayOrderId);
+            formData.append('razorpay_payment_id', razorpayPaymentId);
+            formData.append('razorpay_signature', razorpaySignature);
+
+            const regResponse = await registerTutorAuth(formData);
+            if (regResponse) {
+              setSuccessMsg('Application Submitted! We have created your tutor account. You can log in using your credentials after admin review.');
+            }
+          } catch (error) {
+            console.error(error);
+            setSubmitError(error.message || 'Registration failed. Please try again.');
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: data.name,
+          email: data.email,
+          contact: data.phone
+        },
+        theme: {
+          color: '#3B82F6' // Primary theme blue
+        },
+        modal: {
+          ondismiss: function() {
+            setSubmitError('Payment was cancelled. You must complete the ₹1 payment to submit your application.');
+            setLoading(false);
+          }
+        }
+      };
+
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY || 'rzp_live_TAwDF3o7rjkreE';
+      const rzp1 = new window.Razorpay({ ...options, key: razorpayKey });
+      rzp1.open();
     } catch (error) {
       console.error(error);
       setSubmitError(error.message || 'Registration failed. Please try again.');
@@ -1287,11 +1353,10 @@ const BecomeTutorForm = () => {
                 </p>
               )}
             </div>
-
-               {/* Payment Method Option */}
+                 {/* Payment Method Option */}
               <div className="space-y-3 mt-6">
                 <label className="block text-xs font-bold text-slate-400 dark:text-slate-505 uppercase tracking-wide">
-                  Subscription Activation
+                  Select Payment Method
                 </label>
                 <div className="border border-slate-950 bg-slate-950/5 dark:border-slate-100 dark:bg-slate-100/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
                   <div className="flex items-center gap-3.5">
@@ -1299,11 +1364,11 @@ const BecomeTutorForm = () => {
                       <div className="h-2.5 w-2.5 rounded-full bg-slate-950 dark:bg-slate-100" />
                     </div>
                     <div>
-                      <p className="text-xs text-slate-400 font-semibold mt-0.5">Pay after profile creation</p>
+                      <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
                     </div>
                   </div>
                    <div className="text-right">
-                    <span className="text-xs text-slate-400 font-semibold block">Plan Fee</span>
+                    <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
                     <span className="text-base font-extrabold text-slate-950 dark:text-white">₹{regFee}</span>
                   </div>
                 </div>
@@ -1324,7 +1389,7 @@ const BecomeTutorForm = () => {
                 <div>
                   <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wide">Tutor Subscription Plan</h4>
                   <p className="text-xs text-slate-550 dark:text-slate-400 font-semibold mt-1">
-                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹{regFee}</strong> for a {subMonths === '5min' || String(subMonths) === '5' ? '5 minuties' : `${subMonths}-month`} subscription. You will activate this plan *after* submitting your application details.
+                    HomeTutorX charges a fee of <strong className="text-amber-600 dark:text-amber-500 font-extrabold text-sm">₹{regFee}</strong> for a {subMonths === '5min' || String(subMonths) === '5' ? '5 minuties' : `${subMonths}-month`} tutor subscription plan.
                   </p>
               </div>
             </div>

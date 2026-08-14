@@ -87,6 +87,26 @@ const generateToken = (id) => {
   });
 };
 
+// Helper to automatically refund registration payment on DB/Cloudinary failure
+const autoRefundRegistration = async (paymentId) => {
+  if (paymentId && !paymentId.startsWith('mock_')) {
+    const client = getRazorpayInstance();
+    if (client) {
+      console.log(`[PAYMENT AUTO-REFUND] Initiating refund for payment ID: ${paymentId} due to registration database failure.`);
+      try {
+        await client.payments.refund(paymentId, {
+          notes: {
+            reason: 'Tutor registration database save failed, transaction rolled back'
+          }
+        });
+        console.log(`[PAYMENT AUTO-REFUND] Successfully auto-refunded payment ID: ${paymentId}`);
+      } catch (refundErr) {
+        console.error('[PAYMENT AUTO-REFUND ERROR] Failed to refund registration payment:', refundErr.message);
+      }
+    }
+  }
+};
+
 // @desc    Register a new tutor
 // @route   POST /api/auth/register
 // @access  Public
@@ -125,9 +145,26 @@ exports.registerTutor = async (req, res, next) => {
       });
     }
 
-    // Tutor registration is free/pending initially (Register-then-Pay), payment checked at login/dashboard
-    data.paymentStatus = 'Pending';
-    data.paymentId = undefined;
+    const actualOrderId = data.razorpay_order_id;
+    const actualPaymentId = data.razorpay_payment_id || data.paymentId;
+    const actualSignature = data.razorpay_signature;
+    data.paymentId = actualPaymentId;
+
+    // Verify payment status
+    if (!actualPaymentId || data.paymentStatus !== 'Paid') {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment verification failed. Tutor profile registration requires a successful ₹1 tutor subscription plan payment.'
+      });
+    }
+
+    // Secure verification
+    if (!verifyRazorpaySignature(actualOrderId, actualPaymentId, actualSignature)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment verification failed. Cryptographic signature is invalid.'
+      });
+    }
 
     // Validate name format and length
     const trimmedName = name.trim();
@@ -286,9 +323,9 @@ exports.registerTutor = async (req, res, next) => {
         password: hashedPassword,
         role: 'Tutor',
         tutorProfile: tutorId,
-        paymentStatus: 'Pending',
-        paymentId: undefined,
-        subscriptionExpiresAt: undefined,
+        paymentStatus: 'Paid',
+        paymentId: data.paymentId,
+        subscriptionExpiresAt: new Date(Date.now() + (appSettings.tutorSubscriptionMonths === 5 ? 5 * 60 * 1000 : appSettings.tutorSubscriptionMonths * 30 * 24 * 60 * 60 * 1000)).toISOString(),
         createdAt: new Date().toISOString()
       };
       
@@ -353,13 +390,14 @@ exports.registerTutor = async (req, res, next) => {
         email,
         password,
         role: 'Tutor',
-        paymentStatus: 'Pending',
-        paymentId: undefined,
-        subscriptionExpiresAt: undefined
+        paymentStatus: 'Paid',
+        paymentId: data.paymentId,
+        subscriptionExpiresAt: new Date(Date.now() + (appSettings.tutorSubscriptionMonths === 5 ? 5 * 60 * 1000 : appSettings.tutorSubscriptionMonths * 30 * 24 * 60 * 60 * 1000))
       });
       devLog(`[DATABASE SAVE] Created User document, ID: ${user._id}`);
     } catch (userErr) {
       console.error(`[REGISTRATION USER ERROR] Failed to create User document | Email: ${email} | Error: ${userErr.message}`);
+      await autoRefundRegistration(data.paymentId);
       return res.status(500).json({
         success: false,
         message: `Database save failed: User registration failed. Details: ${userErr.message}`
@@ -412,6 +450,8 @@ exports.registerTutor = async (req, res, next) => {
         await User.findByIdAndDelete(user._id);
       }
       
+      await autoRefundRegistration(data.paymentId);
+      
       return res.status(500).json({
         success: false,
         message: `Database save failed: Tutor profile creation failed. Details: ${tutorErr.message}`
@@ -432,6 +472,8 @@ exports.registerTutor = async (req, res, next) => {
       // Rollback both
       if (tutor) await Tutor.findByIdAndDelete(tutor._id);
       if (user) await User.findByIdAndDelete(user._id);
+      
+      await autoRefundRegistration(data.paymentId);
       
       return res.status(500).json({
         success: false,

@@ -448,6 +448,13 @@ npm run build
 
 ---
 
+### 111. Restored Registration Payment Checkout Flow with Automated Failed-Submission Refunds
+- **Restored Form Submit Checkout**: Reverted [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) back to the pre-payment workflow. Clicking "Submit Application" triggers the Razorpay popup dynamically, completing payment *before* details are sent to the server.
+- **Enabled Cryptographic Verification**: Restored signature checking inside the tutor registration handler in [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js). Tutors are created with `paymentStatus: 'Paid'` and their subscription is instantly activated.
+- **Fail-Safe Automatic Refunds**: Added a secure `autoRefundRegistration` helper function inside [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js). If any database write or schema validation fails during registration *after* successful payment, the backend immediately calls Razorpay's API to issue a full automated refund.
+
+---
+
 ### 110. Removed Active Tutors Count Bar from Listing Page
 - **Removed Count Bar Header**: Deleted the entire listing status bar (which displayed `"{count} Active Tutors Found"`) at the top of the search results grid inside [FindTutors.jsx](file:///d:/desktop/HomeTutorX/src/pages/FindTutors.jsx).
 
