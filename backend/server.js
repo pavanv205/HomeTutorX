@@ -6,7 +6,6 @@ const path = require('path');
 const rateLimit = require('express-rate-limit');
 const errorHandler = require('./middleware/errorMiddleware');
 
-// Server configuration file
 // Validate environment variables upfront on startup
 require('./config/env');
 require('./config/firebase');
