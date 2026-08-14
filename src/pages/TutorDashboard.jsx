@@ -456,7 +456,7 @@ const TutorDashboard = () => {
                 {/* Total Student Leads Card */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                   <div className="h-12 w-12 rounded-2xl bg-blue-50/70 dark:bg-blue-950/20 flex items-center justify-center shrink-0">
-                    <ColorfulUsersIcon className="h-6 w-6" />
+                    <FaUser className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">Total Student Leads</p>
