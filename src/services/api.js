@@ -37,7 +37,7 @@ api.interceptors.response.use(
     }
     
     const customError = {
-      message: error.response?.data?.message || 'Something went wrong. Please try again.',
+      message: error.response?.data?.message || error.message || 'Something went wrong. Please try again.',
       status: status,
       original: error,
     };

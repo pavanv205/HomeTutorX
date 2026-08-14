@@ -517,7 +517,8 @@ const BecomeTutorForm = () => {
             }
           } catch (error) {
             console.error(error);
-            setSubmitError(error.message || 'Registration failed. Please try again.');
+            const errText = typeof error === 'string' ? error : (error?.message || error?.response?.data?.message || 'Registration failed. Please try again.');
+            setSubmitError(errText);
           } finally {
             setLoading(false);
           }
@@ -543,7 +544,8 @@ const BecomeTutorForm = () => {
       rzp1.open();
     } catch (error) {
       console.error(error);
-      setSubmitError(error.message || 'Registration failed. Please try again.');
+      const errText = typeof error === 'string' ? error : (error?.message || error?.response?.data?.message || 'Registration failed. Please try again.');
+      setSubmitError(errText);
       setLoading(false);
     }
   };
