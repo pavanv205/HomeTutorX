@@ -8,74 +8,11 @@ import { FaLock, FaEnvelope, FaPhone, FaUser, FaCheck, FaTimes, FaExclamationTri
 import { parseArrayField } from '../utils/arrayHelper';
 import { Geolocation } from '@capacitor/geolocation';
 
-const ColorfulGiftIcon = ({ className = "h-6 w-6" }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="lidGrad" x1="5" y1="11" x2="19" y2="14">
-        <stop offset="0%" stopColor="#FB7185" />
-        <stop offset="100%" stopColor="#E11D48" />
-      </linearGradient>
-      <linearGradient id="bodyGrad" x1="6" y1="14" x2="18" y2="21">
-        <stop offset="0%" stopColor="#F43F5E" />
-        <stop offset="100%" stopColor="#BE123C" />
-      </linearGradient>
-      <linearGradient id="ribbonGrad" x1="7" y1="6" x2="17" y2="21">
-        <stop offset="0%" stopColor="#FDE047" />
-        <stop offset="100%" stopColor="#CA8A04" />
-      </linearGradient>
-    </defs>
-    {/* Bow */}
-    <path d="M12 9C13.8 6 17 6 17 9C17 11 14.5 11 12 11C9.5 11 7 11 7 9C7 6 10.2 6 12 9Z" fill="url(#ribbonGrad)" />
-    {/* Lid */}
-    <rect x="5" y="11" width="14" height="3" rx="1.5" fill="url(#lidGrad)" />
-    {/* Body */}
-    <path d="M6 14H18V19.5C18 20.33 17.33 21 16.5 21H7.5C6.67 21 6 20.33 6 19.5V14Z" fill="url(#bodyGrad)" />
-    {/* Vertical Ribbon */}
-    <rect x="11" y="11" width="2" height="10" fill="url(#ribbonGrad)" />
-    {/* Horizontal Ribbon under lid */}
-    <rect x="5" y="12.2" width="14" height="0.6" fill="url(#ribbonGrad)" opacity="0.3" />
-  </svg>
-);
-
-const ColorfulUsersIcon = ({ className = "h-6 w-6" }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      {/* Central User Gradient */}
-      <linearGradient id="centerGrad" x1="9" y1="4" x2="15" y2="20">
-        <stop offset="0%" stopColor="#818CF8" />
-        <stop offset="100%" stopColor="#4F46E5" />
-      </linearGradient>
-      {/* Left User Gradient */}
-      <linearGradient id="leftGrad" x1="2" y1="7" x2="9" y2="20">
-        <stop offset="0%" stopColor="#38BDF8" />
-        <stop offset="100%" stopColor="#0284C7" />
-      </linearGradient>
-      {/* Right User Gradient */}
-      <linearGradient id="rightGrad" x1="15" y1="7" x2="22" y2="20">
-        <stop offset="0%" stopColor="#34D399" />
-        <stop offset="100%" stopColor="#059669" />
-      </linearGradient>
-    </defs>
-    
-    {/* Left User */}
-    <circle cx="6" cy="8.5" r="2.5" fill="url(#leftGrad)" />
-    <path d="M6 12C3.79 12 2 13.79 2 16V18C2 18.55 2.45 19 3 19H9C9.55 19 10 18.55 10 18V16C10 13.79 8.21 12 6 12Z" fill="url(#leftGrad)" />
-
-    {/* Right User */}
-    <circle cx="18" cy="8.5" r="2.5" fill="url(#rightGrad)" />
-    <path d="M18 12C15.79 12 14 13.79 14 16V18C14 18.55 14.45 19 15 19H21C21.55 19 22 18.55 22 18V16C22 13.79 20.21 12 18 12Z" fill="url(#rightGrad)" />
-
-    {/* Center User (Drawn last to overlap left/right) */}
-    <circle cx="12" cy="7" r="3" fill="url(#centerGrad)" className="stroke-white dark:stroke-slate-900" strokeWidth="1.5" />
-    <path d="M12 11C9.24 11 7 13.24 7 16V18.5C7 19.33 7.67 20 8.5 20H15.5C16.33 20 17 19.33 17 18.5V16C17 13.24 14.76 11 12 11Z" fill="url(#centerGrad)" className="stroke-white dark:stroke-slate-900" strokeWidth="1.5" />
-  </svg>
-);
-
 import { getAvatarStyle } from '../utils/avatarHelper';
 
 const TutorDashboard = () => {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('Profile'); // 'Profile', 'Student Requests', 'Referrals', 'Settings'
+  const [activeTab, setActiveTab] = useState('Profile'); // 'Profile', 'Student Requests', 'Settings'
   const [tutorProfile, setTutorProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -98,65 +35,6 @@ const TutorDashboard = () => {
       if (photoPreview) URL.revokeObjectURL(photoPreview);
     };
   }, [photoPreview]);
-
-
-
-  const uniqueMonths = useMemo(() => {
-    const months = [];
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    
-    let earliestYear = currentYear;
-    if (referrals.length > 0) {
-      const years = referrals
-        .map(r => r.createdAt ? new Date(r.createdAt).getFullYear() : null)
-        .filter(y => y !== null && !isNaN(y));
-      if (years.length > 0) {
-        earliestYear = Math.min(...years);
-      }
-    }
-    
-    for (let y = earliestYear; y <= currentYear; y++) {
-      for (let m = 0; m < 12; m++) {
-        months.push({
-          year: y,
-          month: m,
-          label: new Date(y, m).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
-          value: `${y}-${m}`
-        });
-      }
-    }
-    
-    return months.sort((a, b) => {
-      if (a.year !== b.year) return b.year - a.year;
-      return b.month - a.month;
-    });
-  }, [referrals]);
-
-  const selectedMonthLabel = uniqueMonths.find(m => m.value === selectedMonthYear)?.label || 'Selected Month';
-
-  const referralStats = useMemo(() => {
-    const [selYear, selMonth] = selectedMonthYear.split('-').map(Number);
-    
-    let joinsInSelectedMonth = 0;
-    const list = referrals.map(r => {
-      const created = new Date(r.createdAt);
-      const isSelectedMonth = created.getFullYear() === selYear && created.getMonth() === selMonth;
-      if (isSelectedMonth) {
-        joinsInSelectedMonth++;
-      }
-      return {
-        ...r,
-        joinedInSelectedMonth: isSelectedMonth
-      };
-    });
-
-    return {
-      totalReferrals: referrals.length,
-      joinsInSelectedMonth,
-      list
-    };
-  }, [referrals, selectedMonthYear]);
 
   // Load Tutor Profile
   const loadDashboardData = useCallback(async () => {
