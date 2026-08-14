@@ -124,7 +124,7 @@ const ColorfulGiftIcon = ({ className = "h-6 w-6" }) => (
 );
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Verified Tutors', 'Unverified Tutors', 'Referrals'
+  const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Verified Tutors', 'Unverified Tutors'
   const [stats, setStats] = useState({
     tutors: { total: 0, verified: 0, pending: 0, active: 0 },
     students: { total: 0 },
@@ -135,12 +135,6 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
-  const [referralSearch, setReferralSearch] = useState('');
-  const [selectedReferrer, setSelectedReferrer] = useState(null);
-  const [selectedMonthYear, setSelectedMonthYear] = useState(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${now.getMonth()}`;
-  });
 
   // Fetch admin dashboard details
   const fetchDashboardData = async () => {
@@ -231,102 +225,6 @@ const AdminDashboard = () => {
 
 
 
-  const uniqueMonths = React.useMemo(() => {
-    const months = [];
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    
-    // Find the earliest year in the database, defaulting to current year
-    let earliestYear = currentYear;
-    if (tutors.length > 0) {
-      const years = tutors
-        .map(t => t.createdAt ? new Date(t.createdAt).getFullYear() : null)
-        .filter(y => y !== null && !isNaN(y));
-      if (years.length > 0) {
-        earliestYear = Math.min(...years);
-      }
-    }
-    
-    // Generate all 12 months for each year from earliestYear to currentYear
-    for (let y = earliestYear; y <= currentYear; y++) {
-      for (let m = 0; m < 12; m++) {
-        months.push({
-          year: y,
-          month: m,
-          label: new Date(y, m).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }),
-          value: `${y}-${m}`
-        });
-      }
-    }
-    
-    // Sort chronologically descending (most recent first)
-    return months.sort((a, b) => {
-      if (a.year !== b.year) return b.year - a.year;
-      return b.month - a.month;
-    });
-  }, [tutors]);
-
-  const referralData = React.useMemo(() => {
-    const [selYear, selMonth] = selectedMonthYear.split('-').map(Number);
-
-    // 1. Calculate total referrals
-    const referredTutors = tutors.filter(t => t.referralCode);
-    const totalReferrals = referredTutors.length;
-
-    // 2. Calculate referrals in selected month
-    const referralsInSelectedMonth = referredTutors.filter(t => {
-      const created = new Date(t.createdAt);
-      return created.getFullYear() === selYear && created.getMonth() === selMonth;
-    }).length;
-
-    // 3. Map tutors to their referral statistics
-    const referrersList = tutors
-      .filter(t => t.ownReferralCode) // only tutors with referral codes
-      .map(referrer => {
-        const referredList = tutors.filter(t => t.referralCode === referrer.ownReferralCode);
-        const selectedMonthList = referredList.filter(t => {
-          const created = new Date(t.createdAt);
-          return created.getFullYear() === selYear && created.getMonth() === selMonth;
-        });
-
-        return {
-          id: referrer._id,
-          name: referrer.fullName || referrer.name,
-          email: referrer.email,
-          mobile: referrer.mobile,
-          ownReferralCode: referrer.ownReferralCode,
-          photo: referrer.photo,
-          totalReferred: referredList.length,
-          referredInSelectedMonth: selectedMonthList.length,
-          referredUsers: referredList.map(t => ({
-            id: t._id,
-            name: t.fullName || t.name,
-            email: t.email,
-            mobile: t.mobile,
-            photo: t.photo,
-            createdAt: t.createdAt
-          }))
-        };
-      });
-
-    // 4. Find Top Referrer
-    let topReferrer = { name: 'None', count: 0 };
-    referrersList.forEach(r => {
-      if (r.totalReferred > topReferrer.count) {
-        topReferrer = { name: r.name, count: r.totalReferred };
-      }
-    });
-
-    return {
-      totalReferrals,
-      referralsInSelectedMonth,
-      topReferrer,
-      referrersList
-    };
-  }, [tutors, selectedMonthYear]);
-
-  const selectedMonthLabel = uniqueMonths.find(m => m.value === selectedMonthYear)?.label || 'Selected Month';
-
   return (
     <>
       <SEO title="Admin Dashboard" description="Manage verified tutors, system locations, and metrics." />
@@ -359,7 +257,7 @@ const AdminDashboard = () => {
 
           {/* Navigation Tabs */}
           <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 overflow-x-auto scrollbar-none">
-            {['Overview', 'Verified Tutors', 'Unverified Tutors', 'Referrals'].map(tab => (
+            {['Overview', 'Verified Tutors', 'Unverified Tutors'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -644,7 +542,6 @@ const AdminDashboard = () => {
                                     <p className="font-bold text-slate-850 dark:text-slate-200">{tutor.fullName}</p>
                                     <p className="text-[9px] text-slate-400">
                                       {tutor.email} • {tutor.mobile}
-                                      {tutor.referralCode && ` • Referral: ${tutor.referralCode}`}
                                       {tutor.paymentId && ` • Paid (ID: ${tutor.paymentId})`}
                                       {tutor.certificateUrl && (
                                         <>
@@ -749,7 +646,6 @@ const AdminDashboard = () => {
                                     <p className="font-bold text-slate-850 dark:text-slate-200">{tutor.fullName}</p>
                                     <p className="text-[9px] text-slate-400">
                                       {tutor.email} • {tutor.mobile}
-                                      {tutor.referralCode && ` • Referral: ${tutor.referralCode}`}
                                       {tutor.paymentId && ` • Paid (ID: ${tutor.paymentId})`}
                                       {tutor.certificateUrl && (
                                         <>
@@ -817,226 +713,10 @@ const AdminDashboard = () => {
                 </div>
               )}
 
-              {/* TAB 4: REFERRALS ANALYTICS */}
-              {activeTab === 'Referrals' && (
-                <div className="space-y-8">
-                  {/* Summary Cards */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md hover:scale-[1.01] transition-all">
-                      <div className="h-12 w-12 rounded-2xl bg-blue-50/70 dark:bg-blue-950/20 flex items-center justify-center shrink-0">
-                        <ColorfulUsersIcon className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Referred Signups</p>
-                        <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{referralData.totalReferrals}</h4>
-                      </div>
-                    </div>
-
-                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md hover:scale-[1.01] transition-all">
-                      <div className="h-12 w-12 rounded-2xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0">
-                        <FaUserCheck />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Referred in {selectedMonthLabel}</p>
-                        <h4 className="text-2xl font-extrabold text-slate-850 dark:text-slate-100 mt-0.5">{referralData.referralsInSelectedMonth}</h4>
-                      </div>
-                    </div>
-
-                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 hover:shadow-md hover:scale-[1.01] transition-all">
-                      <div className="h-12 w-12 rounded-2xl bg-indigo-50/75 dark:bg-indigo-950/20 flex items-center justify-center shrink-0">
-                        <ColorfulGiftIcon className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Top Referrer</p>
-                        <h4 className="text-sm font-extrabold text-slate-850 dark:text-slate-100 mt-1 max-w-[200px] truncate">
-                          {referralData.topReferrer.name} ({referralData.topReferrer.count} joins)
-                        </h4>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* List Section */}
-                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                      <div className="flex flex-col sm:flex-row sm:items-start sm:items-center gap-3">
-                        <div>
-                          <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100">Referrer Directory</h3>
-                          <p className="text-[11px] text-slate-400 font-semibold mt-0.5">Tutors who generated unique referral codes and recruited new signups.</p>
-                        </div>
-                        
-                        {/* Month Selector dropdown */}
-                        <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-150 dark:border-slate-700/80 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300">
-                          <span>Month:</span>
-                          <select
-                            value={selectedMonthYear}
-                            onChange={(e) => setSelectedMonthYear(e.target.value)}
-                            className="bg-transparent focus:outline-none cursor-pointer text-primary dark:text-blue-400 font-extrabold pr-1"
-                          >
-                            {uniqueMonths.map(opt => (
-                              <option key={opt.value} value={opt.value} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-semibold">
-                                {opt.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      
-                      {/* Search */}
-                      <div className="relative flex items-center max-w-xs w-full">
-                        <span className="absolute left-3 text-slate-400 text-xs">🔍</span>
-                        <input
-                          type="text"
-                          value={referralSearch}
-                          onChange={(e) => setReferralSearch(e.target.value)}
-                          placeholder="Search referrer name or code..."
-                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-205 dark:border-slate-700 text-slate-800 dark:text-slate-205 rounded-xl py-2 pl-9 pr-3 text-xs focus:outline-none focus:border-primary transition-all duration-200"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] font-extrabold text-slate-400 dark:text-slate-505 uppercase tracking-wide">
-                            <th className="pb-3 pl-2">Referrer</th>
-                            <th className="pb-3">Referral Code</th>
-                            <th className="pb-3 text-center">Joins in {selectedMonthLabel}</th>
-                            <th className="pb-3 text-center">Total Joins</th>
-                            <th className="pb-3 pr-2 text-right">Details</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60 text-xs text-slate-700 dark:text-slate-350">
-                          {referralData.referrersList.filter(r => {
-                            const query = referralSearch.toLowerCase();
-                            const matchesSearch = r.name.toLowerCase().includes(query) || r.ownReferralCode.toLowerCase().includes(query);
-                            return matchesSearch && r.totalReferred >= 1;
-                          }).length === 0 ? (
-                            <tr>
-                              <td colSpan="5" className="py-8 text-center text-slate-400 font-medium">No referrers matched your query.</td>
-                            </tr>
-                          ) : (
-                            referralData.referrersList
-                              .filter(r => {
-                                const query = referralSearch.toLowerCase();
-                                const matchesSearch = r.name.toLowerCase().includes(query) || r.ownReferralCode.toLowerCase().includes(query);
-                                return matchesSearch && r.totalReferred >= 1;
-                              })
-                              .sort((a, b) => b.totalReferred - a.totalReferred)
-                              .map(referrer => (
-                                <tr key={referrer.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40">
-                                  <td className="py-3.5 pl-2">
-                                    <div className="flex items-center gap-3">
-                                      {referrer.photo && !referrer.photo.includes('photo-1535713875002-d1d0cf377fde') ? (
-                                        <img src={referrer.photo} alt={referrer.name} className="h-8 w-8 rounded-full object-cover border" />
-                                      ) : (
-                                        <div className={`h-8 w-8 rounded-full font-extrabold flex items-center justify-center text-xs shrink-0 ${getAvatarStyle(referrer.name)}`}>
-                                          {(referrer.name || 'T').trim().charAt(0).toUpperCase()}
-                                        </div>
-                                      )}
-                                      <div>
-                                        <p className="font-bold text-slate-850 dark:text-slate-200">{referrer.name}</p>
-                                        <p className="text-[9px] text-slate-400">{referrer.email} • {referrer.mobile}</p>
-                                      </div>
-                                    </div>
-                                  </td>
-                                  <td className="py-3.5">
-                                    <span className="font-mono font-bold bg-slate-50 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-650 dark:text-slate-300 border border-slate-100 dark:border-slate-700/60 tracking-wide text-[10px]">
-                                      {referrer.ownReferralCode}
-                                    </span>
-                                  </td>
-                                  <td className="py-3.5 text-center font-bold text-emerald-600 dark:text-emerald-400">
-                                    {referrer.referredInSelectedMonth}
-                                  </td>
-                                  <td className="py-3.5 text-center font-bold text-slate-800 dark:text-slate-100">
-                                    {referrer.totalReferred}
-                                  </td>
-                                  <td className="py-3.5 pr-2 text-right">
-                                    <Button
-                                      variant="outline"
-                                      size="xs"
-                                      disabled={referrer.totalReferred === 0}
-                                      onClick={() => setSelectedReferrer(referrer)}
-                                    >
-                                      View Joins
-                                    </Button>
-                                  </td>
-                                </tr>
-                              ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              )}
-
             </>
           )}
         </div>
       </div>
-
-      {/* DETAIL MODAL FOR REFERRAL JOINS */}
-      {selectedReferrer && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-          <div 
-            className="fixed inset-0 cursor-default" 
-            onClick={() => setSelectedReferrer(null)}
-          />
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-2xl w-full max-w-lg p-6 relative z-10 space-y-6 animate-scale-up">
-            <div className="flex items-center justify-between border-b pb-3 border-slate-100 dark:border-slate-800">
-              <div>
-                <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100">
-                  Referred Tutors ({selectedReferrer.totalReferred})
-                </h3>
-                <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
-                  Tutors registered using {selectedReferrer.name}'s code ({selectedReferrer.ownReferralCode})
-                </p>
-              </div>
-              <button 
-                onClick={() => setSelectedReferrer(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-black focus:outline-none"
-              >
-                &times;
-              </button>
-            </div>
-
-            <div className="max-h-64 overflow-y-auto pr-1 space-y-3 custom-scrollbar">
-              {selectedReferrer.referredUsers.map(user => (
-                <div 
-                  key={user.id}
-                  className="bg-slate-50 dark:bg-slate-850/40 border border-slate-100/50 dark:border-slate-800 p-3.5 rounded-2xl flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/70 transition-all duration-150"
-                >
-                  <div className="flex items-center gap-3">
-                    {user.photo && !user.photo.includes('photo-1535713875002-d1d0cf377fde') ? (
-                      <img src={user.photo} alt={user.name} className="h-8 w-8 rounded-full object-cover border" />
-                    ) : (
-                      <div className={`h-8 w-8 rounded-full font-extrabold flex items-center justify-center text-xs shrink-0 ${getAvatarStyle(user.name)}`}>
-                        {(user.name || 'T').trim().charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-bold text-slate-800 dark:text-slate-200 text-xs">{user.name}</p>
-                      <p className="text-[9px] text-slate-400">{user.email} • {user.mobile}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Join Date</span>
-                    <span className="text-[10px] font-semibold text-slate-650 dark:text-slate-300">
-                      {new Date(user.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex justify-end pt-2 border-t border-slate-100 dark:border-slate-800">
-              <Button variant="outline" size="sm" onClick={() => setSelectedReferrer(null)}>
-                Close Panel
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
