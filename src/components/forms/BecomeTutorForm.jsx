@@ -362,42 +362,36 @@ const BecomeTutorForm = () => {
           setCompressionLoading(false);
         }
       } else {
-        // It's a PDF – compress to image under 350KB if larger than 350KB
-        if (file.size > 350 * 1024) {
-          try {
-            setCompressionLoading(true);
-            const result = await compressPdfToImage(file, 350 * 1024);
-            setResumeFile(result.file);
-            setCompressedPreviewUrl(result.previewUrl);
-            setOriginalSize(result.originalSize);
-          } catch (pdfErr) {
-            console.error('PDF profile photo compression failed:', pdfErr);
-            if (pdfErr?.message === 'PASSWORD_PROTECTED_PDF') {
-              window.alert('This PDF is password-protected (e.g. e-Aadhaar). Please upload an un-password-protected PDF or image.');
-              setResumeError('Password-protected PDFs cannot be uploaded. Please upload an un-password-protected PDF or image.');
-              setResumeFile(null);
-              setCompressedPreviewUrl(null);
-              setOriginalSize(null);
-              return;
-            }
-            if (file.size > 4 * 1024 * 1024) {
-              window.alert('PDF file size is too large (max 4 MB). Please select a PDF smaller than 4 MB.');
-              setResumeError('PDF file size must be under 4 MB.');
-              setResumeFile(null);
-              setCompressedPreviewUrl(null);
-              setOriginalSize(null);
-              return;
-            }
-            setResumeFile(file);
+        // It's a PDF – compress to JPEG image
+        try {
+          setCompressionLoading(true);
+          const result = await compressPdfToImage(file, 350 * 1024);
+          setResumeFile(result.file);
+          setCompressedPreviewUrl(result.previewUrl);
+          setOriginalSize(result.originalSize);
+        } catch (pdfErr) {
+          console.error('PDF profile photo compression failed:', pdfErr);
+          if (pdfErr?.message === 'PASSWORD_PROTECTED_PDF') {
+            window.alert('This PDF is password-protected (e.g. e-Aadhaar). Please upload an un-password-protected PDF or image.');
+            setResumeError('Password-protected PDFs cannot be uploaded. Please upload an un-password-protected PDF or image.');
+            setResumeFile(null);
             setCompressedPreviewUrl(null);
-            setOriginalSize(file.size);
-          } finally {
-            setCompressionLoading(false);
+            setOriginalSize(null);
+            return;
           }
-        } else {
+          if (file.size > 4 * 1024 * 1024) {
+            window.alert('PDF file size is too large (max 4 MB). Please select a PDF smaller than 4 MB.');
+            setResumeError('PDF file size must be under 4 MB.');
+            setResumeFile(null);
+            setCompressedPreviewUrl(null);
+            setOriginalSize(null);
+            return;
+          }
           setResumeFile(file);
           setCompressedPreviewUrl(null);
-          setOriginalSize(null);
+          setOriginalSize(file.size);
+        } finally {
+          setCompressionLoading(false);
         }
       }
     }
@@ -458,42 +452,36 @@ const BecomeTutorForm = () => {
         setCertificateCompressionLoading(false);
       }
     } else {
-      // It's a PDF – compress to JPEG under 500KB if larger than 500KB
-      if (file.size > 500 * 1024) {
-        try {
-          setCertificateCompressionLoading(true);
-          const result = await compressPdfToImage(file, 500 * 1024);
-          setCertificateFile(result.file);
-          setCertificatePreviewUrl(result.previewUrl);
-          setCertificateOriginalSize(result.originalSize);
-        } catch (pdfErr) {
-          console.error('PDF compression to image failed:', pdfErr);
-          if (pdfErr?.message === 'PASSWORD_PROTECTED_PDF') {
-            window.alert('This PDF is password-protected (e.g. e-Aadhaar). Please upload an un-password-protected PDF or a image/screenshot (JPEG/PNG) of your document.');
-            setCertificateError('Password-protected PDFs cannot be uploaded. Please upload an un-password-protected PDF or image.');
-            setCertificateFile(null);
-            setCertificatePreviewUrl(null);
-            setCertificateOriginalSize(null);
-            return;
-          }
-          if (file.size > 4 * 1024 * 1024) {
-            window.alert('PDF file size is too large (max 4 MB). Please select a PDF smaller than 4 MB.');
-            setCertificateError('PDF file size must be under 4 MB.');
-            setCertificateFile(null);
-            setCertificatePreviewUrl(null);
-            setCertificateOriginalSize(null);
-            return;
-          }
-          setCertificateFile(file);
+      // It's a PDF – compress to JPEG image
+      try {
+        setCertificateCompressionLoading(true);
+        const result = await compressPdfToImage(file, 500 * 1024);
+        setCertificateFile(result.file);
+        setCertificatePreviewUrl(result.previewUrl);
+        setCertificateOriginalSize(result.originalSize);
+      } catch (pdfErr) {
+        console.error('PDF compression to image failed:', pdfErr);
+        if (pdfErr?.message === 'PASSWORD_PROTECTED_PDF') {
+          window.alert('This PDF is password-protected (e.g. e-Aadhaar). Please upload an un-password-protected PDF or a image/screenshot (JPEG/PNG) of your document.');
+          setCertificateError('Password-protected PDFs cannot be uploaded. Please upload an un-password-protected PDF or image.');
+          setCertificateFile(null);
           setCertificatePreviewUrl(null);
-          setCertificateOriginalSize(file.size);
-        } finally {
-          setCertificateCompressionLoading(false);
+          setCertificateOriginalSize(null);
+          return;
         }
-      } else {
+        if (file.size > 4 * 1024 * 1024) {
+          window.alert('PDF file size is too large (max 4 MB). Please select a PDF smaller than 4 MB.');
+          setCertificateError('PDF file size must be under 4 MB.');
+          setCertificateFile(null);
+          setCertificatePreviewUrl(null);
+          setCertificateOriginalSize(null);
+          return;
+        }
         setCertificateFile(file);
         setCertificatePreviewUrl(null);
-        setCertificateOriginalSize(null);
+        setCertificateOriginalSize(file.size);
+      } finally {
+        setCertificateCompressionLoading(false);
       }
     }
   };
