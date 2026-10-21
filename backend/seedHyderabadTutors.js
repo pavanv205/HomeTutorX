@@ -465,7 +465,9 @@ async function seedToMongo() {
         pincode: t.pincode,
         lat: t.lat,
         lng: t.lng,
-        bio: `Dedicated and patient tutor specializing in ${t.subjects.slice(0, 3).join(', ')} with ${t.experience} year(s) of experience in Hyderabad.`,
+        bio: '',
+        about: '',
+        methodology: '',
         photo: '', // Empty photo so standard letter badge is used
         isVerified: true,
         verifiedAt: new Date(),
@@ -492,6 +494,9 @@ async function seedToMongo() {
       tutor.pincode = t.pincode;
       tutor.lat = t.lat;
       tutor.lng = t.lng;
+      tutor.bio = '';
+      tutor.about = '';
+      tutor.methodology = '';
       tutor.photo = '';
       tutor.isVerified = true;
       tutor.paymentStatus = 'Paid';

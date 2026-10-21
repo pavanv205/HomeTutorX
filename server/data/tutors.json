@@ -240,8 +240,8 @@
     "qualification": "BTech",
     "gender": "Male",
     "age": 24,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -279,7 +279,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.093Z"
+    "createdAt": "2026-10-21T10:14:01.093Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-02",
@@ -288,8 +289,8 @@
     "qualification": "BTech",
     "gender": "Male",
     "age": 22,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 2 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 2 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -325,7 +326,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-03",
@@ -334,8 +336,8 @@
     "qualification": "Degree",
     "gender": "Female",
     "age": 23,
-    "about": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Biology",
       "Chemistry",
@@ -373,7 +375,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-04",
@@ -382,8 +385,8 @@
     "qualification": "Diploma",
     "gender": "Male",
     "age": 25,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Telugu with 3 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Telugu with 3 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -419,7 +422,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-05",
@@ -428,8 +432,8 @@
     "qualification": "Degree",
     "gender": "Female",
     "age": 26,
-    "about": "Dedicated and patient tutor specializing in English, Sanskrit, Telugu with 4 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in English, Sanskrit, Telugu with 4 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "English",
       "Sanskrit",
@@ -466,7 +470,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-06",
@@ -475,8 +480,8 @@
     "qualification": "BTech",
     "gender": "Male",
     "age": 21,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 1 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 1 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -513,7 +518,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-07",
@@ -522,8 +528,8 @@
     "qualification": "BTech",
     "gender": "Male",
     "age": 25,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -559,7 +565,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-08",
@@ -568,8 +575,8 @@
     "qualification": "Degree",
     "gender": "Male",
     "age": 23,
-    "about": "Dedicated and patient tutor specializing in Social Studies, English, Telugu with 2 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Social Studies, English, Telugu with 2 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Social Studies",
       "English",
@@ -607,7 +614,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-09",
@@ -616,8 +624,8 @@
     "qualification": "Diploma",
     "gender": "Male",
     "age": 24,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -653,7 +661,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-10",
@@ -662,8 +671,8 @@
     "qualification": "BTech",
     "gender": "Male",
     "age": 26,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 4 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 4 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -701,7 +710,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-11",
@@ -710,8 +720,8 @@
     "qualification": "Degree",
     "gender": "Female",
     "age": 22,
-    "about": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Biology",
       "Chemistry",
@@ -748,7 +758,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-12",
@@ -757,8 +768,8 @@
     "qualification": "Diploma",
     "gender": "Male",
     "age": 20,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 1 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 1 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -794,7 +805,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-13",
@@ -803,8 +815,8 @@
     "qualification": "BTech",
     "gender": "Male",
     "age": 25,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -841,7 +853,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-14",
@@ -850,8 +863,8 @@
     "qualification": "BTech",
     "gender": "Female",
     "age": 21,
-    "about": "Dedicated and patient tutor specializing in Biology, Chemistry, Physics with 1 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Biology, Chemistry, Physics with 1 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Biology",
       "Chemistry",
@@ -889,7 +902,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-15",
@@ -898,8 +912,8 @@
     "qualification": "Degree",
     "gender": "Female",
     "age": 22,
-    "about": "Dedicated and patient tutor specializing in English, Sanskrit, Telugu with 2 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in English, Sanskrit, Telugu with 2 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "English",
       "Sanskrit",
@@ -935,7 +949,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-16",
@@ -944,8 +959,8 @@
     "qualification": "Diploma",
     "gender": "Female",
     "age": 24,
-    "about": "Dedicated and patient tutor specializing in Mathematics, English, Telugu with 2 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, English, Telugu with 2 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "English",
@@ -982,7 +997,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-17",
@@ -991,8 +1007,8 @@
     "qualification": "Degree",
     "gender": "Female",
     "age": 23,
-    "about": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Biology",
       "Chemistry",
@@ -1030,7 +1046,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-18",
@@ -1039,8 +1056,8 @@
     "qualification": "BTech",
     "gender": "Female",
     "age": 25,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -1076,7 +1093,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-19",
@@ -1085,8 +1103,8 @@
     "qualification": "Diploma",
     "gender": "Female",
     "age": 19,
-    "about": "Dedicated and patient tutor specializing in Telugu, English, Social Studies with 1 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Telugu, English, Social Studies with 1 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Telugu",
       "English",
@@ -1121,7 +1139,8 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   },
   {
     "id": "TUT-HYD-20",
@@ -1130,8 +1149,8 @@
     "qualification": "BTech",
     "gender": "Male",
     "age": 24,
-    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
-    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "about": "",
+    "bio": "",
     "subjects": [
       "Mathematics",
       "Physics",
@@ -1169,6 +1188,7 @@
     ],
     "isVerified": true,
     "paymentStatus": "Paid",
-    "createdAt": "2026-10-21T10:14:01.094Z"
+    "createdAt": "2026-10-21T10:14:01.094Z",
+    "methodology": ""
   }
 ]
