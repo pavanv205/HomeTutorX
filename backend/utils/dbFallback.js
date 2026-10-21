@@ -83,8 +83,8 @@ const initializeSeeds = () => {
     const pavanPasswordHash = bcrypt.hashSync('pavan0707', 10);
     const { tutorsData } = require('../seedHyderabadTutors');
     tutorsData.forEach((t, i) => {
-      const tutorUserId = '6a3956421c7fc8576e26c7' + String(i + 10).slice(-2);
-      const tutorProfileId = '6a3956421c7fc8576e26c8' + String(i + 10).slice(-2);
+      const tutorUserId = '6a3956421c7fc8576e26c7' + String(i + 10).padStart(2, '0');
+      const tutorProfileId = '6a3956421c7fc8576e26c8' + String(i + 10).padStart(2, '0');
 
       memoryUsers.push({
         _id: tutorUserId,
