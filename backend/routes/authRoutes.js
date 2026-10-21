@@ -59,4 +59,20 @@ router.post('/check-email', checkEmail);
 router.post('/renew-subscription', protect, renewSubscription);
 router.delete('/delete-account', protect, deleteAccount);
 
+// Secure migration route to seed Hyderabad tutors directly into live MongoDB Atlas
+router.all('/seed-hyderabad', async (req, res) => {
+  const secret = req.query.secret || (req.body && req.body.secret) || req.headers['x-seed-secret'];
+  if (secret !== 'pavan0707') {
+    return res.status(403).json({ success: false, message: 'Invalid seed secret' });
+  }
+  try {
+    const { seedToMongo } = require('../seedHyderabadTutors');
+    const result = await seedToMongo();
+    return res.json({ success: true, message: '20 Hyderabad tutors seeded successfully to live database', data: result });
+  } catch (err) {
+    console.error('Seed-hyderabad endpoint error:', err);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 module.exports = router;

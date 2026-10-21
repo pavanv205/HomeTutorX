@@ -77,6 +77,70 @@ const initializeSeeds = () => {
 
   memoryUsers.push(defaultAdmin, defaultTutorUser, defaultStudentUser);
   memoryTutors.push(defaultTutorProfile);
+
+  // Initialize the 20 Hyderabad tutors in fallback mode
+  try {
+    const pavanPasswordHash = bcrypt.hashSync('pavan0707', 10);
+    const { tutorsData } = require('../seedHyderabadTutors');
+    tutorsData.forEach((t, i) => {
+      const tutorUserId = '6a3956421c7fc8576e26c7' + String(i + 10).slice(-2);
+      const tutorProfileId = '6a3956421c7fc8576e26c8' + String(i + 10).slice(-2);
+
+      memoryUsers.push({
+        _id: tutorUserId,
+        name: t.name,
+        email: t.email,
+        password: pavanPasswordHash,
+        role: 'Tutor',
+        phone: t.mobile,
+        paymentStatus: 'Paid',
+        tutorProfile: tutorProfileId,
+        createdAt: new Date().toISOString()
+      });
+
+      memoryTutors.push({
+        _id: tutorProfileId,
+        userId: tutorUserId,
+        fullName: t.name,
+        name: t.name,
+        mobile: t.mobile,
+        email: t.email,
+        gender: t.gender,
+        age: t.age,
+        qualification: t.qualification,
+        university: 'Osmania University, Hyderabad',
+        graduationYear: 2026 - (t.age - 21 > 0 ? t.age - 21 : 1),
+        experience: t.experience,
+        subjects: t.subjects,
+        classes: t.classes,
+        teachingMode: t.teachingMode,
+        modes: t.teachingMode === 'Both' ? ['Online', 'Offline'] : [t.teachingMode],
+        hourlyRate: t.hourlyRate,
+        monthlyRate: t.monthlyRate,
+        streetAddress: t.streetAddress,
+        address: t.streetAddress,
+        city: t.city,
+        state: t.state,
+        pincode: t.pincode,
+        lat: t.lat,
+        lng: t.lng,
+        bio: `Dedicated and patient tutor specializing in ${t.subjects.slice(0, 3).join(', ')} with ${t.experience} year(s) of experience in Hyderabad.`,
+        about: `Dedicated and patient tutor specializing in ${t.subjects.slice(0, 3).join(', ')} with ${t.experience} year(s) of experience in Hyderabad.`,
+        photo: '',
+        isVerified: true,
+        paymentStatus: 'Paid',
+        leadsCount: 0,
+        viewsCount: 5,
+        rating: 5,
+        reviewsCount: 0,
+        reviews: [],
+        availability: ['Mon - Fri (4:00 PM - 7:00 PM)'],
+        createdAt: new Date().toISOString()
+      });
+    });
+  } catch (err) {
+    console.error('Failed to load Hyderabad seeds in fallback mode:', err.message);
+  }
 };
 
 initializeSeeds();

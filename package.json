@@ -7,6 +7,7 @@
     "dev": "vite",
     "serve-api": "node backend/server.js",
     "db:seed": "node backend/seed.js",
+    "seed:hyderabad": "node backend/seedHyderabadTutors.js",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",

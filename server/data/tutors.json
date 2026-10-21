@@ -232,5 +232,943 @@
       "Mon - Fri (4:00 PM - 7:00 PM)"
     ],
     "createdAt": "2026-06-19T11:09:01.931Z"
+  },
+  {
+    "id": "TUT-HYD-01",
+    "name": "P. Srinivas",
+    "fullName": "P. Srinivas",
+    "qualification": "BTech",
+    "gender": "Male",
+    "age": 24,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "English",
+      "Telugu"
+    ],
+    "classes": [
+      "Class 6-10",
+      "Class 11-12"
+    ],
+    "modes": [
+      "Online",
+      "Offline"
+    ],
+    "teachingMode": "Both",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4485,
+    "lng": 78.3742,
+    "hourlyRate": 200,
+    "monthlyRate": 3500,
+    "experience": 3,
+    "photo": "",
+    "streetAddress": "Flat 302, Cyber View Residency, Near Metro Pillar C1042, Madhapur",
+    "address": "Flat 302, Cyber View Residency, Near Metro Pillar C1042, Madhapur",
+    "pincode": "500081",
+    "mobile": "9848011201",
+    "email": "srinivas.p98@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.093Z"
+  },
+  {
+    "id": "TUT-HYD-02",
+    "name": "K. Karthik",
+    "fullName": "K. Karthik",
+    "qualification": "BTech",
+    "gender": "Male",
+    "age": 22,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 2 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 2 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "English"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Offline"
+    ],
+    "teachingMode": "Offline",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4401,
+    "lng": 78.3489,
+    "hourlyRate": 150,
+    "monthlyRate": 3000,
+    "experience": 2,
+    "photo": "",
+    "streetAddress": "House No 4-82, Telecom Nagar Colony, Near Gachibowli Stadium, Gachibowli",
+    "address": "House No 4-82, Telecom Nagar Colony, Near Gachibowli Stadium, Gachibowli",
+    "pincode": "500032",
+    "mobile": "9848011202",
+    "email": "karthik.k2004@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-03",
+    "name": "K. Priyanka",
+    "fullName": "K. Priyanka",
+    "qualification": "Degree",
+    "gender": "Female",
+    "age": 23,
+    "about": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Biology",
+      "Chemistry",
+      "English",
+      "Telugu",
+      "Social Studies"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Online",
+      "Offline"
+    ],
+    "teachingMode": "Both",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4938,
+    "lng": 78.3995,
+    "hourlyRate": 180,
+    "monthlyRate": 3200,
+    "experience": 2,
+    "photo": "",
+    "streetAddress": "Plot 128, KPHB Phase 3, Near Temple Bus Stop, Kukatpally",
+    "address": "Plot 128, KPHB Phase 3, Near Temple Bus Stop, Kukatpally",
+    "pincode": "500072",
+    "mobile": "9848011203",
+    "email": "priyanka.k2003@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-04",
+    "name": "N. Bhuloka",
+    "fullName": "N. Bhuloka",
+    "qualification": "Diploma",
+    "gender": "Male",
+    "age": 25,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Telugu with 3 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Telugu with 3 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Telugu",
+      "Social Studies"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Offline"
+    ],
+    "teachingMode": "Offline",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4375,
+    "lng": 78.4482,
+    "hourlyRate": 120,
+    "monthlyRate": 2500,
+    "experience": 3,
+    "photo": "",
+    "streetAddress": "7-1-212, Srinivasa Nagar East, Near Metro Station, Ameerpet",
+    "address": "7-1-212, Srinivasa Nagar East, Near Metro Station, Ameerpet",
+    "pincode": "500038",
+    "mobile": "9848011204",
+    "email": "bhuloka.n01@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-05",
+    "name": "J. Vijaya Lakshmi",
+    "fullName": "J. Vijaya Lakshmi",
+    "qualification": "Degree",
+    "gender": "Female",
+    "age": 26,
+    "about": "Dedicated and patient tutor specializing in English, Sanskrit, Telugu with 4 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in English, Sanskrit, Telugu with 4 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "English",
+      "Sanskrit",
+      "Telugu",
+      "Social Studies",
+      "Mathematics"
+    ],
+    "classes": [
+      "Class 6-10",
+      "Class 11-12"
+    ],
+    "modes": [
+      "Online"
+    ],
+    "teachingMode": "Online",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4156,
+    "lng": 78.435,
+    "hourlyRate": 250,
+    "monthlyRate": 4500,
+    "experience": 4,
+    "photo": "",
+    "streetAddress": "Villa 18, Green Valley Enclave, Road Number 12, Banjara Hills",
+    "address": "Villa 18, Green Valley Enclave, Road Number 12, Banjara Hills",
+    "pincode": "500034",
+    "mobile": "9848011205",
+    "email": "vijaya.lakshmi.j@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-06",
+    "name": "H. Himavardhan",
+    "fullName": "H. Himavardhan",
+    "qualification": "BTech",
+    "gender": "Male",
+    "age": 21,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 1 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 1 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "English"
+    ],
+    "classes": [
+      "Class 6-10"
+    ],
+    "modes": [
+      "Online",
+      "Offline"
+    ],
+    "teachingMode": "Both",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.3688,
+    "lng": 78.5247,
+    "hourlyRate": 160,
+    "monthlyRate": 2800,
+    "experience": 1,
+    "photo": "",
+    "streetAddress": "Door 16-11-405, Moosarambagh Rd, Near Chaitanyapuri Metro, Dilsukhnagar",
+    "address": "Door 16-11-405, Moosarambagh Rd, Near Chaitanyapuri Metro, Dilsukhnagar",
+    "pincode": "500060",
+    "mobile": "9848011206",
+    "email": "himavardhan.h@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-07",
+    "name": "Burra Venkatesh",
+    "fullName": "Burra Venkatesh",
+    "qualification": "BTech",
+    "gender": "Male",
+    "age": 25,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Telugu"
+    ],
+    "classes": [
+      "Class 6-10",
+      "Class 11-12"
+    ],
+    "modes": [
+      "Offline"
+    ],
+    "teachingMode": "Offline",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4648,
+    "lng": 78.3622,
+    "hourlyRate": 220,
+    "monthlyRate": 4000,
+    "experience": 3,
+    "photo": "",
+    "streetAddress": "Flat 201, Sri Sai Krupa Residency, Near RTO Office, Kondapur",
+    "address": "Flat 201, Sri Sai Krupa Residency, Near RTO Office, Kondapur",
+    "pincode": "500084",
+    "mobile": "9848011207",
+    "email": "venkatesh.burra99@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-08",
+    "name": "J. Jaya Ram",
+    "fullName": "J. Jaya Ram",
+    "qualification": "Degree",
+    "gender": "Male",
+    "age": 23,
+    "about": "Dedicated and patient tutor specializing in Social Studies, English, Telugu with 2 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Social Studies, English, Telugu with 2 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Social Studies",
+      "English",
+      "Telugu",
+      "Mathematics",
+      "Sanskrit"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Online",
+      "Offline"
+    ],
+    "teachingMode": "Both",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4428,
+    "lng": 78.5032,
+    "hourlyRate": 140,
+    "monthlyRate": 2600,
+    "experience": 2,
+    "photo": "",
+    "streetAddress": "10-2-186, West Marredpally Main Road, Near St Anns, Secunderabad",
+    "address": "10-2-186, West Marredpally Main Road, Near St Anns, Secunderabad",
+    "pincode": "500026",
+    "mobile": "9848011208",
+    "email": "jayaram.j2003@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-09",
+    "name": "Karri Rambabu",
+    "fullName": "Karri Rambabu",
+    "qualification": "Diploma",
+    "gender": "Male",
+    "age": 24,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Telugu"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Offline"
+    ],
+    "teachingMode": "Offline",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4968,
+    "lng": 78.3556,
+    "hourlyRate": 130,
+    "monthlyRate": 2400,
+    "experience": 3,
+    "photo": "",
+    "streetAddress": "Plot 54, Janapriya Nagar Phase 2, Near Allwyn Colony, Miyapur",
+    "address": "Plot 54, Janapriya Nagar Phase 2, Near Allwyn Colony, Miyapur",
+    "pincode": "500049",
+    "mobile": "9848011209",
+    "email": "karri.rambabu02@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-10",
+    "name": "G. Kiran Reddy",
+    "fullName": "G. Kiran Reddy",
+    "qualification": "BTech",
+    "gender": "Male",
+    "age": 26,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 4 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 4 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "English",
+      "Social Studies"
+    ],
+    "classes": [
+      "Class 6-10",
+      "Class 11-12"
+    ],
+    "modes": [
+      "Online",
+      "Offline"
+    ],
+    "teachingMode": "Both",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4319,
+    "lng": 78.4073,
+    "hourlyRate": 280,
+    "monthlyRate": 5000,
+    "experience": 4,
+    "photo": "",
+    "streetAddress": "Plot 421, Journalist Colony, Road No 70, Jubilee Hills",
+    "address": "Plot 421, Journalist Colony, Road No 70, Jubilee Hills",
+    "pincode": "500033",
+    "mobile": "9848011210",
+    "email": "kiranreddy.g98@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-11",
+    "name": "K. Joshna",
+    "fullName": "K. Joshna",
+    "qualification": "Degree",
+    "gender": "Female",
+    "age": 22,
+    "about": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Biology",
+      "Chemistry",
+      "English",
+      "Telugu",
+      "Sanskrit"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Online"
+    ],
+    "teachingMode": "Online",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.444,
+    "lng": 78.4682,
+    "hourlyRate": 170,
+    "monthlyRate": 3000,
+    "experience": 2,
+    "photo": "",
+    "streetAddress": "1-11-252, Prakash Nagar Main Road, Near Shoppers Stop, Begumpet",
+    "address": "1-11-252, Prakash Nagar Main Road, Near Shoppers Stop, Begumpet",
+    "pincode": "500016",
+    "mobile": "9848011211",
+    "email": "joshna.k2004@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-12",
+    "name": "N. Manhor",
+    "fullName": "N. Manhor",
+    "qualification": "Diploma",
+    "gender": "Male",
+    "age": 20,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 1 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 1 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "English"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Offline"
+    ],
+    "teachingMode": "Offline",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4022,
+    "lng": 78.5602,
+    "hourlyRate": 110,
+    "monthlyRate": 2200,
+    "experience": 1,
+    "photo": "",
+    "streetAddress": "House 2-4-68, Chilakanagar Main Road, Near Uppal Metro, Uppal",
+    "address": "House 2-4-68, Chilakanagar Main Road, Near Uppal Metro, Uppal",
+    "pincode": "500039",
+    "mobile": "9848011212",
+    "email": "manhor.n2006@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-13",
+    "name": "Sampangi Rambabu",
+    "fullName": "Sampangi Rambabu",
+    "qualification": "BTech",
+    "gender": "Male",
+    "age": 25,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Telugu",
+      "Social Studies"
+    ],
+    "classes": [
+      "Class 6-10"
+    ],
+    "modes": [
+      "Online",
+      "Offline"
+    ],
+    "teachingMode": "Both",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.3916,
+    "lng": 78.4398,
+    "hourlyRate": 190,
+    "monthlyRate": 3600,
+    "experience": 3,
+    "photo": "",
+    "streetAddress": "Flat 104, Royal Palms, PVNR Expressway Pillar 48, Mehdipatnam",
+    "address": "Flat 104, Royal Palms, PVNR Expressway Pillar 48, Mehdipatnam",
+    "pincode": "500028",
+    "mobile": "9848011213",
+    "email": "sampangi.rambabu@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-14",
+    "name": "P. Kavya",
+    "fullName": "P. Kavya",
+    "qualification": "BTech",
+    "gender": "Female",
+    "age": 21,
+    "about": "Dedicated and patient tutor specializing in Biology, Chemistry, Physics with 1 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Biology, Chemistry, Physics with 1 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Biology",
+      "Chemistry",
+      "Physics",
+      "English",
+      "Telugu"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Online",
+      "Offline"
+    ],
+    "teachingMode": "Both",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.3457,
+    "lng": 78.5522,
+    "hourlyRate": 180,
+    "monthlyRate": 3400,
+    "experience": 1,
+    "photo": "",
+    "streetAddress": "Plot 88, Snehapuri Colony, Near LB Nagar Ring Road, Mansoorabad",
+    "address": "Plot 88, Snehapuri Colony, Near LB Nagar Ring Road, Mansoorabad",
+    "pincode": "500068",
+    "mobile": "9848011214",
+    "email": "kavya.p2005@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-15",
+    "name": "J. Roshini",
+    "fullName": "J. Roshini",
+    "qualification": "Degree",
+    "gender": "Female",
+    "age": 22,
+    "about": "Dedicated and patient tutor specializing in English, Sanskrit, Telugu with 2 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in English, Sanskrit, Telugu with 2 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "English",
+      "Sanskrit",
+      "Telugu",
+      "Social Studies"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Online"
+    ],
+    "teachingMode": "Online",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4284,
+    "lng": 78.5283,
+    "hourlyRate": 150,
+    "monthlyRate": 2900,
+    "experience": 2,
+    "photo": "",
+    "streetAddress": "12-13-418, Street No 1, Near Osmania University Gate, Tarnaka",
+    "address": "12-13-418, Street No 1, Near Osmania University Gate, Tarnaka",
+    "pincode": "500017",
+    "mobile": "9848011215",
+    "email": "roshini.j2004@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-16",
+    "name": "K. Lakshmi",
+    "fullName": "K. Lakshmi",
+    "qualification": "Diploma",
+    "gender": "Female",
+    "age": 24,
+    "about": "Dedicated and patient tutor specializing in Mathematics, English, Telugu with 2 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, English, Telugu with 2 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "English",
+      "Telugu",
+      "Social Studies",
+      "Sanskrit"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Offline"
+    ],
+    "teachingMode": "Offline",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4244,
+    "lng": 78.4554,
+    "hourlyRate": 140,
+    "monthlyRate": 2600,
+    "experience": 2,
+    "photo": "",
+    "streetAddress": "6-3-1090, Raj Bhavan Road, Near Yashoda Hospital, Somajiguda",
+    "address": "6-3-1090, Raj Bhavan Road, Near Yashoda Hospital, Somajiguda",
+    "pincode": "500082",
+    "mobile": "9848011216",
+    "email": "lakshmi.k2002@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-17",
+    "name": "P. Sai Priya",
+    "fullName": "P. Sai Priya",
+    "qualification": "Degree",
+    "gender": "Female",
+    "age": 23,
+    "about": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Biology, Chemistry, English with 2 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Biology",
+      "Chemistry",
+      "English",
+      "Telugu",
+      "Social Studies"
+    ],
+    "classes": [
+      "Class 1-5",
+      "Class 6-10"
+    ],
+    "modes": [
+      "Online",
+      "Offline"
+    ],
+    "teachingMode": "Both",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4431,
+    "lng": 78.4419,
+    "hourlyRate": 160,
+    "monthlyRate": 3100,
+    "experience": 2,
+    "photo": "",
+    "streetAddress": "Door 8-3-228, BK Guda Road, Near Community Hall, SR Nagar",
+    "address": "Door 8-3-228, BK Guda Road, Near Community Hall, SR Nagar",
+    "pincode": "500038",
+    "mobile": "9848011217",
+    "email": "saipriya.p2003@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-18",
+    "name": "L. Kalpana",
+    "fullName": "L. Kalpana",
+    "qualification": "BTech",
+    "gender": "Female",
+    "age": 25,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "English"
+    ],
+    "classes": [
+      "Class 6-10",
+      "Class 11-12"
+    ],
+    "modes": [
+      "Online"
+    ],
+    "teachingMode": "Online",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.3998,
+    "lng": 78.4842,
+    "hourlyRate": 210,
+    "monthlyRate": 3800,
+    "experience": 3,
+    "photo": "",
+    "streetAddress": "3-6-522, Liberty Road, Near Minerva Coffee Shop, Himayatnagar",
+    "address": "3-6-522, Liberty Road, Near Minerva Coffee Shop, Himayatnagar",
+    "pincode": "500029",
+    "mobile": "9848011218",
+    "email": "kalpana.l2001@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-19",
+    "name": "H. Janu",
+    "fullName": "H. Janu",
+    "qualification": "Diploma",
+    "gender": "Female",
+    "age": 19,
+    "about": "Dedicated and patient tutor specializing in Telugu, English, Social Studies with 1 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Telugu, English, Social Studies with 1 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Telugu",
+      "English",
+      "Social Studies",
+      "Sanskrit"
+    ],
+    "classes": [
+      "Class 1-5"
+    ],
+    "modes": [
+      "Offline"
+    ],
+    "teachingMode": "Offline",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.3615,
+    "lng": 78.5449,
+    "hourlyRate": 100,
+    "monthlyRate": 2000,
+    "experience": 1,
+    "photo": "",
+    "streetAddress": "Plot 19, Maruthi Nagar Colony, Near Victoria Memorial Metro, Kothapet",
+    "address": "Plot 19, Maruthi Nagar Colony, Near Victoria Memorial Metro, Kothapet",
+    "pincode": "500035",
+    "mobile": "9848011219",
+    "email": "janu.h2007@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
+  },
+  {
+    "id": "TUT-HYD-20",
+    "name": "K. Rajesh",
+    "fullName": "K. Rajesh",
+    "qualification": "BTech",
+    "gender": "Male",
+    "age": 24,
+    "about": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "bio": "Dedicated and patient tutor specializing in Mathematics, Physics, Chemistry with 3 year(s) of experience in Hyderabad.",
+    "subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "English",
+      "Telugu"
+    ],
+    "classes": [
+      "Class 6-10",
+      "Class 11-12"
+    ],
+    "modes": [
+      "Online",
+      "Offline"
+    ],
+    "teachingMode": "Both",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "lat": 17.4025,
+    "lng": 78.3792,
+    "hourlyRate": 230,
+    "monthlyRate": 4200,
+    "experience": 3,
+    "photo": "",
+    "streetAddress": "Flat 405, Shirdi Sai Enclave, Puppalguda Main Road, Manikonda",
+    "address": "Flat 405, Shirdi Sai Enclave, Puppalguda Main Road, Manikonda",
+    "pincode": "500089",
+    "mobile": "9848011220",
+    "email": "rajesh.k2002@gmail.com",
+    "rating": 5,
+    "reviewsCount": 0,
+    "reviews": [],
+    "availability": [
+      "Mon - Fri (4:00 PM - 7:00 PM)"
+    ],
+    "isVerified": true,
+    "paymentStatus": "Paid",
+    "createdAt": "2026-10-21T10:14:01.094Z"
   }
 ]
