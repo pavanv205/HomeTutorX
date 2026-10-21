@@ -35,8 +35,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500081",
-    "lat": 17.5303,
-    "lng": 78.352,
+    "lat": 17.3691,
+    "lng": 78.3768,
     "mobile": "9848011201"
   },
   {
@@ -63,8 +63,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500032",
-    "lat": 17.4465,
-    "lng": 78.2392,
+    "lat": 17.359,
+    "lng": 78.3068,
     "mobile": "9848011202"
   },
   {
@@ -92,8 +92,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500072",
-    "lat": 17.5935,
-    "lng": 78.3578,
+    "lat": 17.3489,
+    "lng": 78.2368,
     "mobile": "9848011203"
   },
   {
@@ -120,8 +120,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500038",
-    "lat": 17.5864,
-    "lng": 78.4744,
+    "lat": 17.3388,
+    "lng": 78.1668,
     "mobile": "9848011204"
   },
   {
@@ -149,8 +149,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500034",
-    "lat": 17.2546,
-    "lng": 78.3795,
+    "lat": 17.3287,
+    "lng": 78.0968,
     "mobile": "9848011205"
   },
   {
@@ -177,8 +177,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500060",
-    "lat": 17.3067,
-    "lng": 78.569,
+    "lat": 17.3186,
+    "lng": 78.0268,
     "mobile": "9848011206"
   },
   {
@@ -205,8 +205,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500084",
-    "lat": 17.5125,
-    "lng": 78.2549,
+    "lat": 17.3085,
+    "lng": 77.9567,
     "mobile": "9848011207"
   },
   {
@@ -234,8 +234,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500026",
-    "lat": 17.5107,
-    "lng": 78.6091,
+    "lat": 17.2983,
+    "lng": 77.8867,
     "mobile": "9848011208"
   },
   {
@@ -262,8 +262,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500049",
-    "lat": 17.5643,
-    "lng": 78.2959,
+    "lat": 17.2882,
+    "lng": 77.8167,
     "mobile": "9848011209"
   },
   {
@@ -291,8 +291,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500033",
-    "lat": 17.4354,
-    "lng": 78.4261,
+    "lat": 17.2781,
+    "lng": 77.7467,
     "mobile": "9848011210"
   },
   {
@@ -320,8 +320,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500016",
-    "lat": 17.5482,
-    "lng": 78.5296,
+    "lat": 17.268,
+    "lng": 77.6767,
     "mobile": "9848011211"
   },
   {
@@ -348,8 +348,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500039",
-    "lat": 17.4062,
-    "lng": 78.6497,
+    "lat": 17.2579,
+    "lng": 77.6066,
     "mobile": "9848011212"
   },
   {
@@ -376,8 +376,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500028",
-    "lat": 17.3204,
-    "lng": 78.4528,
+    "lat": 17.2478,
+    "lng": 77.5366,
     "mobile": "9848011213"
   },
   {
@@ -405,8 +405,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500068",
-    "lat": 17.281,
-    "lng": 78.6297,
+    "lat": 17.2377,
+    "lng": 77.4666,
     "mobile": "9848011214"
   },
   {
@@ -433,8 +433,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500017",
-    "lat": 17.448,
-    "lng": 78.5997,
+    "lat": 17.2275,
+    "lng": 77.3966,
     "mobile": "9848011215"
   },
   {
@@ -462,8 +462,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500082",
-    "lat": 17.3732,
-    "lng": 78.349,
+    "lat": 17.2174,
+    "lng": 77.3266,
     "mobile": "9848011216"
   },
   {
@@ -491,8 +491,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500038",
-    "lat": 17.4358,
-    "lng": 78.3596,
+    "lat": 17.2073,
+    "lng": 77.2566,
     "mobile": "9848011217"
   },
   {
@@ -519,8 +519,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500029",
-    "lat": 17.37,
-    "lng": 78.5751,
+    "lat": 17.1972,
+    "lng": 77.1865,
     "mobile": "9848011218"
   },
   {
@@ -546,8 +546,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500035",
-    "lat": 17.3442,
-    "lng": 78.6358,
+    "lat": 17.1871,
+    "lng": 77.1165,
     "mobile": "9848011219"
   },
   {
@@ -575,8 +575,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500089",
-    "lat": 17.3275,
-    "lng": 78.3029,
+    "lat": 17.177,
+    "lng": 77.0465,
     "mobile": "9848011220"
   },
   {
@@ -603,8 +603,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500081",
-    "lat": 17.5596,
-    "lng": 78.414,
+    "lat": 17.1669,
+    "lng": 76.9765,
     "mobile": "9848011221"
   },
   {
@@ -632,8 +632,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500002",
-    "lat": 17.2561,
-    "lng": 78.4459,
+    "lat": 17.1568,
+    "lng": 76.9065,
     "mobile": "9848011222"
   },
   {
@@ -661,8 +661,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500032",
-    "lat": 17.3742,
-    "lng": 78.246,
+    "lat": 17.1466,
+    "lng": 76.8365,
     "mobile": "9848011223"
   },
   {
@@ -688,8 +688,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500080",
-    "lat": 17.4871,
-    "lng": 78.5474,
+    "lat": 17.1365,
+    "lng": 76.7664,
     "mobile": "9848011224"
   },
   {
@@ -716,8 +716,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500081",
-    "lat": 17.4149,
-    "lng": 78.2969,
+    "lat": 17.1264,
+    "lng": 76.6964,
     "mobile": "9848011225"
   },
   {
@@ -744,8 +744,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500001",
-    "lat": 17.3179,
-    "lng": 78.3821,
+    "lat": 17.1163,
+    "lng": 76.6264,
     "mobile": "9848011226"
   },
   {
@@ -773,8 +773,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500033",
-    "lat": 17.4965,
-    "lng": 78.4082,
+    "lat": 17.1062,
+    "lng": 76.5564,
     "mobile": "9848011227"
   },
   {
@@ -801,8 +801,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500001",
-    "lat": 17.2803,
-    "lng": 78.5072,
+    "lat": 17.0961,
+    "lng": 76.4864,
     "mobile": "9848011228"
   },
   {
@@ -829,8 +829,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500008",
-    "lat": 17.3728,
-    "lng": 78.4154,
+    "lat": 17.086,
+    "lng": 76.4163,
     "mobile": "9848011229"
   },
   {
@@ -857,8 +857,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500084",
-    "lat": 17.4798,
-    "lng": 78.3118,
+    "lat": 17.0758,
+    "lng": 76.3463,
     "mobile": "9848011230"
   },
   {
@@ -885,8 +885,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500016",
-    "lat": 17.423,
-    "lng": 78.5386,
+    "lat": 17.0657,
+    "lng": 76.2763,
     "mobile": "9848011231"
   },
   {
@@ -913,8 +913,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500082",
-    "lat": 17.3963,
-    "lng": 78.4784,
+    "lat": 17.0556,
+    "lng": 76.2063,
     "mobile": "9848011232"
   },
   {
@@ -940,8 +940,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500036",
-    "lat": 17.3433,
-    "lng": 78.5148,
+    "lat": 17.0455,
+    "lng": 76.1363,
     "mobile": "9848011233"
   },
   {
@@ -969,8 +969,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500018",
-    "lat": 17.5232,
-    "lng": 78.4685,
+    "lat": 17.0354,
+    "lng": 76.0663,
     "mobile": "9848011234"
   },
   {
@@ -998,8 +998,8 @@ const tutorsData = [
     "city": "Hyderabad",
     "state": "Telangana",
     "pincode": "500034",
-    "lat": 17.4621,
-    "lng": 78.4863,
+    "lat": 17.0253,
+    "lng": 75.9962,
     "mobile": "9848011235"
   }
 ];
