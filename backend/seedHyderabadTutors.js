@@ -414,6 +414,8 @@ const tutorsData = [
 
 async function seedToMongo() {
   const defaultPassword = 'pavan0707';
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(defaultPassword, salt);
 
   let createdCount = 0;
   let updatedCount = 0;
@@ -432,11 +434,10 @@ async function seedToMongo() {
         subscriptionExpiresAt: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000)
       });
       await user.save();
+      await User.updateOne({ _id: user._id }, { $set: { password: hashedPassword, paymentStatus: 'Paid' } });
       createdCount++;
     } else {
-      user.password = defaultPassword;
-      user.paymentStatus = 'Paid';
-      await user.save();
+      await User.updateOne({ _id: user._id }, { $set: { password: hashedPassword, paymentStatus: 'Paid' } });
       updatedCount++;
     }
 
