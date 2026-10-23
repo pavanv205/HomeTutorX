@@ -62,7 +62,7 @@ const BecomeTutorForm = () => {
   const { registerTutor: registerTutorAuth } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [regFee, setRegFee] = useState(1); // dynamic fallback
+  const [regFee, setRegFee] = useState(29); // dynamic fallback
   const [subMonths, setSubMonths] = useState(6); // dynamic fallback
   const [successMsg, setSuccessMsg] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
@@ -587,7 +587,7 @@ const BecomeTutorForm = () => {
         },
         modal: {
           ondismiss: function() {
-            setSubmitError('Payment was cancelled. You must complete the ₹1 payment to submit your application.');
+            setSubmitError(`Payment was cancelled. You must complete the ₹${regFee} payment to submit your application.`);
             setLoading(false);
           }
         }

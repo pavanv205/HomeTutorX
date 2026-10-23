@@ -448,6 +448,14 @@ npm run build
 
 ---
 
+### 114. Updated Application Fee from ₹1 to ₹29
+- **Config Constants Updated**: Updated [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) to set `tutorRegistrationFee: 29`.
+- **Frontend State Defaults & Messages**: Updated initial fallback state to `29` and dynamic cancellation notice inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) as well as fallback state in [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx).
+- **Backend Verification**: Updated [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js) to use dynamic `appSettings.tutorRegistrationFee` in payment verification error messages.
+- **Terms of Service**: Updated [TermsOfService.jsx](file:///d:/desktop/HomeTutorX/src/pages/TermsOfService.jsx) to reflect the ₹29 tutor subscription plan registration fee.
+
+---
+
 ### 113. Removed Referral Code Input Field from Tutor Registration
 - **Removed Form Field**: Deleted the `Referral Code (Optional)` text input container completely from step 3 (Profile & Payment) inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx).
 
