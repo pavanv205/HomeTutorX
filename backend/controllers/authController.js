@@ -1094,7 +1094,7 @@ exports.renewSubscription = async (req, res, next) => {
     if (!actualPaymentId || paymentStatus !== 'Paid') {
       return res.status(400).json({
         success: false,
-        message: 'Payment verification failed. Subscription renewal requires a successful ₹29 payment.'
+        message: `Payment verification failed. Subscription renewal requires a successful ₹${appSettings.tutorRegistrationFee} payment.`
       });
     }
 

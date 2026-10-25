@@ -446,6 +446,12 @@ npm run build
 - **100% Geolocation Success**: "Find Near Me" and Live Location linking now ALWAYS succeed and return nearby tutor listings without ever displaying a red error message.
 - Incremented Release Version: Updated [build.gradle](file:///d:/desktop/HomeTutorX/android/app/build.gradle) to `versionCode 9` and `versionName "1.0.8"`.
 
+### 115. Updated Application Fee from ₹29 to ₹49
+- **Config Constants Updated**: Updated [appSettings.js](file:///d:/desktop/HomeTutorX/backend/config/appSettings.js) to set `tutorRegistrationFee: 49`.
+- **Frontend State Defaults & Messages**: Updated initial fallback state to `49` inside [BecomeTutorForm.jsx](file:///d:/desktop/HomeTutorX/src/components/forms/BecomeTutorForm.jsx) as well as fallback state and cancellation notice in [SubscriptionExpired.jsx](file:///d:/desktop/HomeTutorX/src/pages/SubscriptionExpired.jsx).
+- **Backend Verification**: Ensured [authController.js](file:///d:/desktop/HomeTutorX/backend/controllers/authController.js) dynamically validates and displays `appSettings.tutorRegistrationFee` in payment failure and subscription renewal error messages.
+- **Terms of Service**: Updated [TermsOfService.jsx](file:///d:/desktop/HomeTutorX/src/pages/TermsOfService.jsx) to reflect the ₹49 tutor subscription plan registration fee.
+
 ---
 
 ### 114. Updated Application Fee from ₹1 to ₹29

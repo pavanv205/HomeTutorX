@@ -10,7 +10,7 @@ import api from '../services/api';
 const SubscriptionExpired = () => {
   const { user, renewSubscription, logout, isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [regFee, setRegFee] = useState(29);
+  const [regFee, setRegFee] = useState(49);
   const [subMonths, setSubMonths] = useState(6);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -83,7 +83,7 @@ const SubscriptionExpired = () => {
       // 2. Initialize Options
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY || orderData.key || 'rzp_live_TAwDF3o7rjkreE',
-        amount: orderData.amount, // ₹29.00 in paise
+        amount: orderData.amount, // ₹49.00 in paise
         currency: orderData.currency,
         name: 'HomeTutorX',
         description: `${user.role} Subscription Renewal`,
@@ -130,7 +130,7 @@ const SubscriptionExpired = () => {
         },
         modal: {
           ondismiss: function() {
-            setErrorMsg('Payment cancelled. You must complete the ₹29 payment to renew your subscription.');
+            setErrorMsg(`Payment cancelled. You must complete the ₹${regFee} payment to renew your subscription.`);
             setLoading(false);
           }
         }
