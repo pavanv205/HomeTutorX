@@ -74,6 +74,14 @@ const BecomeTutorForm = () => {
   const [certificateOriginalSize, setCertificateOriginalSize] = useState(null);
   const [certificateCompressionLoading, setCertificateCompressionLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [completedPayment, setCompletedPayment] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('htx_pending_tutor_payment');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
   const [compressedPreviewUrl, setCompressedPreviewUrl] = useState(null);
   const [originalSize, setOriginalSize] = useState(null);
   const [compressionLoading, setCompressionLoading] = useState(false);
@@ -496,17 +504,92 @@ const BecomeTutorForm = () => {
     });
   };
 
+  const submitRegistrationWithPayment = async (data, paymentInfo) => {
+    setLoading(true);
+    setSubmitError('');
+
+    try {
+      const formData = new FormData();
+      // Append primitive fields
+      for (const key of Object.keys(data)) {
+        const val = data[key];
+        if (Array.isArray(val)) {
+          formData.append(key, JSON.stringify(val));
+        } else {
+          formData.append(key, val ?? '');
+        }
+      }
+      if (resumeFile) {
+        formData.append('resume', resumeFile);
+      }
+      if (certificateFile) {
+        formData.append('certificate', certificateFile);
+      }
+
+      // Append payment fields
+      formData.append('paymentStatus', 'Paid');
+      formData.append('paymentId', paymentInfo.razorpay_payment_id);
+      formData.append('razorpay_order_id', paymentInfo.razorpay_order_id);
+      formData.append('razorpay_payment_id', paymentInfo.razorpay_payment_id);
+      formData.append('razorpay_signature', paymentInfo.razorpay_signature);
+
+      // Attempt registration with automatic 1-retry for mobile network glitches
+      let attempts = 0;
+      let regResponse = null;
+
+      while (attempts < 2) {
+        try {
+          attempts++;
+          regResponse = await registerTutorAuth(formData);
+          if (regResponse) break;
+        } catch (err) {
+          const msg = (err?.message || '').toLowerCase();
+          const isNetworkErr = msg.includes('network') || msg.includes('timeout') || err?.code === 'ECONNABORTED';
+          if (isNetworkErr && attempts < 2) {
+            console.warn(`[RETRY] Network glitch on attempt ${attempts}. Retrying registration submission in 1.5s...`);
+            await new Promise((r) => setTimeout(r, 1500));
+          } else {
+            throw err;
+          }
+        }
+      }
+
+      if (regResponse) {
+        try {
+          sessionStorage.removeItem('htx_pending_tutor_payment');
+        } catch {}
+        setCompletedPayment(null);
+        setSuccessMsg('Application Submitted! We have created your tutor account. You can log in using your credentials after admin review.');
+      }
+    } catch (error) {
+      console.error('Registration submission failed:', error);
+      const isNet = (error?.message || '').toLowerCase().includes('network');
+      const errText = isNet
+        ? `Network connection interrupted while transmitting files. Your payment of ₹${regFee} (ID: ${paymentInfo.razorpay_payment_id}) is saved! Tap "Retry Application Submission" below to finish without paying again.`
+        : (typeof error === 'string' ? error : (error?.message || error?.response?.data?.message || 'Registration failed. Please try again.'));
+      setSubmitError(errText);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onSubmit = async (data) => {
     try {
-      setLoading(true);
       setSubmitError('');
 
       // Enforce educational certificate file upload
       if (!certificateFile) {
         setCertificateError('Please upload your educational certificate.');
-        setLoading(false);
         return;
       }
+
+      // If payment has ALREADY been completed, do NOT prompt Razorpay again!
+      if (completedPayment && completedPayment.razorpay_payment_id) {
+        await submitRegistrationWithPayment(data, completedPayment);
+        return;
+      }
+
+      setLoading(true);
 
       // Load Razorpay Script
       const isLoaded = await loadRazorpayScript();
@@ -533,49 +616,20 @@ const BecomeTutorForm = () => {
         description: `${subMonths === '5min' || String(subMonths) === '5' ? '5 minuties' : `${subMonths}-Month`} Tutor Subscription Plan`,
         order_id: isMock ? undefined : orderData.id,
         handler: async function (response) {
+          const paymentInfo = {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id || orderData.id,
+            razorpay_signature: response.razorpay_signature || 'mock_signature'
+          };
+          console.log('Payment Successful. Payment ID:', paymentInfo.razorpay_payment_id);
+
+          // Persist payment info immediately in state and sessionStorage so payment is never lost
+          setCompletedPayment(paymentInfo);
           try {
-            setLoading(true);
-            const razorpayPaymentId = response.razorpay_payment_id;
-            const razorpayOrderId = response.razorpay_order_id || orderData.id;
-            const razorpaySignature = response.razorpay_signature || 'mock_signature';
+            sessionStorage.setItem('htx_pending_tutor_payment', JSON.stringify(paymentInfo));
+          } catch {}
 
-            console.log('Payment Successful. Payment ID:', razorpayPaymentId);
-
-            const formData = new FormData();
-            // Append primitive fields
-            for (const key of Object.keys(data)) {
-              const val = data[key];
-              if (Array.isArray(val)) {
-                formData.append(key, JSON.stringify(val));
-              } else {
-                formData.append(key, val ?? '');
-              }
-            }
-            if (resumeFile) {
-              formData.append('resume', resumeFile);
-            }
-            if (certificateFile) {
-              formData.append('certificate', certificateFile);
-            }
-            
-            // Append payment fields
-            formData.append('paymentStatus', 'Paid');
-            formData.append('paymentId', razorpayPaymentId);
-            formData.append('razorpay_order_id', razorpayOrderId);
-            formData.append('razorpay_payment_id', razorpayPaymentId);
-            formData.append('razorpay_signature', razorpaySignature);
-
-            const regResponse = await registerTutorAuth(formData);
-            if (regResponse) {
-              setSuccessMsg('Application Submitted! We have created your tutor account. You can log in using your credentials after admin review.');
-            }
-          } catch (error) {
-            console.error(error);
-            const errText = typeof error === 'string' ? error : (error?.message || error?.response?.data?.message || 'Registration failed. Please try again.');
-            setSubmitError(errText);
-          } finally {
-            setLoading(false);
-          }
+          await submitRegistrationWithPayment(data, paymentInfo);
         },
         prefill: {
           name: data.name,
@@ -587,7 +641,9 @@ const BecomeTutorForm = () => {
         },
         modal: {
           ondismiss: function() {
-            setSubmitError(`Payment was cancelled. You must complete the ₹${regFee} payment to submit your application.`);
+            if (!completedPayment) {
+              setSubmitError(`Payment was cancelled. You must complete the ₹${regFee} payment to submit your application.`);
+            }
             setLoading(false);
           }
         }
@@ -1400,25 +1456,60 @@ const BecomeTutorForm = () => {
               )}
             </div>
                  {/* Payment Method Option */}
-              <div className="space-y-3 mt-6">
-                <label className="block text-xs font-bold text-slate-400 dark:text-slate-505 uppercase tracking-wide">
-                  Select Payment Method
-                </label>
-                <div className="border border-slate-950 bg-slate-950/5 dark:border-slate-100 dark:bg-slate-100/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
-                  <div className="flex items-center gap-3.5">
-                    <div className="h-5 w-5 rounded-full border-2 border-slate-950 dark:border-slate-100 flex items-center justify-center">
-                      <div className="h-2.5 w-2.5 rounded-full bg-slate-950 dark:bg-slate-100" />
+              {completedPayment ? (
+                <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/80 rounded-2xl p-4.5 mt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="h-7 w-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                        ✓
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-emerald-900 dark:text-emerald-200 uppercase tracking-wide">
+                          Payment Verified &amp; Saved (₹{regFee})
+                        </h4>
+                        <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium">
+                          Payment ID: <span className="font-mono font-semibold">{completedPayment.razorpay_payment_id}</span>
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm('Clear saved payment credentials? You will need to make the payment again.')) {
+                          sessionStorage.removeItem('htx_pending_tutor_payment');
+                          setCompletedPayment(null);
+                        }
+                      }}
+                      className="text-[11px] text-emerald-700 dark:text-emerald-300 underline font-semibold hover:text-emerald-900"
+                    >
+                      Clear
+                    </button>
                   </div>
-                   <div className="text-right">
-                    <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
-                    <span className="text-base font-extrabold text-slate-950 dark:text-white">₹{regFee}</span>
+                  <p className="text-xs text-emerald-800 dark:text-emerald-300/90 mt-2.5 font-medium leading-relaxed">
+                    Your application fee of ₹{regFee} has been successfully paid. You will <strong>not</strong> be charged again. Tap <strong>"Retry Application Submission"</strong> below to complete your registration.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3 mt-6">
+                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-505 uppercase tracking-wide">
+                    Select Payment Method
+                  </label>
+                  <div className="border border-slate-950 bg-slate-950/5 dark:border-slate-100 dark:bg-slate-100/10 rounded-2xl p-4 flex items-center justify-between cursor-pointer transition-all duration-200">
+                    <div className="flex items-center gap-3.5">
+                      <div className="h-5 w-5 rounded-full border-2 border-slate-950 dark:border-slate-100 flex items-center justify-center">
+                        <div className="h-2.5 w-2.5 rounded-full bg-slate-950 dark:bg-slate-100" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400 font-semibold mt-0.5">UPI, Cards, Netbanking, Wallets</p>
+                      </div>
+                    </div>
+                     <div className="text-right">
+                      <span className="text-xs text-slate-400 font-semibold block">Application Fee</span>
+                      <span className="text-base font-extrabold text-slate-950 dark:text-white">₹{regFee}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Payment Verification Notice */}
               <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-5 flex items-center gap-4 mt-6">
@@ -1472,8 +1563,13 @@ const BecomeTutorForm = () => {
               Next Step
             </Button>
           ) : (
-            <Button type="submit" variant="primary" loading={loading}>
-              Submit Application
+            <Button
+              type="submit"
+              variant="primary"
+              loading={loading}
+              className={completedPayment ? "!bg-emerald-600 hover:!bg-emerald-700 !text-white !border-emerald-600" : ""}
+            >
+              {completedPayment ? 'Retry Application Submission' : 'Submit Application'}
             </Button>
           )}
         </div>

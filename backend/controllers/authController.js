@@ -265,6 +265,28 @@ exports.registerTutor = async (req, res, next) => {
     }
 
     if (userExists) {
+      if (actualPaymentId && userExists.paymentId === actualPaymentId) {
+        devLog(`[REGISTRATION IDEMPOTENT] Tutor user re-submission with verified paymentId ${actualPaymentId}. Returning existing registration.`);
+        let existingTutor = null;
+        try {
+          existingTutor = await Tutor.findOne({ email: normalizedEmail });
+        } catch (e) {}
+        const token = generateToken(userExists._id);
+        return res.status(200).json({
+          success: true,
+          message: 'Tutor application has already been received successfully.',
+          data: {
+            token,
+            user: {
+              id: userExists._id,
+              name: userExists.name,
+              email: userExists.email,
+              role: userExists.role,
+              tutorProfile: existingTutor ? existingTutor._id : userExists.tutorProfile
+            }
+          }
+        });
+      }
       console.log(`[DEBUG FAIL] userExists triggered for role Tutor on email ${email}`);
       devLog(`[REGISTRATION FAILED] Email already registered: ${email}`);
       return res.status(400).json({ success: false, message: 'Email already registered' });
@@ -284,6 +306,30 @@ exports.registerTutor = async (req, res, next) => {
     }
 
     if (tutorExists) {
+      if (actualPaymentId && tutorExists.paymentId === actualPaymentId) {
+        devLog(`[REGISTRATION IDEMPOTENT] Tutor profile re-submission with verified paymentId ${actualPaymentId}.`);
+        let existingUser = null;
+        try {
+          existingUser = await User.findOne({ email: normalizedEmail, role: 'Tutor' });
+        } catch (e) {}
+        if (existingUser) {
+          const token = generateToken(existingUser._id);
+          return res.status(200).json({
+            success: true,
+            message: 'Tutor application has already been received successfully.',
+            data: {
+              token,
+              user: {
+                id: existingUser._id,
+                name: existingUser.name,
+                email: existingUser.email,
+                role: existingUser.role,
+                tutorProfile: tutorExists._id
+              }
+            }
+          });
+        }
+      }
       console.log(`[DEBUG FAIL] tutorExists triggered on email ${email}`);
       devLog(`[REGISTRATION FAILED] Tutor profile email already registered: ${email}`);
       return res.status(400).json({ success: false, message: 'Email already registered' });
