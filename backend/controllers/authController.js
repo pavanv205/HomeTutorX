@@ -563,7 +563,25 @@ exports.registerStudent = async (req, res, next) => {
   devLog('--- [STUDENT REGISTRATION REQUEST RECEIVED] ---');
   let user = null;
   try {
-    let { name, email, password, phone, paymentStatus, paymentId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body || {};
+    let { 
+      name, 
+      email, 
+      password, 
+      phone, 
+      state, 
+      division, 
+      city, 
+      streetAddress, 
+      location,
+      paymentStatus, 
+      paymentId, 
+      razorpay_order_id, 
+      razorpay_payment_id, 
+      razorpay_signature 
+    } = req.body || {};
+
+    const finalCity = division || city || '';
+    const fullLocation = location || [streetAddress, finalCity, state].filter(Boolean).join(', ');
 
     // Validate inputs
     if (!name || !email || !password || !phone) {
@@ -650,9 +668,14 @@ exports.registerStudent = async (req, res, next) => {
       user = {
         _id: userId,
         name,
-        email,
+        email: normalizedEmail,
         password: hashedPassword,
         phone,
+        state: state || '',
+        city: finalCity,
+        division: finalCity,
+        streetAddress: streetAddress || '',
+        location: fullLocation || '',
         role: 'Student',
         paymentStatus: 'Paid',
         paymentId,
@@ -671,6 +694,11 @@ exports.registerStudent = async (req, res, next) => {
             name: user.name,
             email: user.email,
             phone: user.phone,
+            state: user.state,
+            city: user.city,
+            division: user.division,
+            streetAddress: user.streetAddress,
+            location: user.location,
             role: user.role
           }
         }
@@ -680,9 +708,14 @@ exports.registerStudent = async (req, res, next) => {
     // Create user document
     user = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       password,
       phone,
+      state: state || '',
+      city: finalCity,
+      division: finalCity,
+      streetAddress: streetAddress || '',
+      location: fullLocation || '',
       role: 'Student',
       paymentStatus: 'Paid',
       paymentId
@@ -700,6 +733,11 @@ exports.registerStudent = async (req, res, next) => {
           name: user.name,
           email: user.email,
           phone: user.phone,
+          state: user.state,
+          city: user.city,
+          division: user.division,
+          streetAddress: user.streetAddress,
+          location: user.location,
           role: user.role
         }
       }

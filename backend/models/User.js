@@ -36,6 +36,15 @@ const UserSchema = new mongoose.Schema({
   city: {
     type: String
   },
+  division: {
+    type: String
+  },
+  state: {
+    type: String
+  },
+  streetAddress: {
+    type: String
+  },
   tutorProfile: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tutor'
