@@ -30,6 +30,12 @@ const UserSchema = new mongoose.Schema({
   phone: {
     type: String
   },
+  location: {
+    type: String
+  },
+  city: {
+    type: String
+  },
   tutorProfile: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tutor'

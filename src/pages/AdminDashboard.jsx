@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaGraduationCap, FaUserCheck, FaInfoCircle, FaUser } from 'react-icons/fa';
+import { FaGraduationCap, FaUserCheck, FaInfoCircle, FaUser, FaMapMarkerAlt, FaSearch } from 'react-icons/fa';
 import api from '../services/api';
 import { parseArrayField } from '../utils/arrayHelper';
 import Button from '../components/common/Button';
@@ -124,17 +124,102 @@ const ColorfulGiftIcon = ({ className = "h-6 w-6" }) => (
 );
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Verified Tutors', 'Unverified Tutors'
+  const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Verified Tutors', 'Unverified Tutors', 'Students'
   const [stats, setStats] = useState({
     tutors: { total: 0, verified: 0, pending: 0, active: 0 },
     students: { total: 0 },
     storage: { databaseSize: 0, cdnSize: 0 }
   });
   const [tutors, setTutors] = useState([]);
+  const [students, setStudents] = useState([]);
+
+  // Search states
+  const [tutorLocationSearch, setTutorLocationSearch] = useState('');
+  const [tutorGeneralSearch, setTutorGeneralSearch] = useState('');
+  const [unverifiedLocationSearch, setUnverifiedLocationSearch] = useState('');
+  const [unverifiedGeneralSearch, setUnverifiedGeneralSearch] = useState('');
+  const [studentSearch, setStudentSearch] = useState('');
+  const [studentLocationSearch, setStudentLocationSearch] = useState('');
+
   const [showCapacityDetails, setShowCapacityDetails] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Filtered Verified Tutors
+  const filteredVerifiedTutors = tutors.filter(t => {
+    if (!t.isVerified) return false;
+
+    if (tutorLocationSearch.trim()) {
+      const locQ = tutorLocationSearch.toLowerCase().trim();
+      const city = (t.city || '').toLowerCase();
+      const state = (t.state || '').toLowerCase();
+      const address = (t.streetAddress || t.address || '').toLowerCase();
+      const pincode = String(t.pincode || '').toLowerCase();
+      const matchesLoc = city.includes(locQ) || state.includes(locQ) || address.includes(locQ) || pincode.includes(locQ);
+      if (!matchesLoc) return false;
+    }
+
+    if (tutorGeneralSearch.trim()) {
+      const genQ = tutorGeneralSearch.toLowerCase().trim();
+      const name = (t.fullName || '').toLowerCase();
+      const email = (t.email || '').toLowerCase();
+      const mobile = String(t.mobile || '').toLowerCase();
+      const qualification = (t.qualification || '').toLowerCase();
+      const subjects = parseArrayField(t.subjects).join(' ').toLowerCase();
+      const matchesGen = name.includes(genQ) || email.includes(genQ) || mobile.includes(genQ) || qualification.includes(genQ) || subjects.includes(genQ);
+      if (!matchesGen) return false;
+    }
+
+    return true;
+  });
+
+  // Filtered Unverified Tutors
+  const filteredUnverifiedTutors = tutors.filter(t => {
+    if (t.isVerified) return false;
+
+    if (unverifiedLocationSearch.trim()) {
+      const locQ = unverifiedLocationSearch.toLowerCase().trim();
+      const city = (t.city || '').toLowerCase();
+      const state = (t.state || '').toLowerCase();
+      const address = (t.streetAddress || t.address || '').toLowerCase();
+      const pincode = String(t.pincode || '').toLowerCase();
+      const matchesLoc = city.includes(locQ) || state.includes(locQ) || address.includes(locQ) || pincode.includes(locQ);
+      if (!matchesLoc) return false;
+    }
+
+    if (unverifiedGeneralSearch.trim()) {
+      const genQ = unverifiedGeneralSearch.toLowerCase().trim();
+      const name = (t.fullName || '').toLowerCase();
+      const email = (t.email || '').toLowerCase();
+      const mobile = String(t.mobile || '').toLowerCase();
+      const qualification = (t.qualification || '').toLowerCase();
+      const subjects = parseArrayField(t.subjects).join(' ').toLowerCase();
+      const matchesGen = name.includes(genQ) || email.includes(genQ) || mobile.includes(genQ) || qualification.includes(genQ) || subjects.includes(genQ);
+      if (!matchesGen) return false;
+    }
+
+    return true;
+  });
+
+  // Filtered Students
+  const filteredStudents = students.filter(s => {
+    if (studentLocationSearch.trim()) {
+      const locQ = studentLocationSearch.toLowerCase().trim();
+      const loc = (s.location || s.city || s.address || '').toLowerCase();
+      if (!loc.includes(locQ)) return false;
+    }
+
+    if (studentSearch.trim()) {
+      const q = studentSearch.toLowerCase().trim();
+      const name = (s.name || '').toLowerCase();
+      const email = (s.email || '').toLowerCase();
+      const phone = String(s.phone || '').toLowerCase();
+      if (!name.includes(q) && !email.includes(q) && !phone.includes(q)) return false;
+    }
+
+    return true;
+  });
 
   // Fetch admin dashboard details
   const fetchDashboardData = async () => {
@@ -151,6 +236,15 @@ const AdminDashboard = () => {
       const tutorsRes = await api.get('/tutors', { params: { adminView: true } });
       setTutors(tutorsRes.data || []);
 
+      // 3. Fetch Students
+      try {
+        const studentsRes = await api.get('/admin/students');
+        if (studentsRes.data && studentsRes.data.success) {
+          setStudents(studentsRes.data.data || []);
+        }
+      } catch (e) {
+        console.log('Students fetch error:', e);
+      }
 
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
@@ -257,7 +351,7 @@ const AdminDashboard = () => {
 
           {/* Navigation Tabs */}
           <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 overflow-x-auto scrollbar-none">
-            {['Overview', 'Verified Tutors', 'Unverified Tutors'].map(tab => (
+            {['Overview', 'Verified Tutors', 'Unverified Tutors', 'Students'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -330,7 +424,10 @@ const AdminDashboard = () => {
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-default">
+                    <div 
+                      onClick={() => setActiveTab('Students')}
+                      className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all"
+                    >
                       <div className="h-12 w-12 rounded-2xl bg-blue-50/70 dark:bg-blue-950/20 flex items-center justify-center shrink-0">
                         <ColorfulUsersIcon className="h-6 w-6" />
                       </div>
@@ -507,8 +604,67 @@ const AdminDashboard = () => {
 
               {/* TAB 2: VERIFIED TUTORS */}
               {activeTab === 'Verified Tutors' && (
-                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm overflow-hidden animate-fadeIn">
-                  <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100 mb-5">Verified Tutor Accounts Directory</h3>
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm overflow-hidden animate-fadeIn space-y-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100">
+                          Verified Tutor Accounts Directory
+                        </h3>
+                        <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+                          {filteredVerifiedTutors.length} of {tutors.filter(t => t.isVerified).length} Verified
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+                        Search and filter verified tutor profiles by location or name.
+                      </p>
+                    </div>
+
+                    {/* Search Controls */}
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
+                      {/* Location Search Bar */}
+                      <div className="relative min-w-[220px]">
+                        <FaMapMarkerAlt className="absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-500 text-xs pointer-events-none" />
+                        <input
+                          type="text"
+                          value={tutorLocationSearch}
+                          onChange={(e) => setTutorLocationSearch(e.target.value)}
+                          placeholder="Search location (city, area)..."
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-9 pr-7 text-xs focus:outline-none focus:border-primary text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
+                        />
+                        {tutorLocationSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setTutorLocationSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+
+                      {/* General Search Bar */}
+                      <div className="relative min-w-[220px]">
+                        <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+                        <input
+                          type="text"
+                          value={tutorGeneralSearch}
+                          onChange={(e) => setTutorGeneralSearch(e.target.value)}
+                          placeholder="Search name, subject, email..."
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-9 pr-7 text-xs focus:outline-none focus:border-primary text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
+                        />
+                        {tutorGeneralSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setTutorGeneralSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                   
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -522,12 +678,16 @@ const AdminDashboard = () => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60 text-xs text-slate-700 dark:text-slate-350">
-                        {tutors.filter(t => t.isVerified).length === 0 ? (
+                        {filteredVerifiedTutors.length === 0 ? (
                           <tr>
-                            <td colSpan="5" className="py-8 text-center text-slate-400 font-medium">No verified tutors yet.</td>
+                            <td colSpan="5" className="py-12 text-center text-slate-400 font-medium">
+                              {tutors.filter(t => t.isVerified).length === 0
+                                ? 'No verified tutors yet.'
+                                : 'No verified tutors matching your location or search query.'}
+                            </td>
                           </tr>
                         ) : (
-                          tutors.filter(t => t.isVerified).map(tutor => (
+                          filteredVerifiedTutors.map(tutor => (
                             <tr key={tutor._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40">
                               <td className="py-3.5 pl-2">
                                 <div className="flex items-center gap-3">
@@ -565,8 +725,11 @@ const AdminDashboard = () => {
                                 <p className="text-[9px] text-slate-400">{parseArrayField(tutor.subjects).slice(0, 3).join(', ')} • {tutor.experience} Yrs Exp</p>
                               </td>
                               <td className="py-3.5">
-                                <p>{tutor.city || 'N/A'}</p>
-                                <p className="text-[9px] text-slate-400">{tutor.state}</p>
+                                <div className="flex items-center gap-1.5">
+                                  <FaMapMarkerAlt className="text-rose-500 text-[10px] shrink-0" />
+                                  <p className="font-medium text-slate-800 dark:text-slate-200">{tutor.city || 'N/A'}</p>
+                                </div>
+                                <p className="text-[9px] text-slate-400 pl-4">{tutor.state || tutor.streetAddress || ''}</p>
                               </td>
                               <td className="py-3.5">
                                 <div className="flex flex-col items-start gap-1">
@@ -611,8 +774,67 @@ const AdminDashboard = () => {
 
               {/* TAB 3: UNVERIFIED TUTORS */}
               {activeTab === 'Unverified Tutors' && (
-                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm overflow-hidden animate-fadeIn">
-                  <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100 mb-5">Unverified Tutor Accounts Directory</h3>
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm overflow-hidden animate-fadeIn space-y-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100">
+                          Unverified Tutor Accounts Directory
+                        </h3>
+                        <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
+                          {filteredUnverifiedTutors.length} of {tutors.filter(t => !t.isVerified).length} Pending
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+                        Review pending tutor registrations awaiting verification.
+                      </p>
+                    </div>
+
+                    {/* Search Controls */}
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
+                      {/* Location Search Bar */}
+                      <div className="relative min-w-[220px]">
+                        <FaMapMarkerAlt className="absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-500 text-xs pointer-events-none" />
+                        <input
+                          type="text"
+                          value={unverifiedLocationSearch}
+                          onChange={(e) => setUnverifiedLocationSearch(e.target.value)}
+                          placeholder="Search location (city, area)..."
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-9 pr-7 text-xs focus:outline-none focus:border-primary text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
+                        />
+                        {unverifiedLocationSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setUnverifiedLocationSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+
+                      {/* General Search Bar */}
+                      <div className="relative min-w-[220px]">
+                        <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+                        <input
+                          type="text"
+                          value={unverifiedGeneralSearch}
+                          onChange={(e) => setUnverifiedGeneralSearch(e.target.value)}
+                          placeholder="Search name, subject, email..."
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-9 pr-7 text-xs focus:outline-none focus:border-primary text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
+                        />
+                        {unverifiedGeneralSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setUnverifiedGeneralSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                   
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -626,12 +848,16 @@ const AdminDashboard = () => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60 text-xs text-slate-700 dark:text-slate-350">
-                        {tutors.filter(t => !t.isVerified).length === 0 ? (
+                        {filteredUnverifiedTutors.length === 0 ? (
                           <tr>
-                            <td colSpan="5" className="py-8 text-center text-slate-400 font-medium">No unverified tutors yet.</td>
+                            <td colSpan="5" className="py-12 text-center text-slate-400 font-medium">
+                              {tutors.filter(t => !t.isVerified).length === 0
+                                ? 'No unverified tutors yet.'
+                                : 'No unverified tutors matching your location or search query.'}
+                            </td>
                           </tr>
                         ) : (
-                          tutors.filter(t => !t.isVerified).map(tutor => (
+                          filteredUnverifiedTutors.map(tutor => (
                             <tr key={tutor._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40">
                               <td className="py-3.5 pl-2">
                                 <div className="flex items-center gap-3">
@@ -669,8 +895,11 @@ const AdminDashboard = () => {
                                 <p className="text-[9px] text-slate-400">{parseArrayField(tutor.subjects).slice(0, 3).join(', ')} • {tutor.experience} Yrs Exp</p>
                               </td>
                               <td className="py-3.5">
-                                <p>{tutor.city || 'N/A'}</p>
-                                <p className="text-[9px] text-slate-400">{tutor.state}</p>
+                                <div className="flex items-center gap-1.5">
+                                  <FaMapMarkerAlt className="text-rose-500 text-[10px] shrink-0" />
+                                  <p className="font-medium text-slate-800 dark:text-slate-200">{tutor.city || 'N/A'}</p>
+                                </div>
+                                <p className="text-[9px] text-slate-400 pl-4">{tutor.state || tutor.streetAddress || ''}</p>
                               </td>
                               <td className="py-3.5">
                                 <div className="flex flex-col items-start gap-1">
@@ -703,6 +932,156 @@ const AdminDashboard = () => {
                                 >
                                   Remove
                                 </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: STUDENTS DIRECTORY */}
+              {activeTab === 'Students' && (
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100">
+                          Registered Students Directory ({students.length})
+                        </h3>
+                        <span className="bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-800">
+                          {filteredStudents.length} of {students.length} Students
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+                        View student contact details, location, account registration dates, and trial class requests.
+                      </p>
+                    </div>
+
+                    {/* Search Controls */}
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
+                      {/* Location Search Bar */}
+                      <div className="relative min-w-[220px]">
+                        <FaMapMarkerAlt className="absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-500 text-xs pointer-events-none" />
+                        <input
+                          type="text"
+                          value={studentLocationSearch}
+                          onChange={(e) => setStudentLocationSearch(e.target.value)}
+                          placeholder="Search location (city, area)..."
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-9 pr-7 text-xs focus:outline-none focus:border-primary text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
+                        />
+                        {studentLocationSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setStudentLocationSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+
+                      {/* General Search Bar */}
+                      <div className="relative min-w-[220px]">
+                        <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+                        <input
+                          type="text"
+                          value={studentSearch}
+                          onChange={(e) => setStudentSearch(e.target.value)}
+                          placeholder="Search student name, email, phone..."
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-9 pr-7 text-xs focus:outline-none focus:border-primary text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
+                        />
+                        {studentSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setStudentSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">
+                          <th className="py-3 px-2">Student</th>
+                          <th className="py-3">Email Address</th>
+                          <th className="py-3">Phone Number</th>
+                          <th className="py-3">Location</th>
+                          <th className="py-3">Registered Date</th>
+                          <th className="py-3">Class Requests</th>
+                          <th className="py-3 pr-2 text-right">Account Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-350">
+                        {filteredStudents.length === 0 ? (
+                          <tr>
+                            <td colSpan="7" className="py-12 text-center text-slate-400">
+                              {students.length === 0
+                                ? 'No registered students found in database.'
+                                : 'No students found matching your location or search query.'}
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredStudents.map((student) => (
+                            <tr key={student._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                              <td className="py-3.5 px-2">
+                                <div className="flex items-center gap-3">
+                                  <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${getAvatarStyle(student.name)}`}>
+                                    {(student.name || 'S').trim().charAt(0).toUpperCase()}
+                                  </div>
+                                  <div>
+                                    <p className="font-extrabold text-slate-850 dark:text-slate-100">{student.name}</p>
+                                    <p className="text-[10px] text-slate-400">ID: {String(student._id).slice(-6)}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-3.5">
+                                <a href={`mailto:${student.email}`} className="font-medium text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-blue-400">
+                                  {student.email}
+                                </a>
+                              </td>
+                              <td className="py-3.5">
+                                {student.phone ? (
+                                  <a href={`tel:${student.phone}`} className="font-medium text-slate-700 dark:text-slate-300 hover:text-primary">
+                                    {student.phone}
+                                  </a>
+                                ) : (
+                                  <span className="text-slate-400">Not provided</span>
+                                )}
+                              </td>
+                              <td className="py-3.5">
+                                <div className="flex items-center gap-1.5">
+                                  <FaMapMarkerAlt className="text-rose-500 text-[11px] shrink-0" />
+                                  <span className="font-medium text-slate-700 dark:text-slate-300">
+                                    {student.location || student.city || 'Hyderabad'}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="py-3.5">
+                                <p className="font-medium text-slate-700 dark:text-slate-300">
+                                  {formatVerifiedDate(student.createdAt)}
+                                </p>
+                              </td>
+                              <td className="py-3.5">
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                                  (student.requestsCount || 0) > 0
+                                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400 border border-blue-200 dark:border-blue-900/40'
+                                    : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                                }`}>
+                                  {student.requestsCount || 0} Request{student.requestsCount !== 1 ? 's' : ''}
+                                </span>
+                              </td>
+                              <td className="py-3.5 pr-2 text-right">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-900/40">
+                                  Registered Student
+                                </span>
                               </td>
                             </tr>
                           ))

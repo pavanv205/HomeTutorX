@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaGraduationCap, FaUserCheck } from 'react-icons/fa';
+import { FaGraduationCap, FaUserCheck, FaShareAlt } from 'react-icons/fa';
 import SEO from '../components/common/SEO';
+import AppShareSection from '../components/sections/AppShareSection';
+import AppShareModal from '../components/common/AppShareModal';
 
 const VALUES = [
   {
@@ -50,6 +53,8 @@ const VALUES = [
 ];
 
 const AboutUs = () => {
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
   return (
     <>
       <SEO
@@ -74,6 +79,17 @@ const AboutUs = () => {
             <p className="text-sm text-slate-650 dark:text-slate-455 leading-relaxed font-medium">
               What started as a localized tutor directory in Vizianagaram has evolved into a robust nationwide platform connecting thousands of parents with pre-screened, certified subject matter experts. We combine the personal touch of face-to-face home tuition with modern scheduling tools.
             </p>
+            <div className="pt-1 flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => setIsShareModalOpen(true)}
+                className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30 font-bold text-xs shadow-sm hover:shadow transition-all cursor-pointer group"
+              >
+                <div className="p-1 rounded-lg bg-amber-500/20 group-hover:bg-amber-500 text-amber-700 group-hover:text-white dark:text-amber-300 transition-colors">
+                  <FaShareAlt className="h-3 w-3" />
+                </div>
+                <span>Share HomeTutorX</span>
+              </button>
+            </div>
           </div>
           <div className="lg:col-span-5 relative">
             <div className="rounded-3xl overflow-hidden aspect-[4/3] bg-slate-100 shadow-xl border border-slate-100 dark:border-slate-800">
@@ -168,7 +184,16 @@ const AboutUs = () => {
           </div>
         </section>
 
+        {/* App Share Integration Section */}
+        <AppShareSection />
+
       </div>
+
+      {/* Hero Quick Share Modal */}
+      <AppShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+      />
     </>
   );
 };

@@ -1,3 +1,7 @@
+export const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.hometutor.hometutorx';
+export const WEBSITE_URL = 'https://www.hometutorx.in';
+export const TUTOR_WHATSAPP_GROUP_URL = 'https://chat.whatsapp.com/IbXJUVeb3mM8m5HlnY4YB7?mode=gi_t';
+
 export const NAV_LINKS = [
   { label: "Home", path: "/" },
   { label: "Find Tutors", path: "/tutors" },

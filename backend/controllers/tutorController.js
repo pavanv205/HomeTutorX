@@ -420,7 +420,10 @@ exports.getTutors = async (req, res, next) => {
       });
     }
 
-    let query = Tutor.find(filters).limit(100);
+    let query = Tutor.find(filters);
+    if (req.query.limit && !isNaN(parseInt(req.query.limit, 10))) {
+      query = query.limit(parseInt(req.query.limit, 10));
+    }
     if (adminView === 'true') {
       query = query.sort({ createdAt: -1 });
     }

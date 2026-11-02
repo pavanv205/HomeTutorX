@@ -286,3 +286,66 @@ exports.adminUpdateTutor = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Get all students
+// @route   GET /api/admin/students
+// @access  Private (Admin only)
+exports.getStudents = async (req, res, next) => {
+  try {
+    let students = [];
+    if (mongoose.connection.readyState !== 1) {
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      students = usersList.filter(u => u.role === 'Student');
+    } else {
+      students = await User.find({ role: 'Student' })
+        .select('-password')
+        .sort({ createdAt: -1 })
+        .lean();
+    }
+
+    // Attach student requests / trial bookings count & location
+    const Booking = require('../models/Booking');
+    const enrichedStudents = await Promise.all(students.map(async (s) => {
+      let bookingCount = 0;
+      let studentLocation = s.location || s.city || s.address || '';
+
+      if (mongoose.connection.readyState === 1) {
+        const query = {
+          $or: [
+            { studentEmail: s.email },
+            ...(s.phone ? [{ studentPhone: s.phone }] : [])
+          ]
+        };
+        bookingCount = await Booking.countDocuments(query);
+        const latestBooking = await Booking.findOne(query).sort({ createdAt: -1 });
+        if (latestBooking && latestBooking.location) {
+          studentLocation = latestBooking.location;
+        }
+      } else {
+        const dbFallback = require('../utils/dbFallback');
+        const bookingsList = await dbFallback.getBookings();
+        const matches = bookingsList.filter(b => b.studentEmail === s.email || (s.phone && b.studentPhone === s.phone));
+        bookingCount = matches.length;
+        if (matches.length > 0 && matches[0].location) {
+          studentLocation = matches[0].location;
+        }
+      }
+
+      return {
+        ...s,
+        location: studentLocation || 'Hyderabad, Telangana',
+        requestsCount: bookingCount
+      };
+    }));
+
+    res.status(200).json({
+      success: true,
+      count: enrichedStudents.length,
+      data: enrichedStudents
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+

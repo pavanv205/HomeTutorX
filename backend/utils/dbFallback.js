@@ -38,6 +38,8 @@ const initializeSeeds = () => {
     password: studentPasswordHash,
     role: 'Student',
     phone: '9876543222',
+    location: 'Madhapur, Hyderabad',
+    city: 'Hyderabad',
     createdAt: new Date().toISOString()
   };
 

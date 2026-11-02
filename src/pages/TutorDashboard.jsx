@@ -3,8 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
-import { SUBJECTS, CLASSES } from '../constants';
-import { FaLock, FaEnvelope, FaPhone, FaUser, FaCheck, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
+import { SUBJECTS, CLASSES, TUTOR_WHATSAPP_GROUP_URL } from '../constants';
+import { FaLock, FaEnvelope, FaPhone, FaUser, FaCheck, FaTimes, FaExclamationTriangle, FaWhatsapp } from 'react-icons/fa';
 import { parseArrayField } from '../utils/arrayHelper';
 import { Geolocation } from '@capacitor/geolocation';
 
@@ -397,6 +397,38 @@ const TutorDashboard = () => {
             </div>
           )}
 
+          {/* Official WhatsApp Group Banner */}
+          <div className="rounded-3xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-teal-500/10 dark:from-emerald-950/30 dark:via-slate-900 dark:to-teal-950/20 border border-emerald-500/20 dark:border-emerald-800/40 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-[#25D366] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#25D366]/25">
+                <FaWhatsapp className="h-6 w-6" />
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
+                    Join Official HomeTutorX Tutors WhatsApp Group
+                  </h3>
+                  <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
+                    Active Community
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 font-medium max-w-xl">
+                  Connect with fellow educators, receive real-time student lead alerts, and get direct assistance from the HomeTutorX team.
+                </p>
+              </div>
+            </div>
+            <a
+              href={TUTOR_WHATSAPP_GROUP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold shadow-md shadow-[#25D366]/20 transition-all shrink-0 group cursor-pointer"
+            >
+              <FaWhatsapp className="h-4 w-4" />
+              <span>Join WhatsApp Group</span>
+              <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+            </a>
+          </div>
+
           {/* Navigation Tabs */}
           <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6">
             {['Profile', 'Student Requests', 'Settings'].map(tab => (
@@ -486,6 +518,29 @@ const TutorDashboard = () => {
                     </p>
                   </div>
                 </div>
+
+                {/* Official WhatsApp Group Card */}
+                <a
+                  href={TUTOR_WHATSAPP_GROUP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white dark:bg-slate-900 border border-emerald-200/70 dark:border-emerald-900/40 hover:border-emerald-400 dark:hover:border-emerald-600 rounded-3xl p-6 shadow-sm flex items-center justify-between gap-3 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="h-12 w-12 rounded-2xl bg-[#25D366]/15 text-[#25D366] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <FaWhatsapp className="h-6 w-6" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider truncate">WhatsApp Group</p>
+                      <p className="text-sm font-extrabold text-slate-850 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate">
+                        Join Community
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform">
+                    &rarr;
+                  </span>
+                </a>
               </div>
               )}
 
