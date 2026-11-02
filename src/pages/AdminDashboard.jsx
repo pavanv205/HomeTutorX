@@ -291,13 +291,10 @@ const AdminDashboard = () => {
     return parts.join(', ') || '';
   };
 
-  const totalBookingsCount = stats.bookings?.total !== undefined ? stats.bookings.total : bookings.length;
-  const assignedBookingsCount = stats.bookings?.assigned !== undefined 
-    ? stats.bookings.assigned 
-    : bookings.filter(b => b.assignedTutor).length;
-  const unassignedBookingsCount = stats.bookings?.unassigned !== undefined 
-    ? stats.bookings.unassigned 
-    : bookings.filter(b => !b.assignedTutor).length;
+  const isBookingAssigned = (b) => b && b.status === 'Assigned' && !!b.assignedTutor;
+  const totalBookingsCount = bookings.length;
+  const assignedBookingsCount = bookings.filter(isBookingAssigned).length;
+  const unassignedBookingsCount = bookings.filter(b => !isBookingAssigned(b)).length;
 
   // Filtered Verified Tutors
   const filteredVerifiedTutors = tutors.filter(t => {
@@ -377,8 +374,8 @@ const AdminDashboard = () => {
   // Filtered Student Requests (Bookings)
   const filteredBookings = bookings.filter(b => {
     // 1. Tab segment filter
-    if (bookingFilter === 'assigned' && !b.assignedTutor) return false;
-    if (bookingFilter === 'unassigned' && b.assignedTutor) return false;
+    if (bookingFilter === 'assigned' && !isBookingAssigned(b)) return false;
+    if (bookingFilter === 'unassigned' && isBookingAssigned(b)) return false;
 
     // 2. Location search
     if (bookingLocationSearch.trim()) {
@@ -549,6 +546,10 @@ const AdminDashboard = () => {
       const res = await api.put(`/bookings/${bookingId}`, { status: newStatus });
       if (res.data && res.data.success) {
         setBookings(prev => prev.map(b => b._id === bookingId ? { ...b, status: newStatus } : b));
+        const statsRes = await api.get('/admin/stats');
+        if (statsRes.data && statsRes.data.success) {
+          setStats(statsRes.data.data);
+        }
       }
     } catch (err) {
       console.error('Failed to update status:', err);

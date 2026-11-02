@@ -32,11 +32,11 @@ exports.getDashboardStats = async (req, res, next) => {
       totalStudents = usersList.filter(u => u.role === 'Student').length;
 
       totalRequests = bookingsList.length;
-      const assignedRequests = bookingsList.filter(b => b.assignedTutor).length;
-      const unassignedRequests = bookingsList.filter(b => !b.assignedTutor).length;
-      const pendingRequests = bookingsList.filter(b => b.status === 'Pending').length;
+      const assignedRequests = bookingsList.filter(b => b.status === 'Assigned' && b.assignedTutor).length;
+      const unassignedRequests = bookingsList.filter(b => (b.status || 'Pending') === 'Pending' || !b.assignedTutor).length;
+      const pendingRequests = unassignedRequests;
       const contactedRequests = bookingsList.filter(b => b.status === 'Contacted').length;
-      const resolvedRequests = bookingsList.filter(b => b.status === 'Assigned' || b.status === 'Resolved').length;
+      const resolvedRequests = assignedRequests;
 
       // In offline/fallback mode, calculate byte sizes of seeded files/in-memory data
       dbDataSize = Buffer.byteLength(JSON.stringify(tutorsList)) +
@@ -111,13 +111,13 @@ exports.getDashboardStats = async (req, res, next) => {
     totalStudents = await User.countDocuments({ role: 'Student' });
 
     totalRequests = await Booking.countDocuments();
-    const assignedRequests = await Booking.countDocuments({ assignedTutor: { $ne: null } });
+    const assignedRequests = await Booking.countDocuments({ status: 'Assigned', assignedTutor: { $ne: null } });
     const unassignedRequests = await Booking.countDocuments({
-      $or: [{ assignedTutor: null }, { assignedTutor: { $exists: false } }]
+      $or: [{ status: 'Pending' }, { assignedTutor: null }, { assignedTutor: { $exists: false } }]
     });
-    const pendingRequests = await Booking.countDocuments({ status: 'Pending' });
+    const pendingRequests = unassignedRequests;
     const contactedRequests = await Booking.countDocuments({ status: 'Contacted' });
-    const resolvedRequests = await Booking.countDocuments({ status: { $in: ['Assigned', 'Resolved'] } });
+    const resolvedRequests = assignedRequests;
 
     let avgStudentDbSize = 512;
     let avgTutorDbSize = 3584;
