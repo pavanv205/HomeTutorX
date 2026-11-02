@@ -1862,7 +1862,6 @@ const AdminDashboard = () => {
                         <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">
                           <th className="py-3 px-2">Student</th>
                           <th className="py-3">Contact</th>
-                          <th className="py-3">Subject & Mode</th>
                           <th className="py-3">Locations (Student & Tutor)</th>
                           <th className="py-3 min-w-[240px]">Which Tutor Requested</th>
                           <th className="py-3">Status</th>
@@ -1872,7 +1871,7 @@ const AdminDashboard = () => {
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-350">
                         {filteredBookings.length === 0 ? (
                           <tr>
-                            <td colSpan="7" className="py-12 text-center text-slate-400">
+                            <td colSpan="6" className="py-12 text-center text-slate-400">
                               {bookings.length === 0
                                 ? 'No student requests found in database.'
                                 : 'No requests found matching your filter or search query.'}
@@ -1933,22 +1932,7 @@ const AdminDashboard = () => {
                                   </div>
                                 </td>
 
-                                {/* Subject & Mode */}
-                                <td className="py-3.5">
-                                  <div className="space-y-1">
-                                    <span className="inline-block bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-bold text-[11px] px-2 py-0.5 rounded-md border border-indigo-200/60 dark:border-indigo-900/40">
-                                      {booking.subject || 'All Subjects'}
-                                    </span>
-                                    <p className="text-[10px] text-slate-400 font-medium">
-                                      Mode: <strong className="text-slate-600 dark:text-slate-300">{booking.preferredMode || 'Offline'}</strong>
-                                    </p>
-                                    {booking.message && (
-                                      <p className="text-[10px] text-slate-500 dark:text-slate-400 italic line-clamp-1 max-w-[180px]" title={booking.message}>
-                                        "{booking.message}"
-                                      </p>
-                                    )}
-                                  </div>
-                                </td>
+
 
                                 {/* Locations: Student & Tutor */}
                                 <td className="py-3.5">
