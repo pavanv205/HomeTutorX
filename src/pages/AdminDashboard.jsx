@@ -1777,19 +1777,6 @@ const AdminDashboard = () => {
                         All Requests ({totalBookingsCount})
                       </button>
                       <button
-                        onClick={() => setBookingFilter('assigned')}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                          bookingFilter === 'assigned'
-                            ? 'bg-emerald-500 text-white shadow-sm'
-                            : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
-                        }`}
-                      >
-                        <span>Assigned Requests</span>
-                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${bookingFilter === 'assigned' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'}`}>
-                          {assignedBookingsCount}
-                        </span>
-                      </button>
-                      <button
                         onClick={() => setBookingFilter('unassigned')}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                           bookingFilter === 'unassigned'
@@ -1800,6 +1787,19 @@ const AdminDashboard = () => {
                         <span>Pending Assignment</span>
                         <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${bookingFilter === 'unassigned' ? 'bg-amber-700 text-white' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'}`}>
                           {unassignedBookingsCount}
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => setBookingFilter('assigned')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          bookingFilter === 'assigned'
+                            ? 'bg-emerald-500 text-white shadow-sm'
+                            : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                        }`}
+                      >
+                        <span>Assigned Requests</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${bookingFilter === 'assigned' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'}`}>
+                          {assignedBookingsCount}
                         </span>
                       </button>
                     </div>
