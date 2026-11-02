@@ -246,6 +246,19 @@ exports.deleteBookingsForTutor = async (tutorId) => {
   }
 };
 
+exports.deleteBookingsForStudent = async (email, phone) => {
+  let i = memoryBookings.length;
+  while (i--) {
+    const b = memoryBookings[i];
+    if (
+      (email && String(b.studentEmail).toLowerCase() === String(email).toLowerCase()) ||
+      (phone && String(b.studentPhone) === String(phone))
+    ) {
+      memoryBookings.splice(i, 1);
+    }
+  }
+};
+
 exports.deleteTutor = async (tutorId) => {
   const idx = memoryTutors.findIndex(t => String(t._id) === String(tutorId));
   if (idx !== -1) {

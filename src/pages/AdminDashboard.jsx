@@ -467,6 +467,41 @@ const AdminDashboard = () => {
     }
   };
 
+  // Delete / Remove Student Account
+  const handleDeleteStudent = async (studentId, studentName) => {
+    if (!window.confirm(`Are you sure you want to remove student "${studentName || 'this student'}"? This will permanently delete their account and associated class requests.`)) {
+      return;
+    }
+    setActionLoading(studentId);
+    setErrorMsg('');
+    try {
+      const res = await api.delete(`/admin/students/${studentId}`);
+      if (res.data && res.data.success) {
+        setStudents(prev => prev.filter(s => s._id !== studentId));
+        // Refresh bookings and stats
+        try {
+          const [statsRes, bookingsRes] = await Promise.all([
+            api.get('/admin/stats'),
+            api.get('/bookings')
+          ]);
+          if (statsRes.data && statsRes.data.success) {
+            setStats(statsRes.data.data);
+          }
+          if (bookingsRes.data && bookingsRes.data.success) {
+            setBookings(bookingsRes.data.data || []);
+          }
+        } catch (rErr) {
+          console.log('Refresh error after deleting student:', rErr);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg(err.response?.data?.message || 'Failed to remove student account.');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   useEffect(() => {
     let active = true;
     Promise.resolve().then(() => {
@@ -1517,13 +1552,14 @@ const AdminDashboard = () => {
                           <th className="py-3">Location</th>
                           <th className="py-3">Registered Date</th>
                           <th className="py-3">Class Requests</th>
-                          <th className="py-3 pr-2 text-right">Account Status</th>
+                          <th className="py-3">Account Status</th>
+                          <th className="py-3 pr-2 text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-350">
                         {filteredStudents.length === 0 ? (
                           <tr>
-                            <td colSpan="7" className="py-12 text-center text-slate-400">
+                            <td colSpan="8" className="py-12 text-center text-slate-400">
                               {students.length === 0
                                 ? 'No registered students found in database.'
                                 : 'No students found matching your location or search query.'}
@@ -1579,10 +1615,21 @@ const AdminDashboard = () => {
                                   {student.requestsCount || 0} Request{student.requestsCount !== 1 ? 's' : ''}
                                 </span>
                               </td>
-                              <td className="py-3.5 pr-2 text-right">
+                              <td className="py-3.5">
                                 <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-900/40">
                                   Registered Student
                                 </span>
+                              </td>
+                              <td className="py-3.5 pr-2 text-right">
+                                <button
+                                  onClick={() => handleDeleteStudent(student._id, student.name)}
+                                  disabled={actionLoading === student._id}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold text-rose-600 hover:text-white bg-rose-50 hover:bg-rose-600 dark:bg-rose-950/40 dark:hover:bg-rose-600 rounded-xl border border-rose-200 dark:border-rose-900/50 transition-all shadow-xs disabled:opacity-50"
+                                  title={`Remove student ${student.name}`}
+                                >
+                                  <FaTrashAlt className="text-[10px]" />
+                                  <span>{actionLoading === student._id ? 'Removing...' : 'Remove Student'}</span>
+                                </button>
                               </td>
                             </tr>
                           ))

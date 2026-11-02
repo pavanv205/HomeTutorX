@@ -359,3 +359,54 @@ exports.getStudents = async (req, res, next) => {
   }
 };
 
+// @desc    Delete student account
+// @route   DELETE /api/admin/students/:id
+// @access  Private (Admin only)
+exports.deleteStudent = async (req, res, next) => {
+  try {
+    const studentId = req.params.id;
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log('🔌 MongoDB is offline. Running deleteStudent in Fallback mode.');
+      const dbFallback = require('../utils/dbFallback');
+      const usersList = await dbFallback.getUsers();
+      const student = usersList.find(u => String(u._id) === String(studentId) && u.role === 'Student');
+      if (!student) {
+        return res.status(404).json({ success: false, message: 'Student account not found' });
+      }
+
+      await dbFallback.deleteUser(studentId);
+      if (dbFallback.deleteBookingsForStudent) {
+        await dbFallback.deleteBookingsForStudent(student.email, student.phone);
+      }
+      return res.status(200).json({
+        success: true,
+        message: 'Student account removed successfully'
+      });
+    }
+
+    const student = await User.findOne({ _id: studentId, role: 'Student' });
+    if (!student) {
+      return res.status(404).json({ success: false, message: 'Student account not found' });
+    }
+
+    const Booking = require('../models/Booking');
+    await Booking.deleteMany({
+      $or: [
+        { studentEmail: student.email },
+        ...(student.phone ? [{ studentPhone: student.phone }] : [])
+      ]
+    });
+
+    await User.findByIdAndDelete(studentId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Student account removed successfully'
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
