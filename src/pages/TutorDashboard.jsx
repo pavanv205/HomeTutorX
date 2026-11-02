@@ -4,7 +4,7 @@ import api from '../services/api';
 import Button from '../components/common/Button';
 import SEO from '../components/common/SEO';
 import { SUBJECTS, CLASSES, TUTOR_WHATSAPP_GROUP_URL } from '../constants';
-import { FaLock, FaEnvelope, FaPhone, FaUser, FaCheck, FaTimes, FaExclamationTriangle, FaWhatsapp } from 'react-icons/fa';
+import { FaLock, FaEnvelope, FaUser, FaCheck, FaTimes, FaExclamationTriangle, FaWhatsapp, FaUserShield } from 'react-icons/fa';
 import { parseArrayField } from '../utils/arrayHelper';
 import { Geolocation } from '@capacitor/geolocation';
 
@@ -867,18 +867,15 @@ const TutorDashboard = () => {
                               </span>
                             </div>
 
-                             {/* Contact Grid */}
-                             {booking.status === 'Pending' ? (
-                               <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl text-[11px] font-semibold text-slate-500 dark:text-slate-455 italic flex items-center gap-1.5">
-                                 <span>⏳</span>
-                                 <span>Contact details will be unlocked once you accept this request.</span>
-                               </div>
-                             ) : (
-                               <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/40 p-3 rounded-2xl text-xs font-semibold text-slate-600 dark:text-slate-400">
-                                 <FaPhone className="text-slate-400 shrink-0" />
-                                 <span>{booking.studentPhone || 'N/A'}</span>
-                               </div>
-                             )}
+                            {/* Admin Coordination Notice */}
+                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/40 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-500 dark:text-slate-400">
+                              <FaUserShield className="text-primary shrink-0 text-sm" />
+                              <span>
+                                {booking.status === 'Pending'
+                                  ? 'Request awaiting acceptance. Student contact is managed by Admin.'
+                                  : 'Student contact & coordination is managed by Admin.'}
+                              </span>
+                            </div>
 
                             {/* Requirement Details */}
                             <div className="space-y-2 text-xs font-semibold text-slate-650 dark:text-slate-350">

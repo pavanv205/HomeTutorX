@@ -5,11 +5,11 @@ import {
   FaMapMarkerAlt,
   FaArrowLeft,
   FaCalendarAlt,
-  FaPhone,
   FaCheck,
   FaTimes,
   FaHistory,
-  FaUser
+  FaUser,
+  FaUserShield
 } from 'react-icons/fa';
 import SEO from '../components/common/SEO';
 import { tutorService } from '../services/tutorService';
@@ -323,17 +323,15 @@ const TutorProfile = () => {
                         </span>
                       </div>
 
-                      {booking.status === 'Pending' ? (
-                        <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl text-[11px] font-semibold text-slate-505 dark:text-slate-455 italic flex items-center gap-1.5">
-                          <span>⏳</span>
-                          <span>Contact details will be unlocked once you accept this request.</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl text-[11px] font-semibold text-slate-600 dark:text-slate-400">
-                          <FaPhone className="text-slate-400 shrink-0" />
-                          <span>{booking.studentPhone || 'N/A'}</span>
-                        </div>
-                      )}
+                      {/* Admin Coordination Notice */}
+                      <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/40 px-3 py-2 rounded-xl text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                        <FaUserShield className="text-primary shrink-0 text-xs" />
+                        <span>
+                          {booking.status === 'Pending'
+                            ? 'Request awaiting acceptance. Student contact is managed by Admin.'
+                            : 'Student contact & coordination is managed by Admin.'}
+                        </span>
+                      </div>
 
                       <div className="space-y-1.5 text-xs text-slate-650 dark:text-slate-350 font-semibold">
                         <p>Grade / Class: <span className="text-slate-850 dark:text-slate-200">{parseArrayField(booking.gradeClass).join(', ')}</span></p>

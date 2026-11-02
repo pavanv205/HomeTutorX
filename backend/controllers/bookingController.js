@@ -179,10 +179,19 @@ exports.getBookings = async (req, res, next) => {
         };
       });
 
+      // If Tutor, hide student phone number (admin manages contact on admin dashboard)
+      const sanitizedPopulated = populatedBookings.map(b => {
+        if (req.user.role === 'Tutor') {
+          const { studentPhone, ...rest } = b;
+          return rest;
+        }
+        return b;
+      });
+
       return res.status(200).json({
         success: true,
-        count: populatedBookings.length,
-        data: populatedBookings
+        count: sanitizedPopulated.length,
+        data: sanitizedPopulated
       });
     }
 
@@ -207,10 +216,19 @@ exports.getBookings = async (req, res, next) => {
       .populate('assignedTutor', 'fullName mobile email subjects photo city state streetAddress experience qualification')
       .sort({ createdAt: -1 });
 
+    let resultBookings = bookings;
+    if (req.user.role === 'Tutor') {
+      resultBookings = bookings.map(b => {
+        const obj = b.toObject ? b.toObject() : { ...b };
+        delete obj.studentPhone;
+        return obj;
+      });
+    }
+
     res.status(200).json({
       success: true,
-      count: bookings.length,
-      data: bookings
+      count: resultBookings.length,
+      data: resultBookings
     });
   } catch (err) {
     console.error(`[BOOKING SYSTEM ERROR] Uncaught error in getBookings | Method: ${req.method} | Path: ${req.originalUrl} | Error: ${err.message}`);
@@ -291,9 +309,13 @@ exports.updateBooking = async (req, res, next) => {
           await createNotification(studentUser._id, 'RequestAccepted', `Your class request for ${booking.subject} has been accepted by ${tutorName}.`);
         }
       }
+      const returnData = (req.user.role === 'Tutor')
+        ? (() => { const { studentPhone, ...rest } = updated; return rest; })()
+        : updated;
+
       return res.status(200).json({
         success: true,
-        data: updated
+        data: returnData
       });
     }
 
@@ -356,9 +378,15 @@ exports.updateBooking = async (req, res, next) => {
       }
     }
 
+    let responseData = booking;
+    if (req.user.role === 'Tutor') {
+      responseData = booking.toObject ? booking.toObject() : { ...booking };
+      delete responseData.studentPhone;
+    }
+
     res.status(200).json({
       success: true,
-      data: booking
+      data: responseData
     });
   } catch (err) {
     console.error(`[BOOKING SYSTEM ERROR] Uncaught error in updateBooking | Method: ${req.method} | Path: ${req.originalUrl} | Error: ${err.message}`);
