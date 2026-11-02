@@ -1783,7 +1783,7 @@ const AdminDashboard = () => {
                             : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
                         }`}
                       >
-                        <span>Assigned Tutors</span>
+                        <span>Assigned Requests</span>
                         <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${bookingFilter === 'assigned' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'}`}>
                           {assignedBookingsCount}
                         </span>
@@ -1796,7 +1796,7 @@ const AdminDashboard = () => {
                             : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
                         }`}
                       >
-                        <span>Unassigned Tutors</span>
+                        <span>Pending Assignment</span>
                         <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${bookingFilter === 'unassigned' ? 'bg-amber-700 text-white' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'}`}>
                           {unassignedBookingsCount}
                         </span>
@@ -2017,7 +2017,7 @@ const AdminDashboard = () => {
                                     <div className="space-y-1.5">
                                       <span className="inline-flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 font-extrabold text-[10px] px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800/60">
                                         <FaExclamationTriangle className="text-[9px]" />
-                                        Unassigned Tutor
+                                        Pending Assignment
                                       </span>
                                       <div>
                                         <button
