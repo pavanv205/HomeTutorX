@@ -152,6 +152,7 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
       if (onSetTitle) onSetTitle('');
       setLoading(true);
       try {
+        const studentLocation = user?.location || [user?.streetAddress, user?.division, user?.city, user?.state].filter(Boolean).join(', ') || user?.city || '';
         const payload = {
           studentName: user?.name || 'Student',
           studentEmail: user?.email || '',
@@ -162,6 +163,7 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
           preferredSlot: 'Anytime',
           mode: tutor && tutor.modes && tutor.modes.length > 0 ? tutor.modes[0] : 'Online',
           message: 'Instant booking from tutor profile',
+          location: studentLocation,
           tutorId: tutor ? (tutor._id || tutor.id) : 'general',
           tutorName: tutor ? (tutor.name || tutor.fullName) : 'Any Available Tutor'
         };
@@ -193,6 +195,7 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
     try {
       if (onSetTitle) onSetTitle('');
       setLoading(true);
+      const studentLocation = user?.location || [user?.streetAddress, user?.division, user?.city, user?.state].filter(Boolean).join(', ') || user?.city || '';
       const payload = {
         ...data,
         studentName: data.studentName?.trim() || '',
@@ -201,6 +204,7 @@ const BookingForm = ({ tutor, onSuccess, onSetTitle }) => {
         message: data.message?.trim() || '',
         studentEmail: user?.email || '',
         email: user?.email || '',
+        location: data.location?.trim() || studentLocation,
         tutorId: tutor ? (tutor._id || tutor.id) : 'general',
         tutorName: tutor ? (tutor.name || tutor.fullName) : 'Any Available Tutor'
       };

@@ -179,11 +179,57 @@ const AdminDashboard = () => {
   // Helper to resolve the assigned/requested tutor profile
   const getBookingTutor = (booking) => {
     if (!booking || !booking.assignedTutor) return null;
+    const tutorId = typeof booking.assignedTutor === 'object' ? booking.assignedTutor._id : booking.assignedTutor;
+    const fromList = tutors.find(t => String(t._id) === String(tutorId));
+    if (fromList) return fromList;
     if (typeof booking.assignedTutor === 'object' && (booking.assignedTutor.fullName || booking.assignedTutor.name)) {
       return booking.assignedTutor;
     }
-    const tutorId = typeof booking.assignedTutor === 'object' ? booking.assignedTutor._id : booking.assignedTutor;
-    return tutors.find(t => String(t._id) === String(tutorId)) || null;
+    return null;
+  };
+
+  // Helper to resolve student location
+  const getBookingStudentLocation = (booking) => {
+    if (!booking) return 'Location Not Specified';
+    
+    // 1. Check if registered student has location details
+    const student = students.find(s => 
+      (s.email && booking.studentEmail && s.email.toLowerCase() === booking.studentEmail.toLowerCase()) ||
+      (s.phone && booking.studentPhone && String(s.phone).replace(/\D/g, '') === String(booking.studentPhone).replace(/\D/g, ''))
+    );
+    if (student) {
+      const parts = [student.streetAddress, student.division, student.city, student.state].filter(Boolean);
+      if (parts.length > 0) return parts.join(', ');
+      if (student.location && student.location !== 'Hyderabad' && student.location !== 'Hyderabad, Telangana') {
+        return student.location;
+      }
+      if (student.city) return student.city;
+    }
+
+    // 2. Check if booking location is explicitly set and not the default fallback
+    if (booking.location && booking.location !== 'Hyderabad' && booking.location !== 'Hyderabad, Telangana') {
+      return booking.location;
+    }
+
+    if (student && (student.location || student.city)) {
+      return student.location || student.city;
+    }
+
+    return booking.location || 'Location Not Specified';
+  };
+
+  // Helper to resolve tutor location
+  const getBookingTutorLocation = (booking, tutorObj = null) => {
+    const t = tutorObj || getBookingTutor(booking);
+    if (!t) return 'Unassigned';
+    const parts = [t.streetAddress, t.city, t.state].filter(Boolean);
+    if (parts.length > 0) return parts.join(', ');
+    if (t.city) return t.city;
+    if (t.state) return t.state;
+    if (t.preferredLocations && t.preferredLocations.length > 0) {
+      return parseArrayField(t.preferredLocations).join(', ');
+    }
+    return 'Location Not Set';
   };
 
   const totalBookingsCount = stats.bookings?.total !== undefined ? stats.bookings.total : bookings.length;
@@ -279,10 +325,10 @@ const AdminDashboard = () => {
     if (bookingLocationSearch.trim()) {
       const locQ = bookingLocationSearch.toLowerCase().trim();
       const loc = (b.location || '').toLowerCase();
+      const studentLoc = (getBookingStudentLocation(b) || '').toLowerCase();
       const tutor = getBookingTutor(b);
-      const tutorCity = (tutor?.city || '').toLowerCase();
-      const tutorState = (tutor?.state || '').toLowerCase();
-      if (!loc.includes(locQ) && !tutorCity.includes(locQ) && !tutorState.includes(locQ)) {
+      const tutorLoc = (getBookingTutorLocation(b, tutor) || '').toLowerCase();
+      if (!loc.includes(locQ) && !studentLoc.includes(locQ) && !tutorLoc.includes(locQ)) {
         return false;
       }
     }
@@ -1052,9 +1098,9 @@ const AdminDashboard = () => {
                                   <span className="bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-[11px]">
                                     📚 {booking.subject || 'All Subjects'}
                                   </span>
-                                  <span className="bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-medium text-[11px] flex items-center gap-1">
+                                  <span className="bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-medium text-[11px] flex items-center gap-1" title={`Student Location: ${getBookingStudentLocation(booking)}`}>
                                     <FaMapMarkerAlt className="text-rose-500 text-[10px]" />
-                                    {booking.location || 'Hyderabad'}
+                                    <span>Student: <strong>{getBookingStudentLocation(booking)}</strong></span>
                                   </span>
                                   <span className="text-slate-400 text-[11px] font-medium ml-auto">
                                     Mode: <strong className="text-slate-600 dark:text-slate-300">{booking.preferredMode || 'Offline'}</strong>
@@ -1086,7 +1132,7 @@ const AdminDashboard = () => {
                                             </span>
                                           </div>
                                           <p className="text-[11px] text-slate-400 font-medium truncate">
-                                            {tutor.qualification || tutor.experience ? `${tutor.qualification || ''} ${tutor.experience ? `• ${tutor.experience}y exp` : ''}` : tutor.mobile || tutor.email}
+                                            {getBookingTutorLocation(booking, tutor) !== 'Unassigned' ? `📍 ${getBookingTutorLocation(booking, tutor)} • ` : ''}{tutor.qualification || tutor.experience ? `${tutor.qualification || ''} ${tutor.experience ? `• ${tutor.experience}y exp` : ''}` : tutor.mobile || tutor.email}
                                           </p>
                                         </div>
                                       </div>
@@ -1597,7 +1643,7 @@ const AdminDashboard = () => {
                                 <div className="flex items-center gap-1.5">
                                   <FaMapMarkerAlt className="text-rose-500 text-[11px] shrink-0" />
                                   <span className="font-medium text-slate-700 dark:text-slate-300">
-                                    {student.location || student.city || 'Hyderabad'}
+                                    {student.location || [student.streetAddress, student.division, student.city, student.state].filter(Boolean).join(', ') || student.city || 'Location Not Provided'}
                                   </span>
                                 </div>
                               </td>
@@ -1759,7 +1805,7 @@ const AdminDashboard = () => {
                           <th className="py-3 px-2">Student</th>
                           <th className="py-3">Contact</th>
                           <th className="py-3">Subject & Mode</th>
-                          <th className="py-3">Location</th>
+                          <th className="py-3">Locations (Student & Tutor)</th>
                           <th className="py-3 min-w-[240px]">Which Tutor Requested</th>
                           <th className="py-3">Status</th>
                           <th className="py-3 pr-2 text-right">Actions</th>
@@ -1777,6 +1823,8 @@ const AdminDashboard = () => {
                         ) : (
                           filteredBookings.map((booking) => {
                             const tutor = getBookingTutor(booking);
+                            const studentLoc = getBookingStudentLocation(booking);
+                            const tutorLoc = getBookingTutorLocation(booking, tutor);
                             const cleanPhone = (booking.studentPhone || '').replace(/\D/g, '');
 
                             return (
@@ -1842,13 +1890,38 @@ const AdminDashboard = () => {
                                   </div>
                                 </td>
 
-                                {/* Location */}
+                                {/* Locations: Student & Tutor */}
                                 <td className="py-3.5">
-                                  <div className="flex items-center gap-1.5">
-                                    <FaMapMarkerAlt className="text-rose-500 text-[11px] shrink-0" />
-                                    <span className="font-medium text-slate-700 dark:text-slate-300 max-w-[140px] truncate" title={booking.location}>
-                                      {booking.location || 'Hyderabad'}
-                                    </span>
+                                  <div className="space-y-2 min-w-[170px] max-w-[230px]">
+                                    {/* Student Location */}
+                                    <div className="flex items-start gap-1.5">
+                                      <FaMapMarkerAlt className="text-rose-500 text-[11px] shrink-0 mt-0.5" />
+                                      <div className="min-w-0">
+                                        <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">
+                                          Student Location
+                                        </p>
+                                        <p className="font-semibold text-xs text-slate-800 dark:text-slate-200 leading-snug break-words" title={studentLoc}>
+                                          {studentLoc}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    {/* Tutor Location */}
+                                    <div className="flex items-start gap-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
+                                      <FaGraduationCap className="text-primary text-[11px] shrink-0 mt-0.5" />
+                                      <div className="min-w-0">
+                                        <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">
+                                          Tutor Location
+                                        </p>
+                                        <p className="font-semibold text-xs text-slate-800 dark:text-slate-200 leading-snug break-words" title={tutor ? tutorLoc : 'Awaiting Assignment'}>
+                                          {tutor ? (
+                                            <span className="text-emerald-700 dark:text-emerald-400 font-bold">{tutorLoc}</span>
+                                          ) : (
+                                            <span className="text-slate-400 font-normal italic">Awaiting Assignment</span>
+                                          )}
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 </td>
 
@@ -1887,13 +1960,19 @@ const AdminDashboard = () => {
                                       </div>
 
                                       <div className="mt-1.5 pt-1.5 border-t border-slate-200/60 dark:border-slate-700/50 flex flex-wrap items-center justify-between gap-1 text-[10px] text-slate-400">
-                                        <span>{tutor.mobile || tutor.city || 'Tutor Allocated'}</span>
-                                        <button
-                                          onClick={() => handleUnassignTutor(booking._id)}
-                                          className="text-rose-500 hover:text-rose-600 font-medium"
-                                        >
-                                          Unassign
-                                        </button>
+                                        <span className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
+                                          <FaMapMarkerAlt className="text-rose-500 text-[9px] shrink-0" />
+                                          {tutorLoc}
+                                        </span>
+                                        <div className="flex items-center gap-2 ml-auto">
+                                          {tutor.mobile && <span>{tutor.mobile}</span>}
+                                          <button
+                                            onClick={() => handleUnassignTutor(booking._id)}
+                                            className="text-rose-500 hover:text-rose-600 font-medium"
+                                          >
+                                            Unassign
+                                          </button>
+                                        </div>
                                       </div>
                                     </div>
                                   ) : (
@@ -2095,7 +2174,7 @@ const AdminDashboard = () => {
                                 )}
                               </div>
                               <p className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
-                                {tutor.qualification || ''} • {tutor.city || 'Hyderabad'} • {tutor.mobile || tutor.email}
+                                {tutor.qualification || ''} • {tutor.city || tutor.state || 'Location not set'} • {tutor.mobile || tutor.email}
                               </p>
                               <div className="flex flex-wrap gap-1 mt-1">
                                 {tutorSubjects.slice(0, 3).map((sub, i) => (

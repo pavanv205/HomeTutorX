@@ -14,6 +14,31 @@ exports.createBooking = async (req, res, next) => {
     const resolvedMode = preferredMode || req.body.mode || 'Both';
     const resolvedEmail = studentEmail || req.body.email || '';
 
+    let resolvedLocation = location;
+    if (!resolvedLocation) {
+      if (mongoose.connection.readyState !== 1) {
+        const usersList = await dbFallback.getUsers();
+        const studentUser = usersList.find(u => 
+          (u.email && u.email.toLowerCase() === resolvedEmail.toLowerCase()) ||
+          (resolvedPhone && u.phone === resolvedPhone)
+        );
+        if (studentUser) {
+          resolvedLocation = studentUser.location || [studentUser.streetAddress, studentUser.division, studentUser.city, studentUser.state].filter(Boolean).join(', ') || studentUser.city || '';
+        }
+      } else {
+        const User = require('../models/User');
+        const studentUser = await User.findOne({
+          $or: [
+            { email: { $regex: new RegExp(`^${resolvedEmail}$`, 'i') } },
+            ...(resolvedPhone ? [{ phone: resolvedPhone }] : [])
+          ]
+        }).select('location streetAddress division city state');
+        if (studentUser) {
+          resolvedLocation = studentUser.location || [studentUser.streetAddress, studentUser.division, studentUser.city, studentUser.state].filter(Boolean).join(', ') || studentUser.city || '';
+        }
+      }
+    }
+
     // Fallback if MongoDB is offline
     if (mongoose.connection.readyState !== 1) {
       console.log('🔌 MongoDB is offline. Running createBooking in Fallback mode.');
@@ -44,7 +69,7 @@ exports.createBooking = async (req, res, next) => {
         gradeClass,
         message,
         preferredMode: resolvedMode,
-        location,
+        location: resolvedLocation,
         status: 'Pending',
         assignedTutor: tutorId || undefined,
         createdAt: new Date().toISOString()
@@ -94,7 +119,7 @@ exports.createBooking = async (req, res, next) => {
       gradeClass,
       message,
       preferredMode: resolvedMode,
-      location,
+      location: resolvedLocation,
       status: 'Pending'
     };
 

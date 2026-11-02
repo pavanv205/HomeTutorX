@@ -317,8 +317,7 @@ exports.getStudents = async (req, res, next) => {
     // Attach student requests / trial bookings count & location
     const Booking = require('../models/Booking');
     const enrichedStudents = await Promise.all(students.map(async (s) => {
-      let bookingCount = 0;
-      let studentLocation = s.location || s.city || s.address || '';
+      let studentLocation = s.location || [s.streetAddress, s.division, s.city, s.state].filter(Boolean).join(', ') || s.city || s.address || '';
 
       if (mongoose.connection.readyState === 1) {
         const query = {
@@ -329,7 +328,7 @@ exports.getStudents = async (req, res, next) => {
         };
         bookingCount = await Booking.countDocuments(query);
         const latestBooking = await Booking.findOne(query).sort({ createdAt: -1 });
-        if (latestBooking && latestBooking.location) {
+        if (latestBooking && latestBooking.location && latestBooking.location !== 'Hyderabad') {
           studentLocation = latestBooking.location;
         }
       } else {
@@ -337,14 +336,14 @@ exports.getStudents = async (req, res, next) => {
         const bookingsList = await dbFallback.getBookings();
         const matches = bookingsList.filter(b => b.studentEmail === s.email || (s.phone && b.studentPhone === s.phone));
         bookingCount = matches.length;
-        if (matches.length > 0 && matches[0].location) {
+        if (matches.length > 0 && matches[0].location && matches[0].location !== 'Hyderabad') {
           studentLocation = matches[0].location;
         }
       }
 
       return {
         ...s,
-        location: studentLocation || 'Hyderabad, Telangana',
+        location: studentLocation || (s.city ? s.city : 'Location Not Provided'),
         requestsCount: bookingCount
       };
     }));
