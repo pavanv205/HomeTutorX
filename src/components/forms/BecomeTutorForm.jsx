@@ -526,6 +526,9 @@ const BecomeTutorForm = () => {
 
     try {
       const formData = new FormData();
+      if (data.email) {
+        data.email = data.email.trim().toLowerCase();
+      }
       // Append primitive fields
       for (const key of Object.keys(data)) {
         const val = data[key];

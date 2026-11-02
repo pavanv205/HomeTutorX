@@ -9,7 +9,7 @@ const BookingSchema = new mongoose.Schema({
   studentEmail: {
     type: String,
     match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.w{2,})+$/,
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
       'Please add a valid email'
     ],
     lowercase: true,

@@ -199,8 +199,9 @@ exports.registerTutor = async (req, res, next) => {
     }
 
     // Validate email format
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.w{2,})+$/;
-    if (!emailRegex.test(email)) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const trimmedEmail = (email || '').trim();
+    if (!emailRegex.test(trimmedEmail)) {
       return res.status(400).json({
         success: false,
         message: 'Please provide a valid email address'
@@ -547,7 +548,7 @@ exports.registerTutor = async (req, res, next) => {
     try {
       user = await User.create({
         name: name || data.fullName,
-        email,
+        email: normalizedEmail,
         password,
         role: 'Tutor',
         paymentStatus: 'Paid',
@@ -571,7 +572,7 @@ exports.registerTutor = async (req, res, next) => {
         userId: user._id,
         fullName: name || data.fullName,
         mobile: phone || mobile || 'N/A',
-        email: email,
+        email: normalizedEmail,
         gender: data.gender,
         age: numAge,
         qualification: data.degree || data.qualification,
@@ -723,7 +724,7 @@ exports.registerStudent = async (req, res, next) => {
     paymentId = 'free_student_registration';
 
     // Validate email format
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.w{2,})+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
@@ -1065,7 +1066,7 @@ exports.login = async (req, res, next) => {
     }
 
     // Validate email format
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.w{2,})+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       console.log(`[LOGIN INFO] Login validation failed: Invalid email format for: ${email}`);
       return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
