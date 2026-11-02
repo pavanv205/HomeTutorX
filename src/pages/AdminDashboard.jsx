@@ -170,6 +170,7 @@ const AdminDashboard = () => {
   const [assignModalBooking, setAssignModalBooking] = useState(null);
   const [assignTutorSearch, setAssignTutorSearch] = useState('');
   const [assignLoading, setAssignLoading] = useState(false);
+  const [confirmChangeBooking, setConfirmChangeBooking] = useState(null);
 
   const [showCapacityDetails, setShowCapacityDetails] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -1994,8 +1995,7 @@ const AdminDashboard = () => {
 
                                         <button
                                           onClick={() => {
-                                            setAssignModalBooking(booking);
-                                            setAssignTutorSearch('');
+                                            setConfirmChangeBooking(booking);
                                           }}
                                           className="text-[10px] font-bold text-primary dark:text-blue-400 hover:underline shrink-0"
                                         >
@@ -2089,6 +2089,56 @@ const AdminDashboard = () => {
               )}
 
             </>
+          )}
+
+          {/* CONFIRMATION POPUP FOR CHANGING ASSIGNED TUTOR */}
+          {confirmChangeBooking && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shrink-0 border border-amber-200/60 dark:border-amber-800/60">
+                    <FaExclamationTriangle />
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">Change Assigned Tutor</h4>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Confirmation Required</p>
+                  </div>
+                </div>
+
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Are you sure you want to change the assigned tutor for <strong>{confirmChangeBooking.studentName || 'this student'}</strong>? Confirming will open the tutor directory to allocate a new tutor.
+                </p>
+
+                {getBookingTutor(confirmChangeBooking) && (
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/80 text-xs">
+                    <p className="text-[10px] uppercase font-bold text-slate-400">Current Assigned Tutor</p>
+                    <p className="font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">
+                      {getBookingTutor(confirmChangeBooking)?.fullName}
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-end gap-2.5 pt-2">
+                  <button
+                    onClick={() => setConfirmChangeBooking(null)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      const booking = confirmChangeBooking;
+                      setConfirmChangeBooking(null);
+                      setAssignModalBooking(booking);
+                      setAssignTutorSearch('');
+                    }}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-primary hover:bg-primary/90 shadow-sm transition-colors"
+                  >
+                    Yes, Change Tutor
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* ======================================================== */}
