@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import SEO from '../components/common/SEO';
 import Button from '../components/common/Button';
-import { FaGraduationCap, FaPhone, FaMapMarkerAlt, FaUser, FaHistory, FaTimes, FaTrash } from 'react-icons/fa';
+import { FaGraduationCap, FaMapMarkerAlt, FaUser, FaHistory, FaTimes, FaTrash, FaUserShield } from 'react-icons/fa';
 import { parseArrayField } from '../utils/arrayHelper';
 
 const StudentDashboard = () => {
@@ -218,23 +218,28 @@ const StudentDashboard = () => {
                         {booking.assignedTutor ? (
                           <div className="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl space-y-2 border border-slate-100 dark:border-slate-800">
                             <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">Assigned Teacher Details</p>
-                            <div className="flex items-center gap-2">
-                              <FaUser className="text-primary dark:text-blue-400 shrink-0 h-3.5 w-3.5" />
-                              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                                {booking.assignedTutor.fullName}
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <FaUser className="text-primary dark:text-blue-400 shrink-0 h-3.5 w-3.5" />
+                                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                                  {booking.assignedTutor.fullName}
+                                </span>
+                              </div>
+                              {(booking.assignedTutor.city || booking.assignedTutor.state) && (
+                                <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                  <FaMapMarkerAlt className="text-rose-500 text-[9px] shrink-0" />
+                                  {[booking.assignedTutor.city, booking.assignedTutor.state].filter(Boolean).join(', ')}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1.5 pt-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                              <FaUserShield className="text-primary dark:text-blue-400 shrink-0 text-xs" />
+                              <span>
+                                {booking.status === 'Pending'
+                                  ? 'Awaiting response. Teacher coordination is managed by Admin.'
+                                  : 'Teacher assigned. Class scheduling & coordination is managed by Admin.'}
                               </span>
                             </div>
-                            {booking.status === 'Pending' ? (
-                              <div className="text-[11px] font-semibold text-slate-500 dark:text-slate-455 italic flex items-center gap-1.5 pt-1">
-                                <span>⏳</span>
-                                <span>Awaiting response. Contact details will be unlocked once accepted.</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1.5 pt-1 text-[11px] font-semibold text-slate-550 dark:text-slate-450">
-                                <FaPhone className="shrink-0 text-slate-400" />
-                                <span>{booking.assignedTutor.mobile}</span>
-                              </div>
-                            )}
                           </div>
                         ) : (
                           <div className="bg-slate-50/50 dark:bg-slate-800/20 p-3.5 rounded-2xl text-[11px] font-semibold text-slate-500 dark:text-slate-450 italic flex items-center gap-2">

@@ -204,13 +204,17 @@ exports.getBookings = async (req, res, next) => {
         };
       });
 
-      // If Tutor, hide student phone number (admin manages contact on admin dashboard)
+      // Sanitize sensitive contact numbers (admin manages all direct contact on admin dashboard)
       const sanitizedPopulated = populatedBookings.map(b => {
+        let item = { ...b };
         if (req.user.role === 'Tutor') {
-          const { studentPhone, ...rest } = b;
-          return rest;
+          delete item.studentPhone;
         }
-        return b;
+        if (req.user.role === 'Student' && item.assignedTutor) {
+          const { mobile, email, ...tutorRest } = item.assignedTutor;
+          item.assignedTutor = tutorRest;
+        }
+        return item;
       });
 
       return res.status(200).json({
@@ -246,6 +250,18 @@ exports.getBookings = async (req, res, next) => {
       resultBookings = bookings.map(b => {
         const obj = b.toObject ? b.toObject() : { ...b };
         delete obj.studentPhone;
+        return obj;
+      });
+    }
+    if (req.user.role === 'Student') {
+      resultBookings = bookings.map(b => {
+        const obj = b.toObject ? b.toObject() : { ...b };
+        if (obj.assignedTutor && typeof obj.assignedTutor === 'object') {
+          const tutorObj = obj.assignedTutor.toObject ? obj.assignedTutor.toObject() : { ...obj.assignedTutor };
+          delete tutorObj.mobile;
+          delete tutorObj.email;
+          obj.assignedTutor = tutorObj;
+        }
         return obj;
       });
     }
@@ -407,6 +423,13 @@ exports.updateBooking = async (req, res, next) => {
     if (req.user.role === 'Tutor') {
       responseData = booking.toObject ? booking.toObject() : { ...booking };
       delete responseData.studentPhone;
+    }
+    if (req.user.role === 'Student' && responseData.assignedTutor && typeof responseData.assignedTutor === 'object') {
+      responseData = responseData.toObject ? responseData.toObject() : { ...responseData };
+      const tutorObj = responseData.assignedTutor.toObject ? responseData.assignedTutor.toObject() : { ...responseData.assignedTutor };
+      delete tutorObj.mobile;
+      delete tutorObj.email;
+      responseData.assignedTutor = tutorObj;
     }
 
     res.status(200).json({
