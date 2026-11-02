@@ -188,11 +188,68 @@ const AdminDashboard = () => {
     return null;
   };
 
-  // Helper to resolve student location
+  // Helper to extract clean "Division, State" (or "City, State")
+  const formatDivisionAndState = (divisionOrCity, state, fallbackString = '') => {
+    const div = String(divisionOrCity || '').trim();
+    const st = String(state || '').trim();
+    if (div && st) {
+      return `${div}, ${st}`;
+    }
+    if (div) return div;
+    if (st) return st;
+
+    if (fallbackString && typeof fallbackString === 'string') {
+      const cleanParts = fallbackString
+        .split(',')
+        .map(p => p.trim())
+        .filter(Boolean);
+      if (cleanParts.length >= 2) {
+        const lastTwo = cleanParts.slice(-2);
+        return Array.from(new Set(lastTwo)).join(', ');
+      }
+      if (cleanParts.length === 1) return cleanParts[0];
+    }
+    return '';
+  };
+
+  // Helper to resolve student location (Strictly Division and State)
   const getBookingStudentLocation = (booking) => {
     if (!booking) return 'Location Not Specified';
     
-    // 1. Check if registered student has location details
+    // 1. Check if registered student has division & state details
+    const student = students.find(s => 
+      (s.email && booking.studentEmail && s.email.toLowerCase() === booking.studentEmail.toLowerCase()) ||
+      (s.phone && booking.studentPhone && String(s.phone).replace(/\D/g, '') === String(booking.studentPhone).replace(/\D/g, ''))
+    );
+    if (student) {
+      const divState = formatDivisionAndState(
+        student.division || student.city,
+        student.state,
+        student.location
+      );
+      if (divState && divState !== 'Hyderabad' && divState !== 'Hyderabad, Telangana') {
+        return divState;
+      }
+    }
+
+    // 2. Check if booking location is explicitly set
+    if (booking.location && booking.location !== 'Hyderabad' && booking.location !== 'Hyderabad, Telangana') {
+      const divState = formatDivisionAndState('', '', booking.location);
+      if (divState) return divState;
+      return booking.location;
+    }
+
+    if (student) {
+      const fallback = formatDivisionAndState(student.division || student.city, student.state, student.location);
+      if (fallback) return fallback;
+    }
+
+    return 'Location Not Specified';
+  };
+
+  // Helper to resolve full student address (for hover tooltip)
+  const getBookingStudentFullAddress = (booking) => {
+    if (!booking) return '';
     const student = students.find(s => 
       (s.email && booking.studentEmail && s.email.toLowerCase() === booking.studentEmail.toLowerCase()) ||
       (s.phone && booking.studentPhone && String(s.phone).replace(/\D/g, '') === String(booking.studentPhone).replace(/\D/g, ''))
@@ -200,36 +257,37 @@ const AdminDashboard = () => {
     if (student) {
       const parts = [student.streetAddress, student.division, student.city, student.state].filter(Boolean);
       if (parts.length > 0) return parts.join(', ');
-      if (student.location && student.location !== 'Hyderabad' && student.location !== 'Hyderabad, Telangana') {
-        return student.location;
-      }
-      if (student.city) return student.city;
+      if (student.location) return student.location;
     }
-
-    // 2. Check if booking location is explicitly set and not the default fallback
-    if (booking.location && booking.location !== 'Hyderabad' && booking.location !== 'Hyderabad, Telangana') {
-      return booking.location;
-    }
-
-    if (student && (student.location || student.city)) {
-      return student.location || student.city;
-    }
-
-    return booking.location || 'Location Not Specified';
+    return booking.location || '';
   };
 
-  // Helper to resolve tutor location
+  // Helper to resolve tutor location (Strictly Division / City and State)
   const getBookingTutorLocation = (booking, tutorObj = null) => {
     const t = tutorObj || getBookingTutor(booking);
     if (!t) return 'Unassigned';
-    const parts = [t.streetAddress, t.city, t.state].filter(Boolean);
-    if (parts.length > 0) return parts.join(', ');
-    if (t.city) return t.city;
-    if (t.state) return t.state;
+    
+    const divState = formatDivisionAndState(
+      t.division || t.city,
+      t.state,
+      [t.city, t.state].filter(Boolean).join(', ')
+    );
+    if (divState) return divState;
+
     if (t.preferredLocations && t.preferredLocations.length > 0) {
-      return parseArrayField(t.preferredLocations).join(', ');
+      const pref = parseArrayField(t.preferredLocations)[0];
+      const prefDivState = formatDivisionAndState('', '', pref);
+      if (prefDivState) return prefDivState;
     }
     return 'Location Not Set';
+  };
+
+  // Helper to resolve full tutor address (for hover tooltip)
+  const getBookingTutorFullAddress = (booking, tutorObj = null) => {
+    const t = tutorObj || getBookingTutor(booking);
+    if (!t) return '';
+    const parts = [t.streetAddress, t.city, t.state].filter(Boolean);
+    return parts.join(', ') || '';
   };
 
   const totalBookingsCount = stats.bookings?.total !== undefined ? stats.bookings.total : bookings.length;
@@ -1825,6 +1883,8 @@ const AdminDashboard = () => {
                             const tutor = getBookingTutor(booking);
                             const studentLoc = getBookingStudentLocation(booking);
                             const tutorLoc = getBookingTutorLocation(booking, tutor);
+                            const studentFull = getBookingStudentFullAddress(booking);
+                            const tutorFull = getBookingTutorFullAddress(booking, tutor);
                             const cleanPhone = (booking.studentPhone || '').replace(/\D/g, '');
 
                             return (
@@ -1900,7 +1960,7 @@ const AdminDashboard = () => {
                                         <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">
                                           Student Location
                                         </p>
-                                        <p className="font-semibold text-xs text-slate-800 dark:text-slate-200 leading-snug break-words" title={studentLoc}>
+                                        <p className="font-semibold text-xs text-slate-800 dark:text-slate-200 leading-snug break-words" title={studentFull || studentLoc}>
                                           {studentLoc}
                                         </p>
                                       </div>
@@ -1913,7 +1973,7 @@ const AdminDashboard = () => {
                                         <p className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">
                                           Tutor Location
                                         </p>
-                                        <p className="font-semibold text-xs text-slate-800 dark:text-slate-200 leading-snug break-words" title={tutor ? tutorLoc : 'Awaiting Assignment'}>
+                                        <p className="font-semibold text-xs text-slate-800 dark:text-slate-200 leading-snug break-words" title={tutor ? (tutorFull || tutorLoc) : 'Awaiting Assignment'}>
                                           {tutor ? (
                                             <span className="text-emerald-700 dark:text-emerald-400 font-bold">{tutorLoc}</span>
                                           ) : (
