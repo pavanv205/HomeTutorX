@@ -8,9 +8,8 @@ import {
   FaSearch, 
   FaClipboardList, 
   FaUserClock, 
-  FaTimes, 
-  FaExchangeAlt, 
-  FaPhoneAlt, 
+  FaTimes,
+FaPhoneAlt, 
   FaEnvelope, 
   FaExclamationTriangle, 
   FaArrowRight, 
@@ -1915,16 +1914,6 @@ const AdminDashboard = () => {
                                 {/* Actions */}
                                 <td className="py-3.5 pr-2 text-right">
                                   <div className="flex items-center justify-end gap-1.5">
-                                    <button
-                                      onClick={() => {
-                                        setAssignModalBooking(booking);
-                                        setAssignTutorSearch('');
-                                      }}
-                                      title={tutor ? "Change assigned tutor" : "Assign a tutor"}
-                                      className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                    >
-                                      <FaExchangeAlt className="text-xs" />
-                                    </button>
                                     <button
                                       onClick={() => handleDeleteBooking(booking._id)}
                                       title="Delete request"
