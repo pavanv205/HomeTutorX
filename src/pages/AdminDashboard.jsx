@@ -2008,15 +2008,9 @@ const AdminDashboard = () => {
                                           <FaMapMarkerAlt className="text-rose-500 text-[9px] shrink-0" />
                                           {tutorLoc}
                                         </span>
-                                        <div className="flex items-center gap-2 ml-auto">
-                                          {tutor.mobile && <span>{tutor.mobile}</span>}
-                                          <button
-                                            onClick={() => handleUnassignTutor(booking._id)}
-                                            className="text-rose-500 hover:text-rose-600 font-medium"
-                                          >
-                                            Unassign
-                                          </button>
-                                        </div>
+                                        {tutor.mobile && (
+                                          <span className="ml-auto">{tutor.mobile}</span>
+                                        )}
                                       </div>
                                     </div>
                                   ) : (
