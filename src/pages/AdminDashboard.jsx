@@ -1560,10 +1560,10 @@ const AdminDashboard = () => {
                                 )}
                               </td>
                               <td className="py-3.5">
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1.5" title={student.location || [student.streetAddress, student.division, student.city, student.state].filter(Boolean).join(', ')}>
                                   <FaMapMarkerAlt className="text-rose-500 text-[11px] shrink-0" />
                                   <span className="font-medium text-slate-700 dark:text-slate-300">
-                                    {student.location || [student.streetAddress, student.division, student.city, student.state].filter(Boolean).join(', ') || student.city || 'Location Not Provided'}
+                                    {formatDivisionAndState(student.division || student.city, student.state, student.location) || student.city || 'Location Not Provided'}
                                   </span>
                                 </div>
                               </td>
@@ -2029,9 +2029,9 @@ const AdminDashboard = () => {
                       📚 Subject: <strong>{assignModalBooking.subject || 'All Subjects'}</strong>
                     </span>
                     <span className="text-slate-300 dark:text-slate-700">•</span>
-                    <span className="text-slate-600 dark:text-slate-300 font-semibold flex items-center gap-1">
+                    <span className="text-slate-600 dark:text-slate-300 font-semibold flex items-center gap-1" title={assignModalBooking.location || ''}>
                       <FaMapMarkerAlt className="text-rose-500 text-[10px]" />
-                      {assignModalBooking.location || 'Location Not Specified'}
+                      {formatDivisionAndState('', '', assignModalBooking.location) || assignModalBooking.location || 'Location Not Specified'}
                     </span>
                   </div>
                 </div>
