@@ -495,14 +495,30 @@ const BecomeTutorForm = () => {
   };
 
   const loadRazorpayScript = () => {
+    if (typeof window !== 'undefined' && window.Razorpay) {
+      return Promise.resolve(true);
+    }
     return new Promise((resolve) => {
+      const existing = document.querySelector('script[src*="checkout.razorpay.com"]');
+      if (existing) {
+        if (window.Razorpay) return resolve(true);
+        existing.addEventListener('load', () => resolve(true));
+        existing.addEventListener('error', () => resolve(false));
+        return;
+      }
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
   };
+
+  // Preload Razorpay checkout script on mount so payment modal opens instantaneously
+  useEffect(() => {
+    loadRazorpayScript();
+  }, []);
 
   const submitRegistrationWithPayment = async (data, paymentInfo) => {
     setLoading(true);

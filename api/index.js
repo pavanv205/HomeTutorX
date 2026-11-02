@@ -56,6 +56,11 @@ const connectDB = async () => {
 
 export default async function handler(req, res) {
   try {
+    // Razorpay order creation does not require MongoDB connection; don't block order initialization
+    if (req.url && req.url.includes('/payments/create-order')) {
+      connectDB().catch(err => console.error('[Background DB connect error]:', err));
+      return app(req, res);
+    }
     await connectDB();
   } catch (err) {
     console.error('[Vercel Serverless Function] MongoDB initialization failed:', err);
