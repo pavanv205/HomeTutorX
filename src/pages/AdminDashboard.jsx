@@ -1,5 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { FaGraduationCap, FaUserCheck, FaInfoCircle, FaUser, FaMapMarkerAlt, FaSearch } from 'react-icons/fa';
+import { 
+  FaGraduationCap, 
+  FaUserCheck, 
+  FaInfoCircle, 
+  FaUser, 
+  FaMapMarkerAlt, 
+  FaSearch, 
+  FaClipboardList, 
+  FaUserClock, 
+  FaTimes, 
+  FaExchangeAlt, 
+  FaPhoneAlt, 
+  FaEnvelope, 
+  FaExclamationTriangle, 
+  FaArrowRight, 
+  FaCheckCircle, 
+  FaTrashAlt, 
+  FaWhatsapp 
+} from 'react-icons/fa';
 import api from '../services/api';
 import { parseArrayField } from '../utils/arrayHelper';
 import Button from '../components/common/Button';
@@ -124,14 +142,16 @@ const ColorfulGiftIcon = ({ className = "h-6 w-6" }) => (
 );
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Verified Tutors', 'Unverified Tutors', 'Students'
+  const [activeTab, setActiveTab] = useState('Overview'); // 'Overview', 'Verified Tutors', 'Unverified Tutors', 'Students', 'Student Requests'
   const [stats, setStats] = useState({
     tutors: { total: 0, verified: 0, pending: 0, active: 0 },
     students: { total: 0 },
+    bookings: { total: 0, assigned: 0, unassigned: 0, pending: 0, contacted: 0, resolved: 0 },
     storage: { databaseSize: 0, cdnSize: 0 }
   });
   const [tutors, setTutors] = useState([]);
   const [students, setStudents] = useState([]);
+  const [bookings, setBookings] = useState([]);
 
   // Search states
   const [tutorLocationSearch, setTutorLocationSearch] = useState('');
@@ -141,10 +161,38 @@ const AdminDashboard = () => {
   const [studentSearch, setStudentSearch] = useState('');
   const [studentLocationSearch, setStudentLocationSearch] = useState('');
 
+  // Student Request (Booking) states
+  const [bookingFilter, setBookingFilter] = useState('all'); // 'all', 'assigned', 'unassigned'
+  const [bookingLocationSearch, setBookingLocationSearch] = useState('');
+  const [bookingGeneralSearch, setBookingGeneralSearch] = useState('');
+
+  // Assign Tutor Modal states
+  const [assignModalBooking, setAssignModalBooking] = useState(null);
+  const [assignTutorSearch, setAssignTutorSearch] = useState('');
+  const [assignLoading, setAssignLoading] = useState(false);
+
   const [showCapacityDetails, setShowCapacityDetails] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Helper to resolve the assigned/requested tutor profile
+  const getBookingTutor = (booking) => {
+    if (!booking || !booking.assignedTutor) return null;
+    if (typeof booking.assignedTutor === 'object' && (booking.assignedTutor.fullName || booking.assignedTutor.name)) {
+      return booking.assignedTutor;
+    }
+    const tutorId = typeof booking.assignedTutor === 'object' ? booking.assignedTutor._id : booking.assignedTutor;
+    return tutors.find(t => String(t._id) === String(tutorId)) || null;
+  };
+
+  const totalBookingsCount = stats.bookings?.total !== undefined ? stats.bookings.total : bookings.length;
+  const assignedBookingsCount = stats.bookings?.assigned !== undefined 
+    ? stats.bookings.assigned 
+    : bookings.filter(b => b.assignedTutor).length;
+  const unassignedBookingsCount = stats.bookings?.unassigned !== undefined 
+    ? stats.bookings.unassigned 
+    : bookings.filter(b => !b.assignedTutor).length;
 
   // Filtered Verified Tutors
   const filteredVerifiedTutors = tutors.filter(t => {
@@ -221,6 +269,65 @@ const AdminDashboard = () => {
     return true;
   });
 
+  // Filtered Student Requests (Bookings)
+  const filteredBookings = bookings.filter(b => {
+    // 1. Tab segment filter
+    if (bookingFilter === 'assigned' && !b.assignedTutor) return false;
+    if (bookingFilter === 'unassigned' && b.assignedTutor) return false;
+
+    // 2. Location search
+    if (bookingLocationSearch.trim()) {
+      const locQ = bookingLocationSearch.toLowerCase().trim();
+      const loc = (b.location || '').toLowerCase();
+      const tutor = getBookingTutor(b);
+      const tutorCity = (tutor?.city || '').toLowerCase();
+      const tutorState = (tutor?.state || '').toLowerCase();
+      if (!loc.includes(locQ) && !tutorCity.includes(locQ) && !tutorState.includes(locQ)) {
+        return false;
+      }
+    }
+
+    // 3. General search (student or requested tutor)
+    if (bookingGeneralSearch.trim()) {
+      const q = bookingGeneralSearch.toLowerCase().trim();
+      const studentName = (b.studentName || '').toLowerCase();
+      const studentEmail = (b.studentEmail || '').toLowerCase();
+      const studentPhone = String(b.studentPhone || '').toLowerCase();
+      const subject = (b.subject || '').toLowerCase();
+      const grade = (b.gradeClass || '').toLowerCase();
+      const tutor = getBookingTutor(b);
+      const tutorName = (tutor?.fullName || tutor?.name || '').toLowerCase();
+      const tutorEmail = (tutor?.email || '').toLowerCase();
+      const tutorPhone = String(tutor?.mobile || '').toLowerCase();
+
+      const matches = studentName.includes(q) ||
+        studentEmail.includes(q) ||
+        studentPhone.includes(q) ||
+        subject.includes(q) ||
+        grade.includes(q) ||
+        tutorName.includes(q) ||
+        tutorEmail.includes(q) ||
+        tutorPhone.includes(q);
+
+      if (!matches) return false;
+    }
+
+    return true;
+  });
+
+  // Filtered Verified Tutors for Assignment Modal
+  const filteredTutorsForAssignment = tutors.filter(t => {
+    if (!t.isVerified) return false;
+    if (!assignTutorSearch.trim()) return true;
+    const q = assignTutorSearch.toLowerCase().trim();
+    const name = (t.fullName || '').toLowerCase();
+    const email = (t.email || '').toLowerCase();
+    const mobile = String(t.mobile || '').toLowerCase();
+    const city = (t.city || '').toLowerCase();
+    const subjects = parseArrayField(t.subjects).join(' ').toLowerCase();
+    return name.includes(q) || email.includes(q) || mobile.includes(q) || city.includes(q) || subjects.includes(q);
+  });
+
   // Fetch admin dashboard details
   const fetchDashboardData = async () => {
     setLoading(true);
@@ -246,11 +353,117 @@ const AdminDashboard = () => {
         console.log('Students fetch error:', e);
       }
 
+      // 4. Fetch Bookings / Student Requests
+      try {
+        const bookingsRes = await api.get('/bookings');
+        if (bookingsRes.data && bookingsRes.data.success) {
+          setBookings(bookingsRes.data.data || []);
+        }
+      } catch (bErr) {
+        console.log('Bookings fetch error:', bErr);
+      }
+
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
       setErrorMsg('Failed to fetch admin data. Make sure MongoDB is connected.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Assign or Reassign a Tutor to a Student Request
+  const handleAssignTutor = async (bookingId, tutorId) => {
+    setAssignLoading(true);
+    try {
+      const res = await api.put(`/bookings/${bookingId}`, {
+        assignedTutor: tutorId,
+        status: 'Assigned'
+      });
+      if (res.data && res.data.success) {
+        const tutorObj = tutors.find(t => String(t._id) === String(tutorId));
+        setBookings(prev => prev.map(b => b._id === bookingId ? {
+          ...b,
+          status: 'Assigned',
+          assignedTutor: tutorObj ? {
+            _id: tutorObj._id,
+            fullName: tutorObj.fullName,
+            mobile: tutorObj.mobile,
+            email: tutorObj.email,
+            subjects: tutorObj.subjects,
+            photo: tutorObj.photo,
+            city: tutorObj.city,
+            state: tutorObj.state,
+            streetAddress: tutorObj.streetAddress,
+            experience: tutorObj.experience,
+            qualification: tutorObj.qualification
+          } : tutorId
+        } : b));
+
+        // Refresh stats
+        const statsRes = await api.get('/admin/stats');
+        if (statsRes.data && statsRes.data.success) {
+          setStats(statsRes.data.data);
+        }
+        setAssignModalBooking(null);
+      }
+    } catch (err) {
+      console.error('Failed to assign tutor:', err);
+      alert('Failed to assign tutor. Please try again.');
+    } finally {
+      setAssignLoading(false);
+    }
+  };
+
+  // Unassign Tutor
+  const handleUnassignTutor = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to unassign the tutor from this student request?')) return;
+    try {
+      const res = await api.put(`/bookings/${bookingId}`, {
+        assignedTutor: null,
+        status: 'Pending'
+      });
+      if (res.data && res.data.success) {
+        setBookings(prev => prev.map(b => b._id === bookingId ? {
+          ...b,
+          status: 'Pending',
+          assignedTutor: null
+        } : b));
+        const statsRes = await api.get('/admin/stats');
+        if (statsRes.data && statsRes.data.success) {
+          setStats(statsRes.data.data);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to unassign tutor:', err);
+    }
+  };
+
+  // Update Status of Student Request
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
+    try {
+      const res = await api.put(`/bookings/${bookingId}`, { status: newStatus });
+      if (res.data && res.data.success) {
+        setBookings(prev => prev.map(b => b._id === bookingId ? { ...b, status: newStatus } : b));
+      }
+    } catch (err) {
+      console.error('Failed to update status:', err);
+    }
+  };
+
+  // Delete Student Request
+  const handleDeleteBooking = async (bookingId) => {
+    if (!window.confirm('Are you sure you want to permanently delete this student request?')) return;
+    try {
+      const res = await api.delete(`/bookings/${bookingId}`);
+      if (res.data && res.data.success) {
+        setBookings(prev => prev.filter(b => b._id !== bookingId));
+        const statsRes = await api.get('/admin/stats');
+        if (statsRes.data && statsRes.data.success) {
+          setStats(statsRes.data.data);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to delete booking:', err);
     }
   };
 
@@ -351,17 +564,26 @@ const AdminDashboard = () => {
 
           {/* Navigation Tabs */}
           <div className="flex border-b border-slate-200 dark:border-slate-800 gap-6 overflow-x-auto scrollbar-none">
-            {['Overview', 'Verified Tutors', 'Unverified Tutors', 'Students'].map(tab => (
+            {['Overview', 'Verified Tutors', 'Unverified Tutors', 'Students', 'Student Requests'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`py-3.5 text-sm font-extrabold border-b-2 transition-all focus:outline-none ${
+                className={`py-3.5 text-sm font-extrabold border-b-2 transition-all focus:outline-none flex items-center gap-2 shrink-0 ${
                   activeTab === tab
                     ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400 font-black'
                     : 'border-transparent text-slate-500 hover:text-slate-850 dark:text-slate-400 dark:hover:text-slate-200'
                 }`}
               >
-                {tab}
+                <span>{tab}</span>
+                {tab === 'Student Requests' && (
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                    unassignedBookingsCount > 0
+                      ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                      : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300'
+                  }`}>
+                    {totalBookingsCount}
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -599,6 +821,285 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                   )}
+
+                  {/* ======================================================== */}
+                  {/* STUDENT REQUESTS OVERVIEW CARD (3 SECTIONS + TUTOR DETAILS) */}
+                  {/* ======================================================== */}
+                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+                    {/* Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+                      <div className="flex items-center gap-3">
+                        <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-500 text-white flex items-center justify-center text-lg shadow-md shadow-indigo-500/20 shrink-0">
+                          <FaClipboardList />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2.5">
+                            <h3 className="text-lg font-black text-slate-900 dark:text-slate-100 tracking-tight">
+                              Student Request Center
+                            </h3>
+                            <span className="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+                              {totalBookingsCount} Requests
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                            Track student inquiries, tutor allocations, and direct match assignments.
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          setBookingFilter('all');
+                          setActiveTab('Student Requests');
+                        }}
+                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold text-primary dark:text-blue-400 bg-blue-50/80 dark:bg-blue-950/30 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors self-start sm:self-auto"
+                      >
+                        <span>Open Full Requests Board</span>
+                        <FaArrowRight className="text-[10px]" />
+                      </button>
+                    </div>
+
+                    {/* 3 Sections Grid: Total Requests, Assigned Tutors, Unassigned Tutors */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                      {/* Section 1: Total Requests */}
+                      <div
+                        onClick={() => {
+                          setBookingFilter('all');
+                          setActiveTab('Student Requests');
+                        }}
+                        className="group relative overflow-hidden bg-gradient-to-br from-indigo-50/70 via-white to-blue-50/40 dark:from-indigo-950/20 dark:via-slate-900 dark:to-blue-950/10 border border-indigo-100 dark:border-indigo-900/40 rounded-3xl p-6 cursor-pointer hover:shadow-lg hover:border-indigo-300 dark:hover:border-indigo-700 hover:scale-[1.01] transition-all"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="h-12 w-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl shadow-md shadow-indigo-500/20 shrink-0">
+                            <FaClipboardList />
+                          </div>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                            All Enquiries
+                          </span>
+                        </div>
+                        <div className="mt-4">
+                          <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">
+                            Total Requests
+                          </p>
+                          <h4 className="text-3xl font-black text-slate-900 dark:text-white mt-0.5 tracking-tight">
+                            {totalBookingsCount}
+                          </h4>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1 leading-relaxed">
+                            Total trial and tuition requests placed by students across all subjects and locations.
+                          </p>
+                        </div>
+                        <div className="mt-5 pt-3.5 border-t border-indigo-100 dark:border-indigo-900/40 flex items-center justify-between text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform">
+                          <span>View all student requests</span>
+                          <FaArrowRight className="text-[11px]" />
+                        </div>
+                      </div>
+
+                      {/* Section 2: Assigned Tutors */}
+                      <div
+                        onClick={() => {
+                          setBookingFilter('assigned');
+                          setActiveTab('Student Requests');
+                        }}
+                        className="group relative overflow-hidden bg-gradient-to-br from-emerald-50/70 via-white to-teal-50/40 dark:from-emerald-950/20 dark:via-slate-900 dark:to-teal-950/10 border border-emerald-100 dark:border-emerald-900/40 rounded-3xl p-6 cursor-pointer hover:shadow-lg hover:border-emerald-300 dark:hover:border-emerald-700 hover:scale-[1.01] transition-all"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="h-12 w-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-md shadow-emerald-500/20 shrink-0">
+                            <FaUserCheck />
+                          </div>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                            Matched & Active ✅
+                          </span>
+                        </div>
+                        <div className="mt-4">
+                          <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">
+                            Assigned Tutors
+                          </p>
+                          <h4 className="text-3xl font-black text-slate-900 dark:text-white mt-0.5 tracking-tight">
+                            {assignedBookingsCount}
+                          </h4>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1 leading-relaxed">
+                            Students successfully connected to a requested tutor profile with full contact details.
+                          </p>
+                        </div>
+                        <div className="mt-5 pt-3.5 border-t border-emerald-100 dark:border-emerald-900/40 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform">
+                          <span>View assigned tutors</span>
+                          <FaArrowRight className="text-[11px]" />
+                        </div>
+                      </div>
+
+                      {/* Section 3: Unassigned Tutors */}
+                      <div
+                        onClick={() => {
+                          setBookingFilter('unassigned');
+                          setActiveTab('Student Requests');
+                        }}
+                        className="group relative overflow-hidden bg-gradient-to-br from-amber-50/70 via-white to-orange-50/40 dark:from-amber-950/20 dark:via-slate-900 dark:to-orange-950/10 border border-amber-100 dark:border-amber-900/40 rounded-3xl p-6 cursor-pointer hover:shadow-lg hover:border-amber-300 dark:hover:border-amber-700 hover:scale-[1.01] transition-all"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="h-12 w-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl shadow-md shadow-amber-500/20 shrink-0">
+                            <FaUserClock />
+                          </div>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                            Action Required ⚠️
+                          </span>
+                        </div>
+                        <div className="mt-4">
+                          <p className="text-[11px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">
+                            Unassigned Tutors
+                          </p>
+                          <h4 className="text-3xl font-black text-slate-900 dark:text-white mt-0.5 tracking-tight">
+                            {unassignedBookingsCount}
+                          </h4>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1 leading-relaxed">
+                            Open student enquiries pending tutor assignment. Click to assign a verified tutor.
+                          </p>
+                        </div>
+                        <div className="mt-5 pt-3.5 border-t border-amber-100 dark:border-amber-900/40 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400 group-hover:translate-x-1 transition-transform">
+                          <span>Assign tutors now</span>
+                          <FaArrowRight className="text-[11px]" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Requested Tutor Allocations Preview */}
+                    <div className="pt-2">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                          Recent Student Requests & Requested Tutor Allocations
+                        </h4>
+                        <span className="text-[11px] text-slate-400 font-semibold">
+                          Showing recent requests
+                        </span>
+                      </div>
+
+                      {bookings.length === 0 ? (
+                        <div className="p-8 text-center bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs text-slate-400">
+                          No student requests recorded yet.
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                          {bookings.slice(0, 4).map(booking => {
+                            const tutor = getBookingTutor(booking);
+                            return (
+                              <div
+                                key={booking._id}
+                                className="bg-slate-50/70 dark:bg-slate-800/30 border border-slate-200/70 dark:border-slate-800 rounded-2xl p-4.5 space-y-3.5 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
+                              >
+                                {/* Student Header */}
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="flex items-center gap-3">
+                                    <div className={`h-9 w-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${getAvatarStyle(booking.studentName)}`}>
+                                      {(booking.studentName || 'S').trim().charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                      <h5 className="font-extrabold text-sm text-slate-900 dark:text-slate-100">
+                                        {booking.studentName}
+                                      </h5>
+                                      <p className="text-[11px] text-slate-400 font-medium">
+                                        {booking.gradeClass || 'Student'} • {formatVerifiedDate(booking.createdAt)}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
+                                    booking.status === 'Assigned'
+                                      ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'
+                                      : booking.status === 'Contacted'
+                                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'
+                                      : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                                  }`}>
+                                    {booking.status}
+                                  </span>
+                                </div>
+
+                                {/* Subject & Location Pills */}
+                                <div className="flex flex-wrap items-center gap-2 text-xs">
+                                  <span className="bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-[11px]">
+                                    📚 {booking.subject || 'All Subjects'}
+                                  </span>
+                                  <span className="bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-medium text-[11px] flex items-center gap-1">
+                                    <FaMapMarkerAlt className="text-rose-500 text-[10px]" />
+                                    {booking.location || 'Hyderabad'}
+                                  </span>
+                                  <span className="text-slate-400 text-[11px] font-medium ml-auto">
+                                    Mode: <strong className="text-slate-600 dark:text-slate-300">{booking.preferredMode || 'Offline'}</strong>
+                                  </span>
+                                </div>
+
+                                {/* REQUESTED TUTOR SECTION */}
+                                <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800/80">
+                                  <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1.5">
+                                    Requested Tutor Allocation
+                                  </p>
+                                  {tutor ? (
+                                    <div className="bg-white dark:bg-slate-900/90 border border-emerald-200/70 dark:border-emerald-900/40 rounded-xl p-3 flex items-center justify-between gap-3">
+                                      <div className="flex items-center gap-2.5 min-w-0">
+                                        {tutor.photo ? (
+                                          <img src={tutor.photo} alt={tutor.fullName} className="h-9 w-9 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-700" />
+                                        ) : (
+                                          <div className={`h-9 w-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${getAvatarStyle(tutor.fullName)}`}>
+                                            {(tutor.fullName || 'T').trim().charAt(0).toUpperCase()}
+                                          </div>
+                                        )}
+                                        <div className="min-w-0">
+                                          <div className="flex items-center gap-1.5">
+                                            <p className="font-extrabold text-xs text-slate-900 dark:text-slate-100 truncate">
+                                              {tutor.fullName}
+                                            </p>
+                                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold shrink-0">
+                                              ✓ Verified
+                                            </span>
+                                          </div>
+                                          <p className="text-[11px] text-slate-400 font-medium truncate">
+                                            {tutor.qualification || tutor.experience ? `${tutor.qualification || ''} ${tutor.experience ? `• ${tutor.experience}y exp` : ''}` : tutor.mobile || tutor.email}
+                                          </p>
+                                        </div>
+                                      </div>
+
+                                      <div className="flex items-center gap-1.5 shrink-0">
+                                        <button
+                                          onClick={() => {
+                                            setAssignModalBooking(booking);
+                                            setAssignTutorSearch('');
+                                          }}
+                                          className="px-2.5 py-1 text-[11px] font-bold text-primary dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
+                                        >
+                                          Change
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/70 dark:border-amber-900/40 rounded-xl p-2.5 flex items-center justify-between gap-3">
+                                      <div className="flex items-center gap-2">
+                                        <FaExclamationTriangle className="text-amber-500 text-xs shrink-0" />
+                                        <div>
+                                          <p className="text-xs font-bold text-amber-800 dark:text-amber-300">
+                                            No Tutor Assigned Yet
+                                          </p>
+                                          <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                                            Awaiting admin to allocate a verified tutor
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <button
+                                        onClick={() => {
+                                          setAssignModalBooking(booking);
+                                          setAssignTutorSearch('');
+                                        }}
+                                        className="px-3 py-1 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-lg shadow-sm transition-colors shrink-0"
+                                      >
+                                        + Assign Tutor
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -1092,7 +1593,496 @@ const AdminDashboard = () => {
                 </div>
               )}
 
+              {/* TAB 5: STUDENT REQUESTS & TUTOR ALLOCATION */}
+              {activeTab === 'Student Requests' && (
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 md:p-8 shadow-sm overflow-hidden animate-fadeIn space-y-6">
+                  {/* Top Bar: Title & Filter Pills */}
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <h3 className="text-base font-extrabold text-slate-850 dark:text-slate-100">
+                          Student Tuition Requests & Tutor Directory
+                        </h3>
+                        <span className="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+                          {filteredBookings.length} of {bookings.length} Requests
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+                        View details about which tutor the student has requested, manage assignments, and update statuses.
+                      </p>
+                    </div>
+
+                    {/* Filter Segmented Control */}
+                    <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl shrink-0 self-start lg:self-auto">
+                      <button
+                        onClick={() => setBookingFilter('all')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                          bookingFilter === 'all'
+                            ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                            : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                        }`}
+                      >
+                        All Requests ({totalBookingsCount})
+                      </button>
+                      <button
+                        onClick={() => setBookingFilter('assigned')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          bookingFilter === 'assigned'
+                            ? 'bg-emerald-500 text-white shadow-sm'
+                            : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                        }`}
+                      >
+                        <span>Assigned Tutors</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${bookingFilter === 'assigned' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300'}`}>
+                          {assignedBookingsCount}
+                        </span>
+                      </button>
+                      <button
+                        onClick={() => setBookingFilter('unassigned')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                          bookingFilter === 'unassigned'
+                            ? 'bg-amber-500 text-white shadow-sm'
+                            : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                        }`}
+                      >
+                        <span>Unassigned Tutors</span>
+                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${bookingFilter === 'unassigned' ? 'bg-amber-700 text-white' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'}`}>
+                          {unassignedBookingsCount}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Search Controls */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
+                      {/* Location Search Bar */}
+                      <div className="relative min-w-[240px]">
+                        <FaMapMarkerAlt className="absolute left-3.5 top-1/2 -translate-y-1/2 text-rose-500 text-xs pointer-events-none" />
+                        <input
+                          type="text"
+                          value={bookingLocationSearch}
+                          onChange={(e) => setBookingLocationSearch(e.target.value)}
+                          placeholder="Search location (city, area)..."
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-9 pr-7 text-xs focus:outline-none focus:border-primary text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
+                        />
+                        {bookingLocationSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setBookingLocationSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+
+                      {/* General Search Bar */}
+                      <div className="relative min-w-[260px]">
+                        <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+                        <input
+                          type="text"
+                          value={bookingGeneralSearch}
+                          onChange={(e) => setBookingGeneralSearch(e.target.value)}
+                          placeholder="Search student, tutor, subject, phone..."
+                          className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-9 pr-7 text-xs focus:outline-none focus:border-primary text-slate-800 dark:text-slate-200 placeholder:text-slate-400"
+                        />
+                        {bookingGeneralSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setBookingGeneralSearch('')}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold"
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-slate-400 font-medium">
+                      Showing <strong className="text-slate-700 dark:text-slate-200">{filteredBookings.length}</strong> matching enquiries
+                    </div>
+                  </div>
+
+                  {/* Table View */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">
+                          <th className="py-3 px-2">Student</th>
+                          <th className="py-3">Contact</th>
+                          <th className="py-3">Subject & Mode</th>
+                          <th className="py-3">Location</th>
+                          <th className="py-3 min-w-[240px]">Which Tutor Requested</th>
+                          <th className="py-3">Status</th>
+                          <th className="py-3 pr-2 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-350">
+                        {filteredBookings.length === 0 ? (
+                          <tr>
+                            <td colSpan="7" className="py-12 text-center text-slate-400">
+                              {bookings.length === 0
+                                ? 'No student requests found in database.'
+                                : 'No requests found matching your filter or search query.'}
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredBookings.map((booking) => {
+                            const tutor = getBookingTutor(booking);
+                            const cleanPhone = (booking.studentPhone || '').replace(/\D/g, '');
+
+                            return (
+                              <tr key={booking._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                {/* Student */}
+                                <td className="py-3.5 px-2">
+                                  <div className="flex items-center gap-3">
+                                    <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${getAvatarStyle(booking.studentName)}`}>
+                                      {(booking.studentName || 'S').trim().charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                      <p className="font-extrabold text-slate-850 dark:text-slate-100">{booking.studentName}</p>
+                                      <p className="text-[10px] text-slate-400">
+                                        {booking.gradeClass || 'Student'} • {formatVerifiedDate(booking.createdAt)}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </td>
+
+                                {/* Contact */}
+                                <td className="py-3.5">
+                                  <div className="space-y-1">
+                                    {booking.studentPhone && (
+                                      <div className="flex items-center gap-1.5">
+                                        <a href={`tel:${booking.studentPhone}`} className="font-bold text-slate-800 dark:text-slate-200 hover:text-primary">
+                                          {booking.studentPhone}
+                                        </a>
+                                        {cleanPhone && (
+                                          <a
+                                            href={`https://wa.me/91${cleanPhone}?text=${encodeURIComponent(`Hello ${booking.studentName}, this is HomeTutorX regarding your tuition request for ${booking.subject || 'classes'}.`)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-emerald-500 hover:text-emerald-600 p-0.5"
+                                            title="Chat on WhatsApp"
+                                          >
+                                            <FaWhatsapp className="text-xs" />
+                                          </a>
+                                        )}
+                                      </div>
+                                    )}
+                                    {booking.studentEmail && (
+                                      <a href={`mailto:${booking.studentEmail}`} className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:text-primary truncate max-w-[150px]">
+                                        {booking.studentEmail}
+                                      </a>
+                                    )}
+                                  </div>
+                                </td>
+
+                                {/* Subject & Mode */}
+                                <td className="py-3.5">
+                                  <div className="space-y-1">
+                                    <span className="inline-block bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-bold text-[11px] px-2 py-0.5 rounded-md border border-indigo-200/60 dark:border-indigo-900/40">
+                                      {booking.subject || 'All Subjects'}
+                                    </span>
+                                    <p className="text-[10px] text-slate-400 font-medium">
+                                      Mode: <strong className="text-slate-600 dark:text-slate-300">{booking.preferredMode || 'Offline'}</strong>
+                                    </p>
+                                    {booking.message && (
+                                      <p className="text-[10px] text-slate-500 dark:text-slate-400 italic line-clamp-1 max-w-[180px]" title={booking.message}>
+                                        "{booking.message}"
+                                      </p>
+                                    )}
+                                  </div>
+                                </td>
+
+                                {/* Location */}
+                                <td className="py-3.5">
+                                  <div className="flex items-center gap-1.5">
+                                    <FaMapMarkerAlt className="text-rose-500 text-[11px] shrink-0" />
+                                    <span className="font-medium text-slate-700 dark:text-slate-300 max-w-[140px] truncate" title={booking.location}>
+                                      {booking.location || 'Hyderabad'}
+                                    </span>
+                                  </div>
+                                </td>
+
+                                {/* WHICH TUTOR REQUESTED */}
+                                <td className="py-3.5">
+                                  {tutor ? (
+                                    <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/80 rounded-xl p-2.5 max-w-[280px]">
+                                      <div className="flex items-start justify-between gap-2">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                          {tutor.photo ? (
+                                            <img src={tutor.photo} alt={tutor.fullName} className="h-8 w-8 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-700" />
+                                          ) : (
+                                            <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${getAvatarStyle(tutor.fullName)}`}>
+                                              {(tutor.fullName || 'T').trim().charAt(0).toUpperCase()}
+                                            </div>
+                                          )}
+                                          <div className="min-w-0">
+                                            <p className="font-extrabold text-xs text-slate-900 dark:text-white truncate">
+                                              {tutor.fullName}
+                                            </p>
+                                            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                                              ✓ Assigned Tutor
+                                            </p>
+                                          </div>
+                                        </div>
+
+                                        <button
+                                          onClick={() => {
+                                            setAssignModalBooking(booking);
+                                            setAssignTutorSearch('');
+                                          }}
+                                          className="text-[10px] font-bold text-primary dark:text-blue-400 hover:underline shrink-0"
+                                        >
+                                          Change
+                                        </button>
+                                      </div>
+
+                                      <div className="mt-1.5 pt-1.5 border-t border-slate-200/60 dark:border-slate-700/50 flex flex-wrap items-center justify-between gap-1 text-[10px] text-slate-400">
+                                        <span>{tutor.mobile || tutor.city || 'Tutor Allocated'}</span>
+                                        <button
+                                          onClick={() => handleUnassignTutor(booking._id)}
+                                          className="text-rose-500 hover:text-rose-600 font-medium"
+                                        >
+                                          Unassign
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="space-y-1.5">
+                                      <span className="inline-flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 font-extrabold text-[10px] px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800/60">
+                                        <FaExclamationTriangle className="text-[9px]" />
+                                        Unassigned Tutor
+                                      </span>
+                                      <div>
+                                        <button
+                                          onClick={() => {
+                                            setAssignModalBooking(booking);
+                                            setAssignTutorSearch('');
+                                          }}
+                                          className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-extrabold text-white bg-amber-600 hover:bg-amber-700 rounded-lg shadow-sm transition-colors"
+                                        >
+                                          + Assign Tutor
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </td>
+
+                                {/* Status */}
+                                <td className="py-3.5">
+                                  <select
+                                    value={booking.status || 'Pending'}
+                                    onChange={(e) => handleUpdateBookingStatus(booking._id, e.target.value)}
+                                    className={`text-[11px] font-bold rounded-lg px-2 py-1 border focus:outline-none cursor-pointer ${
+                                      booking.status === 'Assigned'
+                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300'
+                                        : booking.status === 'Contacted'
+                                        ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-300'
+                                        : booking.status === 'Resolved'
+                                        ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:border-purple-800 dark:text-purple-300'
+                                        : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300'
+                                    }`}
+                                  >
+                                    <option value="Pending">Pending</option>
+                                    <option value="Assigned">Assigned</option>
+                                    <option value="Contacted">Contacted</option>
+                                    <option value="Resolved">Resolved</option>
+                                  </select>
+                                </td>
+
+                                {/* Actions */}
+                                <td className="py-3.5 pr-2 text-right">
+                                  <div className="flex items-center justify-end gap-1.5">
+                                    <button
+                                      onClick={() => {
+                                        setAssignModalBooking(booking);
+                                        setAssignTutorSearch('');
+                                      }}
+                                      title={tutor ? "Change assigned tutor" : "Assign a tutor"}
+                                      className="p-1.5 rounded-lg text-slate-500 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                    >
+                                      <FaExchangeAlt className="text-xs" />
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteBooking(booking._id)}
+                                      title="Delete request"
+                                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+                                    >
+                                      <FaTrashAlt className="text-xs" />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
             </>
+          )}
+
+          {/* ======================================================== */}
+          {/* ASSIGN TUTOR MODAL */}
+          {/* ======================================================== */}
+          {assignModalBooking && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl space-y-6 max-h-[90vh] flex flex-col">
+                {/* Modal Header */}
+                <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+                  <div>
+                    <h3 className="text-lg font-black text-slate-900 dark:text-white">
+                      Assign Tutor to Student Request
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      Choose a verified tutor from your directory to allocate to this student.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setAssignModalBooking(null)}
+                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    <FaTimes className="text-base" />
+                  </button>
+                </div>
+
+                {/* Target Student Request Summary */}
+                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                      Student Enquiry Details
+                    </span>
+                    <span className="text-xs font-bold text-primary dark:text-blue-400">
+                      {assignModalBooking.gradeClass || 'Student'}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+                    <p className="font-extrabold text-slate-900 dark:text-white">
+                      {assignModalBooking.studentName}
+                    </p>
+                    <span className="text-slate-300 dark:text-slate-700">•</span>
+                    <span className="text-slate-600 dark:text-slate-300 font-semibold">
+                      📚 Subject: <strong>{assignModalBooking.subject || 'All Subjects'}</strong>
+                    </span>
+                    <span className="text-slate-300 dark:text-slate-700">•</span>
+                    <span className="text-slate-600 dark:text-slate-300 font-semibold flex items-center gap-1">
+                      <FaMapMarkerAlt className="text-rose-500 text-[10px]" />
+                      {assignModalBooking.location || 'Location Not Specified'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Search Input */}
+                <div className="relative">
+                  <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none" />
+                  <input
+                    type="text"
+                    value={assignTutorSearch}
+                    onChange={(e) => setAssignTutorSearch(e.target.value)}
+                    placeholder="Search verified tutors by name, subject, area..."
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 pl-9 pr-8 text-xs focus:outline-none focus:border-primary text-slate-800 dark:text-slate-200 placeholder:text-slate-400 font-medium"
+                  />
+                  {assignTutorSearch && (
+                    <button
+                      onClick={() => setAssignTutorSearch('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm font-bold"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+
+                {/* Tutors List */}
+                <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
+                  {filteredTutorsForAssignment.length === 0 ? (
+                    <div className="py-12 text-center text-xs text-slate-400 font-medium">
+                      No verified tutors found matching "{assignTutorSearch}".
+                    </div>
+                  ) : (
+                    filteredTutorsForAssignment.map(tutor => {
+                      const isCurrentlyAssigned = assignModalBooking.assignedTutor && (
+                        String(assignModalBooking.assignedTutor._id || assignModalBooking.assignedTutor) === String(tutor._id)
+                      );
+                      const tutorSubjects = parseArrayField(tutor.subjects);
+                      const isSubjectMatch = tutorSubjects.some(s => 
+                        s.toLowerCase().includes((assignModalBooking.subject || '').toLowerCase())
+                      );
+
+                      return (
+                        <div
+                          key={tutor._id}
+                          className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                            isCurrentlyAssigned
+                              ? 'bg-emerald-50/70 border-emerald-300 dark:bg-emerald-950/20 dark:border-emerald-800'
+                              : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 hover:border-primary/50'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            {tutor.photo ? (
+                              <img src={tutor.photo} alt={tutor.fullName} className="h-10 w-10 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-700" />
+                            ) : (
+                              <div className={`h-10 w-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${getAvatarStyle(tutor.fullName)}`}>
+                                {(tutor.fullName || 'T').trim().charAt(0).toUpperCase()}
+                              </div>
+                            )}
+
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="font-extrabold text-xs text-slate-900 dark:text-white truncate">
+                                  {tutor.fullName}
+                                </p>
+                                {isSubjectMatch && (
+                                  <span className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 text-[9px] font-extrabold px-1.5 py-0.5 rounded">
+                                    Subject Match
+                                  </span>
+                                )}
+                                {isCurrentlyAssigned && (
+                                  <span className="bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 text-[9px] font-extrabold px-1.5 py-0.5 rounded">
+                                    Current
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
+                                {tutor.qualification || ''} • {tutor.city || 'Hyderabad'} • {tutor.mobile || tutor.email}
+                              </p>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {tutorSubjects.slice(0, 3).map((sub, i) => (
+                                  <span key={i} className="text-[9px] bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 py-0.2 rounded font-medium">
+                                    {sub}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          <Button
+                            size="sm"
+                            variant={isCurrentlyAssigned ? 'secondary' : 'primary'}
+                            disabled={assignLoading || isCurrentlyAssigned}
+                            onClick={() => handleAssignTutor(assignModalBooking._id, tutor._id)}
+                            className="shrink-0 text-xs font-bold"
+                          >
+                            {isCurrentlyAssigned ? 'Assigned' : 'Assign'}
+                          </Button>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                {/* Modal Footer */}
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                  <Button variant="ghost" size="sm" onClick={() => setAssignModalBooking(null)}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>

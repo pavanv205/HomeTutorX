@@ -144,6 +144,52 @@ const initializeSeeds = () => {
   } catch (err) {
     console.error('Failed to load Hyderabad seeds in fallback mode:', err.message);
   }
+
+  // Seed sample student requests / bookings
+  memoryBookings.push(
+    {
+      _id: '6a3956421c7fc8576e26c6d1',
+      studentName: 'Rahul Sharma',
+      studentEmail: 'rahul.student@gmail.com',
+      studentPhone: '9876543222',
+      subject: 'Mathematics',
+      gradeClass: 'Class 9-10',
+      message: 'Looking for home tuition in Madhapur for CBSE Class 10 board prep.',
+      preferredMode: 'Offline',
+      location: 'Madhapur, Hyderabad, Telangana',
+      status: 'Assigned',
+      assignedTutor: defaultTutorProfileId,
+      createdAt: new Date(Date.now() - 86400000 * 2).toISOString()
+    },
+    {
+      _id: '6a3956421c7fc8576e26c6d2',
+      studentName: 'Sneha Reddy',
+      studentEmail: 'sneha.reddy@gmail.com',
+      studentPhone: '9848022338',
+      subject: 'Physics',
+      gradeClass: 'Class 11-12',
+      message: 'Need experienced physics tutor for NEET coaching.',
+      preferredMode: 'Both',
+      location: 'Gachibowli, Hyderabad, Telangana',
+      status: 'Pending',
+      assignedTutor: null,
+      createdAt: new Date(Date.now() - 86400000).toISOString()
+    },
+    {
+      _id: '6a3956421c7fc8576e26c6d3',
+      studentName: 'Vikram Varma',
+      studentEmail: 'vikram.varma@outlook.com',
+      studentPhone: '9988776655',
+      subject: 'Chemistry',
+      gradeClass: 'Class 11-12',
+      message: 'Looking for organic chemistry home tutor.',
+      preferredMode: 'Offline',
+      location: 'Banjara Hills, Hyderabad, Telangana',
+      status: 'Assigned',
+      assignedTutor: defaultTutorProfileId,
+      createdAt: new Date().toISOString()
+    }
+  );
 };
 
 initializeSeeds();

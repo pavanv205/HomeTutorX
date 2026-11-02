@@ -168,7 +168,13 @@ exports.getBookings = async (req, res, next) => {
             fullName: assignedTutor.fullName,
             mobile: assignedTutor.mobile,
             email: assignedTutor.email,
-            subjects: assignedTutor.subjects
+            subjects: assignedTutor.subjects,
+            photo: assignedTutor.photo,
+            city: assignedTutor.city,
+            state: assignedTutor.state,
+            streetAddress: assignedTutor.streetAddress,
+            experience: assignedTutor.experience,
+            qualification: assignedTutor.qualification
           } : null
         };
       });
@@ -198,7 +204,7 @@ exports.getBookings = async (req, res, next) => {
 
     // Populate tutor details
     const bookings = await Booking.find(query)
-      .populate('assignedTutor', 'fullName mobile email subjects')
+      .populate('assignedTutor', 'fullName mobile email subjects photo city state streetAddress experience qualification')
       .sort({ createdAt: -1 });
 
     res.status(200).json({

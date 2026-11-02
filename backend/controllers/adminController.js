@@ -32,6 +32,8 @@ exports.getDashboardStats = async (req, res, next) => {
       totalStudents = usersList.filter(u => u.role === 'Student').length;
 
       totalRequests = bookingsList.length;
+      const assignedRequests = bookingsList.filter(b => b.assignedTutor).length;
+      const unassignedRequests = bookingsList.filter(b => !b.assignedTutor).length;
       const pendingRequests = bookingsList.filter(b => b.status === 'Pending').length;
       const contactedRequests = bookingsList.filter(b => b.status === 'Contacted').length;
       const resolvedRequests = bookingsList.filter(b => b.status === 'Assigned' || b.status === 'Resolved').length;
@@ -82,9 +84,11 @@ exports.getDashboardStats = async (req, res, next) => {
           },
           bookings: {
             total: totalRequests,
+            assigned: assignedRequests,
+            unassigned: unassignedRequests,
             pending: pendingRequests,
             contacted: contactedRequests,
-            assigned: resolvedRequests
+            resolved: resolvedRequests
           },
           storage: {
             databaseSize: dbDataSize,
@@ -98,7 +102,7 @@ exports.getDashboardStats = async (req, res, next) => {
       });
     }
 
-    const StudentRequest = require('../models/StudentRequest');
+    const Booking = require('../models/Booking');
 
     totalTutors = await Tutor.countDocuments();
     const verifiedTutors = await Tutor.countDocuments({ isVerified: true });
@@ -106,10 +110,14 @@ exports.getDashboardStats = async (req, res, next) => {
     const activeTutors = verifiedTutors;
     totalStudents = await User.countDocuments({ role: 'Student' });
 
-    totalRequests = await StudentRequest.countDocuments();
-    const pendingRequests = await StudentRequest.countDocuments({ status: 'Pending' });
-    const contactedRequests = await StudentRequest.countDocuments({ status: 'Contacted' });
-    const resolvedRequests = await StudentRequest.countDocuments({ status: 'Resolved' });
+    totalRequests = await Booking.countDocuments();
+    const assignedRequests = await Booking.countDocuments({ assignedTutor: { $ne: null } });
+    const unassignedRequests = await Booking.countDocuments({
+      $or: [{ assignedTutor: null }, { assignedTutor: { $exists: false } }]
+    });
+    const pendingRequests = await Booking.countDocuments({ status: 'Pending' });
+    const contactedRequests = await Booking.countDocuments({ status: 'Contacted' });
+    const resolvedRequests = await Booking.countDocuments({ status: { $in: ['Assigned', 'Resolved'] } });
 
     let avgStudentDbSize = 512;
     let avgTutorDbSize = 3584;
@@ -176,9 +184,11 @@ exports.getDashboardStats = async (req, res, next) => {
         },
         bookings: {
           total: totalRequests,
+          assigned: assignedRequests,
+          unassigned: unassignedRequests,
           pending: pendingRequests,
           contacted: contactedRequests,
-          assigned: resolvedRequests
+          resolved: resolvedRequests
         },
         storage: {
           databaseSize: dbDataSize,
