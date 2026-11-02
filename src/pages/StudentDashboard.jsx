@@ -268,38 +268,6 @@ const StudentDashboard = () => {
                       {/* Card Footer */}
                       <div className="pt-3 border-t border-slate-100 dark:border-slate-800/60 text-[10px] text-slate-400 dark:text-slate-500 font-bold flex items-center justify-between mt-3">
                         <span>Requested: {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-
-                        {booking.status === 'Pending' && (
-                          <button
-                            disabled={updatingBookingId !== null}
-                            onClick={() => {
-                              if (window.confirm('Are you sure you want to delete this tuition request?')) {
-                                handleUpdateBookingStatus(booking._id, 'Deleted');
-                              }
-                            }}
-                            className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
-                          >
-                            <FaTimes className="h-3 w-3" />
-                            Delete Request
-                          </button>
-                        )}
-
-                        {booking.status === 'Assigned' && (
-                          <div className="flex gap-2">
-                            <button
-                              disabled={updatingBookingId !== null}
-                              onClick={() => {
-                                if (window.confirm('Are you sure you want to delete this tuition request?')) {
-                                  handleUpdateBookingStatus(booking._id, 'Deleted');
-                                }
-                              }}
-                              className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-650 dark:bg-red-950/20 dark:hover:bg-red-950/40 dark:text-red-400 rounded-xl text-[11px] font-bold cursor-pointer transition-colors"
-                            >
-                              <FaTimes className="h-3 w-3" />
-                              Delete
-                            </button>
-                          </div>
-                        )}
                       </div>
                     </div>
                   ))}
