@@ -150,7 +150,7 @@ exports.createTutor = async (req, res, next) => {
     }
 
     // Email validation
-    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.w{2,})+$/;
     if (!emailRegex.test(emailVal)) {
       return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
     }

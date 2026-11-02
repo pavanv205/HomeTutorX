@@ -579,10 +579,12 @@ const BecomeTutorForm = () => {
       }
     } catch (error) {
       console.error('Registration submission failed:', error);
-      const isNet = (error?.message || '').toLowerCase().includes('network');
+      const isNet = (error?.message || '').toLowerCase().includes('network') || error?.code === 'ECONNABORTED';
+      const serverMessage = error?.response?.data?.message;
+      const fallbackMsg = typeof error === 'string' ? error : (error?.message || 'Registration failed. Please try again.');
       const errText = isNet
         ? `Network connection interrupted while transmitting files. Your payment of ₹${regFee} (ID: ${paymentInfo.razorpay_payment_id}) is saved! Tap "Retry Application Submission" below to finish without paying again.`
-        : (typeof error === 'string' ? error : (error?.message || error?.response?.data?.message || 'Registration failed. Please try again.'));
+        : (serverMessage ? `Payment (ID: ${paymentInfo.razorpay_payment_id}) was successful, but account setup encountered an error: ${serverMessage}. Tap "Retry Application Submission" below to finish.` : fallbackMsg);
       setSubmitError(errText);
     } finally {
       setLoading(false);
@@ -670,7 +672,8 @@ const BecomeTutorForm = () => {
       rzp1.open();
     } catch (error) {
       console.error(error);
-      const errText = typeof error === 'string' ? error : (error?.message || error?.response?.data?.message || 'Registration failed. Please try again.');
+      const serverMessage = error?.response?.data?.message;
+      const errText = typeof error === 'string' ? error : (serverMessage || error?.message || 'Registration failed. Please try again.');
       setSubmitError(errText);
       setLoading(false);
     }

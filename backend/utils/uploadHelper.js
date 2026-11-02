@@ -33,9 +33,15 @@ if (hasCloudinary) {
 }
 
 if (!hasCloudinary) {
-  const uploadDir = path.join(__dirname, '..', 'uploads');
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  const os = require('os');
+  const isServerless = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+  const uploadDir = isServerless ? path.join(os.tmpdir(), 'uploads') : path.join(__dirname, '..', 'uploads');
+  try {
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+  } catch (dirErr) {
+    console.warn('[UPLOAD HELPER] Could not create fallback upload directory:', dirErr.message);
   }
   storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -69,8 +75,8 @@ const fileFilter = (req, file, cb) => {
       cb(new Error('Invalid file type: Profile Photo must be JPG, JPEG, PNG, or WEBP'), false);
     }
   } else if (file.fieldname === 'certificate') {
-    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
-    const allowedExts = ['.jpg', '.jpeg', '.png', '.pdf'];
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
     const hasAllowedExt = allowedExts.some(ext => filename.endsWith(ext));
     const hasAllowedMime = allowedMimeTypes.includes(file.mimetype);
     
