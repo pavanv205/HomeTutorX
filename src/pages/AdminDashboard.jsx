@@ -2042,17 +2042,11 @@ const AdminDashboard = () => {
                                     className={`text-[11px] font-bold rounded-lg px-2 py-1 border focus:outline-none cursor-pointer ${
                                       booking.status === 'Assigned'
                                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300'
-                                        : booking.status === 'Contacted'
-                                        ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-300'
-                                        : booking.status === 'Resolved'
-                                        ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:border-purple-800 dark:text-purple-300'
                                         : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300'
                                     }`}
                                   >
                                     <option value="Pending">Pending</option>
                                     <option value="Assigned">Assigned</option>
-                                    <option value="Contacted">Contacted</option>
-                                    <option value="Resolved">Resolved</option>
                                   </select>
                                 </td>
 
