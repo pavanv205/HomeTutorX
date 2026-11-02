@@ -365,13 +365,6 @@ const TutorProfile = () => {
                           >
                             <FaCheck className="h-3 w-3" /> Accept
                           </button>
-                          <button
-                            disabled={updatingBookingId !== null}
-                            onClick={() => handleDeleteBooking(booking._id)}
-                            className="flex items-center gap-1.5 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-950/20 dark:hover:bg-red-950/45 dark:text-red-455 rounded-xl text-xs font-bold cursor-pointer transition-colors"
-                          >
-                            <FaTimes className="h-3 w-3" /> Decline
-                          </button>
                         </div>
                       )}
                     </div>
