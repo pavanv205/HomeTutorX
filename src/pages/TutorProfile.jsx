@@ -356,17 +356,6 @@ const TutorProfile = () => {
                       <span className="text-[9px] text-slate-400 font-bold">
                         {new Date(booking.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
-                      {booking.status === 'Pending' && (
-                        <div className="flex gap-1.5">
-                          <button
-                            disabled={updatingBookingId !== null}
-                            onClick={() => handleUpdateStatus(booking._id, 'Assigned')}
-                            className="flex items-center gap-1.5 py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/45 dark:text-emerald-400 rounded-xl text-xs font-bold cursor-pointer transition-colors"
-                          >
-                            <FaCheck className="h-3 w-3" /> Accept
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
